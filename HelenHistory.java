@@ -1,101 +1,155 @@
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.GridLayout;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.*;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JList;
-import javax.swing.JPanel;
-import javax.swing.JEditorPane;
-import javax.swing.JTextField;
-import javax.swing.border.Border;
+import javax.swing.*;
 
-class PromptHistory extends JPanel{
-    private JPanel header; //Title
-    private JList listPrevResults;
-    
-
-}
 
 class QuestionPanel extends JPanel{
-    
-    Footer footer;
+    private JLabel title;
+    private JTextArea currQuestion;
+    private JTextArea currAnswer;
+    private JLabel recordingLabel;
+    private JButton askQuestion;
 
-    Border emptyBorder = BorderFactory.createEmptyBorder();
+    String ph = "Placeholder";
 
-    Color gray = new Color(218, 229, 234);
+    LayoutManager qpLayout = new BoxLayout(this, BoxLayout.PAGE_AXIS);
+
+    private void configTitle(){
+        title = new JLabel("Team 12 App", SwingConstants.CENTER);
+        title.setFont(new Font("Sans-serif", Font.BOLD, 30));
+        title.setAlignmentX(CENTER_ALIGNMENT);
+        
+    }
+    private void configcurrQuestion(){
+        this.currQuestion = new JTextArea(ph);
+        currQuestion.setEditable(false);
+        currQuestion.setLineWrap(true);
+        currQuestion.setAlignmentX(CENTER_ALIGNMENT);
+        currQuestion.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(Color.black),
+        currQuestion.getBorder()));
+        currQuestion.setPreferredSize(new Dimension(600,200));
+        currQuestion.setMaximumSize(new Dimension(600,200));
+        currQuestion.setFont(new Font("Sans-serif", Font.BOLD, 18));
+    }
+
+    private void configcurrAnswer(){
+        this.currAnswer = new JTextArea(ph);
+        currAnswer.setEditable(false);
+        currAnswer.setLineWrap(true);
+        currAnswer.setAlignmentX(CENTER_ALIGNMENT);
+        currAnswer.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(Color.black),
+        currAnswer.getBorder()));
+        currAnswer.setPreferredSize(new Dimension(600,700));
+        currAnswer.setMaximumSize(new Dimension(600,700));
+        currAnswer.setFont(new Font("Sans-serif", Font.PLAIN, 14));
+    }
+
+    private void configaskQuestion(){
+        askQuestion = new JButton("New Question"); 
+        askQuestion.setFont(new Font("Sans-serif", Font.PLAIN, 24));
+        askQuestion.setAlignmentX(CENTER_ALIGNMENT);
+    }
+
+    private void configrecordingLabel(){
+        recordingLabel = new JLabel(ph, SwingConstants.CENTER);
+        recordingLabel.setPreferredSize(new Dimension(200,40));
+        recordingLabel.setAlignmentX(CENTER_ALIGNMENT);
+    }
 
     QuestionPanel(){
-        this.setPreferredSize(new Dimension(800, 800)); // set size of task
-        this.setBackground(gray); // set background color of task
-        this.setLayout(new BorderLayout()); // set layout of task
+        this.setBackground(Color.green); // set background color of task
+        this.setLayout(qpLayout);
 
-        footer = new Footer();
-        this.add(footer, BorderLayout.CENTER);
-    }
-}
+        configTitle();
+        configcurrQuestion();
+        configcurrAnswer();
+        configaskQuestion();
+        configrecordingLabel();
 
-class CurrentQuestion extends JEditorPane{
-
-}
-
-class CurrentAnswer extends JEditorPane{
-
-}
-
-class Footer extends JPanel{
-    private JLabel recordingLabel; //Can be microphone in later iteration?
-    private JButton AskNewQuestion;
-
-    Color gray = new Color(218, 229, 234);
-
-    Footer(){
-        this.setPreferredSize(new Dimension(800, 800)); // set size of task
-        this.setBackground(gray); // set background color of task
-        this.setLayout(new BorderLayout());
-        
-
-        AskNewQuestion = new JButton("New Question"); // clear button
-        AskNewQuestion.setFont(new Font("Sans-serif", Font.ITALIC, 10)); // set font
-        this.add(AskNewQuestion); // add to footer
+        this.add(title);
+        this.add(currQuestion);
+        this.add(currAnswer);
+        this.add(Box.createVerticalGlue());
+        this.add(recordingLabel);
+        this.add(askQuestion);
+        this.add(Box.createVerticalGlue());
+        this.add(Box.createRigidArea(new Dimension(100,20)));
     }
     
 
-    public JButton getAskButton() {
-        return AskNewQuestion;
+    // public JButton getAskButton() {
+    //     return askQuestion;
+    // }
+}
+
+class PromptHistory extends JPanel{
+    private JLabel header;
+    private JScrollPane pastResults;
+    String[] listPH = new String[200];
+
+
+    LayoutManager phLayout = new BoxLayout(this, BoxLayout.PAGE_AXIS);
+    
+    private void configheader(){
+        header = new JLabel("Prompt History"); 
+        header.setFont(new Font("Sans-serif", Font.BOLD, 40));
+        header.setAlignmentX(CENTER_ALIGNMENT);
+    }
+
+    private void configpastResults(){
+        JList<String> list;
+        for (int i = 0; i < 199; i++){
+            listPH[i] = "placeholder";
+        }
+        
+        list = new JList<String>(listPH);
+        pastResults = new JScrollPane(list);
+        // pastResults.setMinimumSize(new Dimension(400, 800));
+        pastResults.setPreferredSize(new Dimension(400, 800));
+        // pastResults.setMaximumSize(new Dimension(400, 800));
+
+    }
+    
+    PromptHistory(){
+        this.setBackground(Color.cyan);
+        this.setLayout(phLayout);
+        this.setPreferredSize(new Dimension(400,1000));
+
+        configheader();
+        configpastResults();
+
+        this.add(header);
+        this.add(pastResults);
     }
 }
+
 
 class AppFrame extends JFrame{
-    private PromptHistory historypanel;
-    private QuestionPanel questionpanel;
+    private QuestionPanel qp;
+    private PromptHistory ph;
+    LayoutManager afLayout = new BorderLayout();
 
-    private JButton newQuestionButton;
+    // private JButton newQuestionButton;
 
     AppFrame() {
-        this.setSize(800, 1000); // 400 width and 600 height
-        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // Close on exit
-        this.setVisible(true); // Make visible
+        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.setSize(800, 1000); 
+        this.setLayout(afLayout);
+        this.setVisible(true);
     
         // historypanel = new PromptHistory();
-        questionpanel = new QuestionPanel();
+        qp = new QuestionPanel();
+        ph = new PromptHistory();
     
-        this.add(historypanel, BorderLayout.WEST); // Add title bar on top of the screen
-        // this.add(questionpanel, BorderLayout.EAST); // Add footer on bottom of the screen
+        this.add(qp, BorderLayout.CENTER); 
+        this.add(ph, BorderLayout.WEST); 
 
-        newQuestionButton = questionpanel.footer.getAskButton();
+        // newQuestionButton = questionpanel.footer.getAskButton();
         // clearButton = footer.getClearButton();
         // loadButton = footer.getLoadButton();
         // saveButton = footer.getSaveButton();
