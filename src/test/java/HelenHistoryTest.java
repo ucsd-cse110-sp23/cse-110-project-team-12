@@ -11,12 +11,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 public class HelenHistoryTest {
     @Test
     void testEnqueue() {
-
         assertEquals(3, 3);
     }
-
-
-
     //check what happens when the button is clicked, something is said, the button is clicked again
     //check what happens when the button is clicked, nothing is said, th
     
