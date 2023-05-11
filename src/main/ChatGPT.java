@@ -92,7 +92,7 @@ public class ChatGPT {
 		JSONArray choices = responseJson.getJSONArray("choices");
 		answer = choices.getJSONObject(0).getString("text");
 		
-		System.out.println(answer);
+		//System.out.println(answer);
 	}
 
 }

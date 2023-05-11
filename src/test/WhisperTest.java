@@ -25,6 +25,11 @@ public class WhisperTest {
         }
         assertEquals(Whisper.question_text, "1 plus 1");
     }*/
+	
+	@Test
+	void sampleTest() {
+		assertEquals(3,3);
+	}
 
     @Test
     void simpleTest() {
