@@ -1,3 +1,4 @@
+package main;
 // package src.main.java;
 import java.awt.*;
 import java.io.BufferedReader;
