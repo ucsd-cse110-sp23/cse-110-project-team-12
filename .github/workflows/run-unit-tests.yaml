@@ -27,11 +27,10 @@ jobs:
         uses: gradle/gradle-build-action@v2
 
       # build everything (includes running unit tests)
-      - name: Execute Gradle build
-        run: ./gradlew build
-
       - name: Change wrapper permissions
         run: chmod +x ./gradlew
+      - name: Execute Gradle build
+        run: ./gradlew build
 
       # report the results
       - name: Publish Test Report
