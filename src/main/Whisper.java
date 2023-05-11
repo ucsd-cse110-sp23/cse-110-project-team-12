@@ -40,8 +40,6 @@ public class Whisper {
              handleErrorResponse(connection);
          }
          connection.disconnect();
-
-         System.out.println("yaaaaaaaah1");
       
 
 	}
