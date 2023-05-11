@@ -18,8 +18,7 @@ class QuestionPanel extends JPanel{
     private TargetDataLine targetDataLine;
     private static File question_audio;
     private JLabel title;
-    private JTextArea question;
-    private JTextArea answer;
+    private JTextArea question, answer;
     private JLabel recordingLabel;
     private JButton startButton;
 
@@ -71,8 +70,17 @@ class QuestionPanel extends JPanel{
         recordingLabel.setPreferredSize(new Dimension(200,40));
         recordingLabel.setAlignmentX(CENTER_ALIGNMENT);
     }
-
-    QuestionPanel(){
+    
+    public String getQuestion() {
+    	return question.getText();
+    }
+    
+    public String getAnswer() {
+    	return answer.getText();
+    }
+    
+    
+    public QuestionPanel(){
         this.setBackground(Color.green); // set background color of task
         this.setLayout(qpLayout);
 
@@ -96,8 +104,15 @@ class QuestionPanel extends JPanel{
         audioFormat = getAudioFormat();
         addListeners();
     }
+    
+    //to POST q/a to server
+    public JButton getPostButton() {
+    	return startButton;
+    	
+    }
 
     public void addListeners() {
+    	String URL = "http://localhost:8100/";
         startButton.addActionListener(
           new ActionListener() {
             @Override
@@ -107,6 +122,27 @@ class QuestionPanel extends JPanel{
                     startButton.setText("Stop Recording");
                 } else {
                     stopRecording();
+                    try {
+	        			  URL url = new URL(URL);
+	        			  HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+	        			  conn.setRequestMethod("POST");
+	        			  conn.setDoOutput(true);
+	        			  OutputStreamWriter out = new OutputStreamWriter(
+	        				conn.getOutputStream()
+	        			  );
+	        			  out.write(question.getText() + "," + answer.getText());
+	        			  out.flush();
+	        			  out.close();
+	        			  BufferedReader in = new BufferedReader(
+			                new InputStreamReader(conn.getInputStream())
+			              );
+			              String response = in.readLine();
+			              in.close();
+			              JOptionPane.showMessageDialog(null, response);
+			            } catch (Exception ex) {
+			              ex.printStackTrace();
+			              JOptionPane.showMessageDialog(null, "Error: " + ex.getMessage());
+	        		    }
                     startButton.setText("New Question");
                 }
             }
@@ -185,6 +221,7 @@ class QuestionPanel extends JPanel{
     
       private void stopRecording() {
         targetDataLine.stop();
+        /*
         try {
             new Whisper(question_audio);
         } catch (IOException e) {
@@ -198,12 +235,10 @@ class QuestionPanel extends JPanel{
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        answer.setText(ChatGPT.answer);
+        answer.setText(ChatGPT.answer);*/
+        question.setText("question asked");
+        answer.setText("answer retrieved");
         targetDataLine.close();
       }
     
-
-    // public JButton getAskButton() {
-    //     return startButton;
-    // }
 }
