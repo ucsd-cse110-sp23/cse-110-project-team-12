@@ -3,7 +3,7 @@ name: Java CI
 on: [push]
 
 permissions:
-    contents: read
+    contents: write
     checks: write
     id-token: write
 
@@ -13,9 +13,6 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
-
-	- name: Change wrapper permissions
-        run: chmod +x ./gradlew
 
       - name: Set up JDK
         uses: actions/setup-java@v3
