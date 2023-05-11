@@ -38,3 +38,6 @@ jobs:
           report_paths: '**/build/test-results/test/TEST-*.xml'
           detailed_summary: true # display detailed summary of the report
           include_passed: true # include passed tests in the results table
+
+	-name: Change wrapper permissions
+	 run: chmod +x ./gradlew
