@@ -5,12 +5,13 @@ import java.awt.*;
 //import java.util.ArrayList;
 //import java.net.*;
 import javax.swing.*;
+import java.util.*;
 
 public class PromptHistory extends JPanel {
     private JLabel header;
-    private JScrollPane pastResults;
-    String[] listPH = new String[200];
-
+    private static JScrollPane sideBar;
+    public static DefaultListModel listPH;
+    private static JList list;
 
     LayoutManager phLayout = new BoxLayout(this, BoxLayout.PAGE_AXIS);
     
@@ -19,31 +20,49 @@ public class PromptHistory extends JPanel {
         header.setFont(new Font("Sans-serif", Font.BOLD, 40));
         header.setAlignmentX(CENTER_ALIGNMENT);
     }
-
-    private void configpastResults(){
-        JList<String> list;
-        for (int i = 0; i < 199; i++){
-            listPH[i] = "placeholder";
-        }
-        
-        list = new JList<String>(listPH);
-        pastResults = new JScrollPane(list);
-        // pastResults.setMinimumSize(new Dimension(400, 800));
-        pastResults.setPreferredSize(new Dimension(400, 800));
-        // pastResults.setMaximumSize(new Dimension(400, 800));
-
-    }
     
-    PromptHistory(){
+    public static void loadPrevQuestions() {
+    	/*LinkedHashMap<String,String> data = (LinkedHashMap<String, String>) RequestHandler.getMap();
+    	for (String key : data.keySet()) {
+    		listPH.addElement(key);
+    	}*/
+    	list = new JList(listPH);
+    	sideBar = new JScrollPane(list);
+    }
+/*
+    public static void configSideBar(){
+    	
+    	//String[] array = listPH.toArray(new String[listPH.size()]);
+        JList list = new JList();
+        //list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        //list.setSelectedIndex(0);
+        list.setVisibleRowCount(1);
+        sideBar = new JScrollPane();
+       // System.out.println("oo" + list.getModel().getSize());
+        // pastResults.setMinimumSize(new Dimension(400, 800));
+        sideBar.setPreferredSize(new Dimension(400, 800));
+        // pastResults.setMaximumSize(new Dimension(400, 800));
+        sideBar.setViewportView(list);
+    	
+
+    }*/
+    
+    public PromptHistory(){
+    	
         this.setBackground(Color.cyan);
         this.setLayout(phLayout);
         this.setPreferredSize(new Dimension(400,1000));
-
+        setVisible(true);
+        
         configheader();
-        configpastResults();
-
+        listPH = new DefaultListModel();
+        list = new JList(listPH);
+        sideBar = new JScrollPane(list);
+        
         this.add(header);
-        this.add(pastResults);
+        this.add(sideBar);
+        setVisible(true);
+        
     }
 
 }

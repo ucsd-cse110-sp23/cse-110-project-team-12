@@ -9,10 +9,19 @@ import java.util.*;
  */
 public class RequestHandler implements HttpHandler {
 
-	private final Map<String,String> data;
+	private static Map<String,String> data;
 	
 	public RequestHandler(Map<String, String> data) {
+		//RequestHandler.data = data;
 		this.data = data;
+	}
+	
+	/* Get map of previous questions and answers
+	 * 
+	 * @return Map<String,String> of q/a pairs
+	 */
+	public static Map<String,String> getMap() {
+		return data;
 	}
 	
 	/* Called by HttpServer when HTTP request received
@@ -94,6 +103,7 @@ public class RequestHandler implements HttpHandler {
 		
 		//store data in hashmap
 		data.put(question, answer);
+		MyServer.allData.put(question, answer);
 		
 		String response = "Posted entry {" + question + ", " + answer + "}";
 		System.out.println(response);

@@ -1,7 +1,6 @@
 package main;
-// package src.main.java;
+
 import java.awt.*;
-import org.json.*;
 import java.awt.event.*;
 import java.io.*;
 import java.net.HttpURLConnection;
@@ -9,9 +8,6 @@ import java.net.URL;
 
 import javax.sound.sampled.*;
 import javax.swing.*;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 class QuestionPanel extends JPanel{
     private AudioFormat audioFormat;
@@ -22,12 +18,12 @@ class QuestionPanel extends JPanel{
     private JLabel recordingLabel;
     private JButton startButton;
 
-    String ph = "Placeholder";
+    //String ph = "Placeholder";
 
     LayoutManager qpLayout = new BoxLayout(this, BoxLayout.PAGE_AXIS);
 
     private void configTitle(){
-        title = new JLabel("Team 12 App", SwingConstants.CENTER);
+        title = new JLabel("SayIt Assistant", SwingConstants.CENTER);
         title.setFont(new Font("Sans-serif", Font.BOLD, 30));
         title.setAlignmentX(CENTER_ALIGNMENT);
         
@@ -143,20 +139,13 @@ class QuestionPanel extends JPanel{
 			              ex.printStackTrace();
 			              JOptionPane.showMessageDialog(null, "Error: " + ex.getMessage());
 	        		    }
+                    PromptHistory.listPH.addElement(question.getText());
+                    PromptHistory.loadPrevQuestions();
                     startButton.setText("New Question");
                 }
             }
           }
         );
-        /*
-        stopButton.addActionListener(
-          new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-              stopRecording();
-            }
-          }
-        );*/
       }
 
       private AudioFormat getAudioFormat() {
