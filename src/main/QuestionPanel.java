@@ -17,6 +17,7 @@ class QuestionPanel extends JPanel{
     private JTextArea question, answer;
     private JLabel recordingLabel;
     private JButton startButton;
+    private int num = 0;
 
     //String ph = "Placeholder";
 
@@ -140,7 +141,8 @@ class QuestionPanel extends JPanel{
 			              JOptionPane.showMessageDialog(null, "Error: " + ex.getMessage());
 	        		    }
                     PromptHistory.listPH.addElement(question.getText());
-                    PromptHistory.loadPrevQuestions();
+                    //to show old q's on start up
+                    PromptHistory.saveQuestions();
                     startButton.setText("New Question");
                 }
             }
@@ -225,8 +227,10 @@ class QuestionPanel extends JPanel{
             e.printStackTrace();
         }
         answer.setText(ChatGPT.answer);*/
-        question.setText("question asked");
-        answer.setText("answer retrieved");
+        question.setText("question asked" + num);
+        answer.setText("answer retrieved" + num);
+        //"${escape(result[i].supply_name)}"
+        num++;
         targetDataLine.close();
       }
     

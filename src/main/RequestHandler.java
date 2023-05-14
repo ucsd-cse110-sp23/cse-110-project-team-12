@@ -71,6 +71,7 @@ public class RequestHandler implements HttpHandler {
 		
 		if (query != null) {
 			//extract value of query param from query string
+			
 			String question = query.substring(query.indexOf("=") + 1);
 			
 			String answer = data.get(question); //retrieve data from hashmap
@@ -100,7 +101,7 @@ public class RequestHandler implements HttpHandler {
 		
 		//extract language and year vals
 		String question = postData.substring(0,postData.indexOf(",")), answer = postData.substring(postData.indexOf(",")+1);
-		
+		question = question.replace(' ', '+');
 		//store data in hashmap
 		data.put(question, answer);
 		MyServer.allData.put(question, answer);
@@ -154,12 +155,18 @@ public class RequestHandler implements HttpHandler {
 		String query = uri.getRawQuery();
 		
 		if (query != null) {
+			
 			//extract value of query param from query string
 			String question = query.substring(query.indexOf("=")+1);
+			question = question.replace(' ', '+');
 			String answer = data.get(question); //retrieve data from hashmap
+			
+			
 			if (answer != null) { //valid query
+				
 				response = "Deleted entry {" + question + ", " + answer + "}";
 				System.out.println(response);
+				
 				data.remove(question);
 			} else {            //invalid query
 				response = "No data found for " + question;
