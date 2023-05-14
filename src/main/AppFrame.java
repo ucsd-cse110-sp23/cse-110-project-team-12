@@ -3,6 +3,15 @@ package main;
 import java.awt.*;
 import javax.swing.*;
 
+/*
+ * main app
+ * 
+ *  extends JFrame
+ *  holds:
+ *  	PromptHistory - left
+ *  	QuestionPanel - right
+ * 
+ */
 public class AppFrame extends JFrame{
 	
     private QuestionPanel qp;
@@ -33,4 +42,3 @@ public class AppFrame extends JFrame{
     }  
     
 }
-

@@ -28,7 +28,7 @@ public class MyServer {
 		
 		//set and start server
 		server.createContext("/", new RequestHandler(allData));
-		//server.createContext("/name", new MyHandler(name));
+		
 		server.setExecutor(threadPoolExecutor);
 		server.start();
 		
