@@ -100,7 +100,10 @@ public class RequestHandler implements HttpHandler {
 		//extract question and answer vals
 		String question = postData.substring(0,postData.indexOf(",")), answer = postData.substring(postData.indexOf(",")+1);
 		question = question.replace(' ', '+');
+<<<<<<< HEAD
 		
+=======
+>>>>>>> f2cdc2371df219b10a5eab577c13a0e110dcb998
 		//store data in hashmap
 		data.put(question, answer);
 		MyServer.allData.put(question, answer);
@@ -133,6 +136,10 @@ public class RequestHandler implements HttpHandler {
 			if (answer != null) { //valid query
 				
 				response = "Deleted entry {" + question + ", " + answer + "}";
+<<<<<<< HEAD
+=======
+				System.out.println(response);
+>>>>>>> f2cdc2371df219b10a5eab577c13a0e110dcb998
 				
 				data.remove(question);
 			} else {            //invalid query
