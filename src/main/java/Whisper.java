@@ -1,5 +1,7 @@
-package main;
-// package src.main.java;
+/*
+ * ChatGPT class communicates with Whisper server to get a translation of the voice recording.
+ */
+
 import java.io.*;
 import java.net.*;
 import org.json.*;

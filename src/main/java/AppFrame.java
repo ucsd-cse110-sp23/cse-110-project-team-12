@@ -1,7 +1,10 @@
-package main;
+/*
+ * AppFrame is the main interface of our program, contains 2 subpanels
+ */
 
 import java.awt.*;
 import javax.swing.*;
+
 
 public class AppFrame extends JFrame{
 	
@@ -33,4 +36,3 @@ public class AppFrame extends JFrame{
     }  
     
 }
-

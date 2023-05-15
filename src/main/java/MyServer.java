@@ -1,4 +1,7 @@
-package main;
+/*
+ * MyServer class runs a local server to link our app with data storage capabilities. 
+ */
+
 import com.sun.net.httpserver.*; //server create()
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -28,7 +31,7 @@ public class MyServer {
 		
 		//set and start server
 		server.createContext("/", new RequestHandler(allData));
-		//server.createContext("/name", new MyHandler(name));
+		
 		server.setExecutor(threadPoolExecutor);
 		server.start();
 		
