@@ -12,9 +12,9 @@ import java.net.URL;
 public class PromptHistory extends JPanel {
     private JLabel header;
     private static JScrollPane sideBar;
-    public static DefaultListModel listPH;
+    public static DefaultListModel<String> listPH;
     private static JList list;
-    private static String filePath = "C:\\Users\\julia\\eclipse-work\\cse-110-project-team-12\\src\\main\\questionFile.txt";
+    protected static String filePath = "src/main/questionFile.txt";
     private JButton clearAll;
 
     LayoutManager phLayout = new BoxLayout(this, BoxLayout.PAGE_AXIS);
