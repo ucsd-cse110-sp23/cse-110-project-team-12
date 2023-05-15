@@ -23,6 +23,12 @@ dependencies {
 
 }
 
-test {
+tasks.named('test', Test) {
     useJUnitPlatform()
+
+    maxHeapSize = '1G'
+
+    testLogging {
+        events "passed"
+    }
 }
