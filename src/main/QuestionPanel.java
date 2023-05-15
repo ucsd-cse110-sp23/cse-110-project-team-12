@@ -25,15 +25,11 @@ class QuestionPanel extends JPanel{
     private static JTextArea question, answer;
     private JLabel recordingLabel;
     private JButton startButton;
-<<<<<<< HEAD
+
     private JButton deleteButton;
     
     private int num = 0;
-=======
-    private int num = 0;
 
-    //String ph = "Placeholder";
->>>>>>> f2cdc2371df219b10a5eab577c13a0e110dcb998
 
     LayoutManager qpLayout = new BoxLayout(this, BoxLayout.PAGE_AXIS);
     
@@ -342,17 +338,13 @@ class QuestionPanel extends JPanel{
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-<<<<<<< HEAD
-        String answerString = ChatGPT.answer;
-        answerString = answerString.substring(2);
-        answer.setText(answerString);
-=======
-        answer.setText(ChatGPT.answer);*/
+
+        answer.setText(ChatGPT.answer);
         question.setText("question asked" + num);
         answer.setText("answer retrieved" + num);
         //"${escape(result[i].supply_name)}"
         num++;
->>>>>>> f2cdc2371df219b10a5eab577c13a0e110dcb998
+
         targetDataLine.close();
       }
     

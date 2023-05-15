@@ -21,11 +21,9 @@ public class PromptHistory extends JPanel {
     private static JScrollPane sideBar;
     public static DefaultListModel listPH;
     private static JList list;
-<<<<<<< HEAD
-    private static String filePath = "src/main/questionFile.txt";
-=======
+
     private static String filePath = "C:\\Users\\julia\\eclipse-work\\cse-110-project-team-12\\src\\main\\questionFile.txt";
->>>>>>> f2cdc2371df219b10a5eab577c13a0e110dcb998
+
     private JButton clearAll;
 
     LayoutManager phLayout = new BoxLayout(this, BoxLayout.PAGE_AXIS);
@@ -41,8 +39,7 @@ public class PromptHistory extends JPanel {
     	clearAll.setFont(new Font("Sans-serif", Font.PLAIN, 24));
         clearAll.setAlignmentX(CENTER_ALIGNMENT);
     }
-<<<<<<< HEAD
-=======
+/*
     
     public void loadQuestions() {
     	
@@ -95,7 +92,7 @@ public class PromptHistory extends JPanel {
     	    System.out.println("saveQuestions() not implemented");
     	}	  
       }
-    /*
+    
     public static void loadPrevQuestions() {
     	/*LinkedHashMap<String,String> data = (LinkedHashMap<String, String>) RequestHandler.getMap();
     	for (String key : data.keySet()) {
@@ -121,7 +118,7 @@ public class PromptHistory extends JPanel {
     	
 
     }*/
->>>>>>> f2cdc2371df219b10a5eab577c13a0e110dcb998
+
     
     /*
      * load asked questions from text file
@@ -195,21 +192,11 @@ public class PromptHistory extends JPanel {
         
     }
     
-<<<<<<< HEAD
     /*
      * add functionality to clear all button
      */
+
     public void addListeners() {
-    	
-    	/*
-    	 * clicking CLEAR ALL button
-    	 * 
-    	 * Deletes every q/a from server
-    	 * Clears and updates prompt history list
-    	 */
-=======
-    public void addListeners() {
->>>>>>> f2cdc2371df219b10a5eab577c13a0e110dcb998
     	clearAll.addActionListener(
     			new ActionListener() {
     				@Override
@@ -228,22 +215,18 @@ public class PromptHistory extends JPanel {
 	    			            );
 	    			            String response = in.readLine();
 	    			            in.close();
-<<<<<<< HEAD
+
 	    			           
 	    			          } catch (Exception ex) {
 	    			            ex.printStackTrace();
 	    			           
-=======
-	    			            JOptionPane.showMessageDialog(null, response);
-	    			          } catch (Exception ex) {
-	    			            ex.printStackTrace();
-	    			            JOptionPane.showMessageDialog(null, "Error: " + ex.getMessage());
->>>>>>> f2cdc2371df219b10a5eab577c13a0e110dcb998
-	    			          }
+	    			            //JOptionPane.showMessageDialog(null, response);
+	    			         
     					}
     					listPH.clear();
     					saveQuestions();
     				}
+    			}
     			}
     	);
     }
