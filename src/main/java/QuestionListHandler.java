@@ -1,3 +1,7 @@
+/*
+ * QuestionListHandler handles selections for scrolling JList sidebar of previous questions
+ * implements ListSelectionListener
+ */
 
 import java.io.*;
 import java.net.HttpURLConnection;
@@ -6,10 +10,7 @@ import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-/*
- * handles selections for scrolling JList sidebar of previous questions
- * implements ListSelectionListener
- */
+
 class QuestionListHandler implements ListSelectionListener{
     
 	/*

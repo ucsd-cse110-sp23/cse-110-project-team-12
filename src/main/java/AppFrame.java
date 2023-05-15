@@ -1,17 +1,11 @@
-
+/*
+ * AppFrame is the main interface of our program, contains 2 subpanels
+ */
 
 import java.awt.*;
 import javax.swing.*;
 
-/*
- * main app
- * 
- *  extends JFrame
- *  holds:
- *  	PromptHistory - left
- *  	QuestionPanel - right
- * 
- */
+
 public class AppFrame extends JFrame{
 	
     private QuestionPanel qp;

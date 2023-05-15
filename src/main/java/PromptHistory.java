@@ -1,27 +1,25 @@
-
-import java.awt.*;
-import java.awt.event.*;
-import java.io.*;
-//import java.util.ArrayList;
-//import java.net.*;
-import javax.swing.*;
-import java.util.*;
-import java.net.HttpURLConnection;
-import java.net.URL;
-
-/* PromptHistory
+/* PromptHistory is a subpanel that contains prior questions.
  * extends JPanel
  * holds:
  * 			header - JLabel
  * 			list of questions in scrolling JList sidebar
  * 			clearAll - JButton
  */
+
+import java.awt.*;
+import java.awt.event.*;
+import java.io.*;
+import javax.swing.*;
+import java.net.HttpURLConnection;
+import java.net.URL;
+
+
 public class PromptHistory extends JPanel {
     private JLabel header;
     private static JScrollPane sideBar;
     public static DefaultListModel listPH;
     private static JList list;
-    private static String filePath = "src/main/questionFile.txt";
+    private static String filePath = "bin/main/questionFile.txt";
     private JButton clearAll;
 
     LayoutManager phLayout = new BoxLayout(this, BoxLayout.PAGE_AXIS);

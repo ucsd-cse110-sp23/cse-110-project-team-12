@@ -1,4 +1,6 @@
-
+/*
+ * ChatGPT class communicates with online ChatGPT server to get a response to the question we send.
+ */
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -91,8 +93,6 @@ public class ChatGPT {
 		
 		JSONArray choices = responseJson.getJSONArray("choices");
 		answer = choices.getJSONObject(0).getString("text");
-		
-		//System.out.println(answer);
 	}
 
 }

@@ -1,4 +1,11 @@
-
+/*  QuestionPanel is a subpanel that holds our q&a field. It has buttons to allow user to record questions.
+ * 	extends JPanel
+ *  holds:
+ *  	Title JLabel
+ *  	Question JTextArea
+ *  	Answer JTextArea
+ *  	StartButton JButton
+ */
 
 import java.awt.*;
 import java.awt.event.*;
@@ -9,14 +16,7 @@ import java.net.URL;
 import javax.sound.sampled.*;
 import javax.swing.*;
 
-/*  QuestionPanel
- * 	extends JPanel
- *  holds:
- *  	Title JLabel
- *  	Question JTextArea
- *  	Answer JTextArea
- *  	StartButton JButton
- */
+
 class QuestionPanel extends JPanel{
     private AudioFormat audioFormat;
     private TargetDataLine targetDataLine;

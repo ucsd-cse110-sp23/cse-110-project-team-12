@@ -1,12 +1,13 @@
+/*
+ * RequestHandler - how server should handle incoming requests
+ */
 
 import com.sun.net.httpserver.*; //server create()
 import java.io.*;
 import java.net.*;
 import java.util.*;
 
-/*
- * HTTP Handler - how server should handle incoming requests
- */
+
 public class RequestHandler implements HttpHandler {
 
 	private static Map<String,String> data;
