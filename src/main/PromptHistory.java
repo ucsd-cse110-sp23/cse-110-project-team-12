@@ -147,6 +147,9 @@ public class PromptHistory extends JPanel {
     					}
     					listPH.clear();
     					saveQuestions();
+    					
+    					QuestionPanel.setQuestion("Your Question will appear here");
+    					QuestionPanel.setAnswer("Your Answer will appear here");
     				}
     			}
     	);
