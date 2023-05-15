@@ -73,7 +73,6 @@ public class RequestHandler implements HttpHandler {
 			question = question.replace(' ', '+');
 			
 			String answer = data.get(question); //retrieve data from hashmap
-			System.out.println("RH" + (String)answer);
 			
 			if (answer != null) {
 				response = answer;
