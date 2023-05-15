@@ -21,9 +21,7 @@ public class PromptHistory extends JPanel {
     private static JScrollPane sideBar;
     public static DefaultListModel listPH;
     private static JList list;
-
-    private static String filePath = "C:\\Users\\julia\\eclipse-work\\cse-110-project-team-12\\src\\main\\questionFile.txt";
-
+    private static String filePath = "src/main/questionFile.txt";
     private JButton clearAll;
 
     LayoutManager phLayout = new BoxLayout(this, BoxLayout.PAGE_AXIS);
@@ -39,86 +37,6 @@ public class PromptHistory extends JPanel {
     	clearAll.setFont(new Font("Sans-serif", Font.PLAIN, 24));
         clearAll.setAlignmentX(CENTER_ALIGNMENT);
     }
-/*
-    
-    public void loadQuestions() {
-    	
-        try {
-        	
-        	BufferedReader questionFile = new BufferedReader(new FileReader(filePath));
-        	
-        	String currLine;
-        	//ArrayList<String> list = new ArrayList<>();
-        	
-        	while ((currLine = questionFile.readLine()) != null) {
-        		//System.out.println(currLine);
-        		//String question = new Task();
-        		listPH.addElement(currLine);
-        		//task.taskName.setText(currLine);
-        		//this.add(currLine);
-        		//list.add(currLine);
-        	}
-        	
-        	
-        	
-        	questionFile.close();
-        	//updateNumbers();
-        	revalidate();
-        	//return list;
-        } catch (IOException e){
-        	System.out.println("loadQuestions() not implemented");
-            //return null;
-        }
-        
-      }
-    
-    public static void saveQuestions() {
-        // 1: use try-catch block
-        // 2: use FileWriter
-        // 3 get list of Tasks using this.getComponents()
-    	// 4: to iterate over list of tasks, look at updateNumbers() method
-    	try {
-    		FileWriter questionFile = new FileWriter(filePath);
-    		
-    		//Component[] listItems = this.getComponents();
-    		for (int i = 0; i < listPH.getSize(); i++) {
-    			
-				questionFile.write((String)listPH.elementAt(i));
-				questionFile.write("\n");
-    			
-    		}
-    		questionFile.close();
-    	} catch (IOException e) {
-    	    System.out.println("saveQuestions() not implemented");
-    	}	  
-      }
-    
-    public static void loadPrevQuestions() {
-    	/*LinkedHashMap<String,String> data = (LinkedHashMap<String, String>) RequestHandler.getMap();
-    	for (String key : data.keySet()) {
-    		listPH.addElement(key);
-    	}
-    	list = new JList(listPH);
-    	sideBar = new JScrollPane(list);
-    } */
-/*
-    public static void configSideBar(){
-    	
-    	//String[] array = listPH.toArray(new String[listPH.size()]);
-        JList list = new JList();
-        //list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        //list.setSelectedIndex(0);
-        list.setVisibleRowCount(1);
-        sideBar = new JScrollPane();
-       // System.out.println("oo" + list.getModel().getSize());
-        // pastResults.setMinimumSize(new Dimension(400, 800));
-        sideBar.setPreferredSize(new Dimension(400, 800));
-        // pastResults.setMaximumSize(new Dimension(400, 800));
-        sideBar.setViewportView(list);
-    	
-
-    }*/
-
     
     /*
      * load asked questions from text file
@@ -195,8 +113,14 @@ public class PromptHistory extends JPanel {
     /*
      * add functionality to clear all button
      */
-
     public void addListeners() {
+    	
+    	/*
+    	 * clicking CLEAR ALL button
+    	 * 
+    	 * Deletes every q/a from server
+    	 * Clears and updates prompt history list
+    	 */
     	clearAll.addActionListener(
     			new ActionListener() {
     				@Override
@@ -215,18 +139,15 @@ public class PromptHistory extends JPanel {
 	    			            );
 	    			            String response = in.readLine();
 	    			            in.close();
-
 	    			           
 	    			          } catch (Exception ex) {
 	    			            ex.printStackTrace();
 	    			           
-	    			            //JOptionPane.showMessageDialog(null, response);
-	    			         
+	    			          }
     					}
     					listPH.clear();
     					saveQuestions();
     				}
-    			}
     			}
     	);
     }

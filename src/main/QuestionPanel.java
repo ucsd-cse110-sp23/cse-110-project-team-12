@@ -25,11 +25,9 @@ class QuestionPanel extends JPanel{
     private static JTextArea question, answer;
     private JLabel recordingLabel;
     private JButton startButton;
-
     private JButton deleteButton;
     
     private int num = 0;
-
 
     LayoutManager qpLayout = new BoxLayout(this, BoxLayout.PAGE_AXIS);
     
@@ -338,13 +336,9 @@ class QuestionPanel extends JPanel{
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-
-        answer.setText(ChatGPT.answer);
-        question.setText("question asked" + num);
-        answer.setText("answer retrieved" + num);
-        //"${escape(result[i].supply_name)}"
-        num++;
-
+        String answerString = ChatGPT.answer;
+        answerString = answerString.substring(2);
+        answer.setText(answerString);
         targetDataLine.close();
       }
     
