@@ -40,8 +40,8 @@ public class DeleteListener implements myListener{
                 
                 //delete selected question and answer from prompt history
                 
-                int questionIndex = PromptHistory.listPH.indexOf(QuestionPanel.getQuestion());
-                PromptHistory.listPH.remove(questionIndex);
+                int questionIndex = PromptHistory.getIndexInPH(QuestionPanel.getQuestion());
+                PromptHistory.removePH(questionIndex);
                 PromptHistory.resetPH();
                 
             }

@@ -49,47 +49,57 @@
  
          addListeners();
      }
+
+      
+   public static void setButtonText(String s){
+     startButton.setText(s);
+   }
+
+        
+   public static void setQuestion(String q) {
+    question.setText(q);
+}
+
+    public static void setAnswer(String a) {
+        answer.setText(a);
+    }
+
+    public static String getQuestion() {
+        return question.getText();
+    }
+
+    public static String getAnswer() {
+        return answer.getText();
+    }
+
+    public static void setRecordingLableVisible(){
+        recordingLabel.setVisible(true);
+    }
+
+    public static void setRecordingLableInvisible(){
+      recordingLabel.setVisible(false);
+  }
+  
+  public static String getButtonText(){
+    return startButton.getText();
+}
+
+   
  
      /*
       * add functionality to delete and start buttons
       */
-     public void addListeners() {
+     private void addListeners() {
          startButton.addActionListener(new StartStopListener());
          deleteButton.addActionListener(new DeleteListener());
      }
  
-     public static String getQuestion() {
-         return question.getText();
-     }
+
  
-     public static String getAnswer() {
-         return answer.getText();
-     }
+
  
-     
-     public static void setQuestion(String q) {
-         question.setText(q);
-     }
- 
-     public static void setAnswer(String a) {
-         answer.setText(a);
-     }
- 
-     public static void setRecordingLableVisible(){
-         recordingLabel.setVisible(true);
-     }
- 
-     public static void setRecordingLableInvisible(){
-       recordingLabel.setVisible(false);
-   }
- 
-   public static String getButtonText(){
-     return startButton.getText();
- }
- 
-   public static void setButtonText(String s){
-     startButton.setText(s);
-   }
+
+
      
        private void configTitle(){
          title = new JLabel("SayIt Assistant", SwingConstants.CENTER);

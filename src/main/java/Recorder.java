@@ -2,15 +2,15 @@ import java.io.*;
 import javax.sound.sampled.*;
 
 public class Recorder {
-
+   
     private AudioFormat audioFormat;
     private TargetDataLine targetDataLine;
     // the file that will contain the audio data
     private static File audioFile;
     private static final String AUDIOFILENAME = "question_audio.wav";
 
-    Recorder(AudioFormat af) {
-        audioFormat = af;
+    Recorder() {
+        audioFormat = getAudioFormat();
         audioFile = new File(AUDIOFILENAME);
     }
 
@@ -74,5 +74,31 @@ public class Recorder {
         answerString = answerString.substring(2);
             QuestionPanel.setAnswer(answerString);
         targetDataLine.close();
+      }
+
+      private static AudioFormat getAudioFormat() {
+        // the number of samples of audio per second.
+        // 44100 represents the typical sample rate for CD-quality audio.
+        float sampleRate = 44100;
+    
+        // the number of bits in each sample of a sound that has been digitized.
+        int sampleSizeInBits = 16;
+    
+        // the number of audio channels in this format (1 for mono, 2 for stereo).
+        int channels = 1;
+    
+        // whether the data is signed or unsigned.
+        boolean signed = true;
+    
+        // whether the audio data is stored in big-endian or little-endian order.
+        boolean bigEndian = false;
+    
+        return new AudioFormat(
+          sampleRate,
+          sampleSizeInBits,
+          channels,
+          signed,
+          bigEndian
+        );
       }
 }

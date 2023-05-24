@@ -46,7 +46,7 @@ public class StartStopListener implements myListener{
             //add question to prompt history list
             PromptHistory.addPH(QuestionPanel.getQuestion());
             //to show old q's on start up
-            QuestionLoader.saveQuestions();
+            MediatorPHQP.saveQuestions();
             QuestionPanel.setButtonText("New Question");
         }
     }

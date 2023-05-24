@@ -88,7 +88,6 @@ public class Whisper {
 		 
 		 question_text = responseJson.getString("text");
 		 
-		 //System.out.println("Transcription Result: " + question_text);
 	 }
 	 
 	 private static void handleErrorResponse(HttpURLConnection connection) throws IOException, JSONException{
@@ -101,38 +100,6 @@ public class Whisper {
         errorReader.close();
         String errorResult = errorResponse.toString();
         System.out.println("Error Result: " + errorResult);
-    }
-    public static void main(String[] args) throws IOException{
-    	//"C:/Users/julia/Downloads/250290.mp3"
-        File file = question_audio;
-        System.out.println("and here");
-
-        URL url = new URL(API_ENDPOINT);
-        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-        connection.setRequestMethod("POST");
-        connection.setDoOutput(true);
-
-        String boundary = "Boundary-" + System.currentTimeMillis();
-        connection.setRequestProperty("Content-Type", "multipart/form-data; boundary=" + boundary);
-        connection.setRequestProperty("Authorization", "Bearer " + TOKEN);
-
-        OutputStream outputStream = connection.getOutputStream();
-
-        writeParameterToOutputStream(outputStream, "model", MODEL, boundary);
-        writeFileToOutputStream(outputStream, file, boundary);
-        outputStream.write(("\r\n--" + boundary + "--\r\n").getBytes());
-        outputStream.flush();
-        outputStream.close();
-
-        int responseCode = connection.getResponseCode();
-
-        if(responseCode== HttpURLConnection.HTTP_OK){
-            handleSuccessResponse(connection);
-        }
-        else{
-            handleErrorResponse(connection);
-        }
-        connection.disconnect();
     }
 
 }
