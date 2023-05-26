@@ -3,18 +3,14 @@ import javax.sound.sampled.*;
 
 public class Recorder {
    
-    private AudioFormat audioFormat;
-    private TargetDataLine targetDataLine;
+    private static AudioFormat audioFormat = getAudioFormat();
+    private static TargetDataLine targetDataLine;
     // the file that will contain the audio data
-    private static File audioFile;
     private static final String AUDIOFILENAME = "question_audio.wav";
+    private static File audioFile = new File(AUDIOFILENAME);
+    
 
-    Recorder() {
-        audioFormat = getAudioFormat();
-        audioFile = new File(AUDIOFILENAME);
-    }
-
-    public void startRecording() {
+    public static void startRecording() {
         Thread t = new Thread(
                 new Runnable() {
                     @override
@@ -54,7 +50,7 @@ public class Recorder {
        * creates new ChatGPT obj with question text to get answer
        * 
        */
-      public void stopRecording() {
+      public static void stopRecording() {
         targetDataLine.stop();
         
         try {

@@ -11,7 +11,7 @@
  import javax.swing.*;
  
  
- class QuestionPanel extends JPanel{
+ class QuestionPanel extends JPanel implements listenerObserver{
  
      private JLabel title;
      private static JTextArea question, answer;
@@ -50,7 +50,9 @@
          addListeners();
      }
 
-      
+    public void onListenerChange(){
+// some sort of server check?? to update. Maybe yes for listhandler
+    }
    public static void setButtonText(String s){
      startButton.setText(s);
    }

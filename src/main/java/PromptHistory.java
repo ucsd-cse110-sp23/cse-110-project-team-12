@@ -11,7 +11,7 @@ import java.io.*;
 import javax.swing.*;
 
 
-public class PromptHistory extends JPanel {
+public class PromptHistory extends JPanel implements listenerObserver {
     private JLabel header;
     private static JScrollPane sideBar;
     private static DefaultListModel<String> listPH;
@@ -40,6 +40,10 @@ public class PromptHistory extends JPanel {
       
       addListeners();
       
+  }
+
+  public void onListenerChange(){
+// some sort of server check to update the prompt history
   }
 
   public static void resetPH() {

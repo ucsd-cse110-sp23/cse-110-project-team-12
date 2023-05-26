@@ -22,23 +22,9 @@ public class DeleteListener implements myListener{
                 //do nothing
             } else {
                 
-                try {
-                    question = question.replace(' ', '+');
-                    URL url = new URL(URL + "?=" + question);
-                    HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-                    conn.setRequestMethod("DELETE");
-                    BufferedReader in = new BufferedReader(
-                      new InputStreamReader(conn.getInputStream())
-                    );
-                   
-                    in.close();
-                   
-                  } catch (Exception ex) {
-                    ex.printStackTrace();
-                    
-                  }
+                ServerCalls.deleteFromServer(question);
                 
-                //delete selected question and answer from prompt history
+                //TODO: some server call as well delete selected question and answer from prompt history
                 
                 int questionIndex = PromptHistory.getIndexInPH(QuestionPanel.getQuestion());
                 PromptHistory.removePH(questionIndex);
@@ -46,4 +32,12 @@ public class DeleteListener implements myListener{
                 
             }
         }
+
+        public void registerObserver(listenerObserver panel) {
+    
+        }
+    
+        public void notifyObservers() {
+        }
+    
 }
