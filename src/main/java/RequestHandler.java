@@ -68,10 +68,11 @@ public class RequestHandler implements HttpHandler {
 		String query = uri.getRawQuery();
 		
 		if (query != null) {
+
 			//extract value of query param from query string
 			
 			String question = query.substring(query.indexOf("=") + 1);
-			question = question.replace(' ', '+');
+			//question = question.replace(' ', '+');
 			
 			String answer = data.get(question); //retrieve data from hashmap
 			
@@ -99,7 +100,7 @@ public class RequestHandler implements HttpHandler {
 		
 		//extract question and answer vals
 		String question = postData.substring(0,postData.indexOf(",")), answer = postData.substring(postData.indexOf(",")+1);
-		question = question.replace(' ', '+');
+		//question = question.replace(' ', '+');
 
 		//store data in hashmap
 		data.put(question, answer);

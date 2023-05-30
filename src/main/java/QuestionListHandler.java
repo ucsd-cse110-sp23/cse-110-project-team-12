@@ -18,28 +18,12 @@ class QuestionListHandler implements ListSelectionListener{
 	 * displays saved answer
 	 */
     public void valueChanged(ListSelectionEvent e){
+        String question = (String) ((JList) e.getSource()).getSelectedValue();
+        //String query = question.replace(' ', '+');
+        String response = ServerCalls.getFromServer(question);
 
-            try {
-                
-        		JList selectedQuestion = (JList) e.getSource();
-                String question = (String) selectedQuestion.getSelectedValue();
-                String query = question.replace(' ', '+');
-                String URL = "http://localhost:8100/";
-                URL url = new URL(URL + "?=" + query);
-                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-                conn.setRequestMethod("GET");
-            
-
-                BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-                String response = in.readLine();
-                in.close();
-                
-                QuestionPanel.setQuestion(question.replace('+', ' '));
-                QuestionPanel.setAnswer(response);    
-            }   
-            catch (Exception ex) {
-                //do nothing
-            } 
-       
+        //subject: QuestionListHandler, observer: QuestionPanel
+        QuestionPanel.setQuestion(question);
+        QuestionPanel.setAnswer(response); 
     }
 }

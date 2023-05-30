@@ -1,5 +1,5 @@
 /*
- * ChatGPT class communicates with online ChatGPT server to get a response to the question we send.
+ * ChatGPTQuestion class communicates with online ChatGPT server to get a response to the question we send.
  */
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -20,7 +20,7 @@ public class ChatGPT {
 	public static String answer = null;
 	
 	public ChatGPT(String question_text) throws IOException, InterruptedException {
-		ChatGPT.question = question_text;
+		question = question_text;
 		
 		//Set request parameters
 		String prompt = question;
@@ -54,45 +54,21 @@ public class ChatGPT {
 		JSONObject responseJson = new JSONObject(responseBody);
 		
 		JSONArray choices = responseJson.getJSONArray("choices");
-		answer = choices.getJSONObject(0).getString("text");
+		answer = choices.getJSONObject(0).getString("text").substring(2);
 	}
-
 	
-
-	public static void main(String[] args) throws IOException, InterruptedException {
-		//Set request parameters
-		String prompt = question;
-		int maxTokens = 100;
-		
-		//Create a request body which you will pass into request object
-		JSONObject requestBody = new JSONObject();
-		requestBody.put("model", MODEL);
-		requestBody.put("prompt", prompt);
-		requestBody.put("max_tokens", maxTokens);
-		requestBody.put("temperature", 1.0);
-		
-		//create HTTP client
-		HttpClient client = HttpClient.newHttpClient();
-		
-		//create the request object
-		HttpRequest request = HttpRequest
-		.newBuilder()
-		.uri(URI.create(API_ENDPOINT))
-		.header("Content-Type", "application/json")
-		.header("Authorization", String.format("Bearer %s",  API_KEY))
-		.POST(HttpRequest.BodyPublishers.ofString(requestBody.toString()))
-		.build();
-		
-		//send request and receive response
-		HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+	public ChatGPT(String question, String answer) {
+		this.question = question;
+		this.answer = answer;
+	}
 	
-		//process the response
-		String responseBody = response.body();
-		
-		JSONObject responseJson = new JSONObject(responseBody);
-		
-		JSONArray choices = responseJson.getJSONArray("choices");
-		answer = choices.getJSONObject(0).getString("text");
+	public String getResult() {
+		return answer;
+	}
+	
+	//for testing purposes
+	public static void setResult(String s) {
+		answer = s;
 	}
 
 }
