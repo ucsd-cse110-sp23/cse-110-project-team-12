@@ -8,9 +8,9 @@ public class CreateAccountListenerMock extends CreateAccountListener {
 	public CreateAccountListenerMock(LoginScreenMock screen) {
 		super(screen);
 		
-		email = screen.emailField.getText();
-		pass1 = screen.passField1.getText();
-		pass2 = screen.passField2.getText();
+		email = screen.emailText;
+		pass1 = screen.pass1Text;
+		pass2 = screen.pass2Text;
 		
 		CheckEmailDupeMock checkEmail = new CheckEmailDupeMock(email, "TestUsers");
 		

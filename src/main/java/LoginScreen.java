@@ -9,6 +9,7 @@ public class LoginScreen extends JFrame {
 	JPanel panel;
 	JLabel email, pass1, pass2;
 	JTextField emailField, passField1, passField2;
+	String emailText, pass1Text, pass2Text;
 	int fieldLength = 20;
 	boolean loggedIn;
 	
@@ -66,10 +67,10 @@ public class LoginScreen extends JFrame {
 		//addListener(new CreateAccountListener(this));
 	}
 	
-	LoginScreen(String email, String pass1, String pass2) {
-		emailField = new JTextField(email);
-		passField1 = new JTextField(pass1);
-		passField2 = new JTextField(pass2);
+	public LoginScreen(String email, String pass1, String pass2) {
+		emailText = email;
+		pass1Text = pass1;
+		pass2Text = pass2;
 	}
 	
 	protected void setEmail(String s) {
