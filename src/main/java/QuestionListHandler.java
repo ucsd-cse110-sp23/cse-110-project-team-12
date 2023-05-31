@@ -17,8 +17,9 @@ class QuestionListHandler implements ListSelectionListener{
 	 * gets selected question from server upon clicking
 	 * displays saved answer
 	 */
-    public void valueChanged(ListSelectionEvent e){
-        String question = (String) ((JList) e.getSource()).getSelectedValue();
+    @SuppressWarnings("unchecked")
+	public void valueChanged(ListSelectionEvent e){
+        String question = (String) ((JList<String>) e.getSource()).getSelectedValue();
         //String query = question.replace(' ', '+');
         String response = ServerCalls.getFromServer(question);
 

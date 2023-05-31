@@ -1,15 +1,33 @@
 import org.junit.jupiter.api.Test;
+import org.bson.Document;
+import org.bson.conversions.Bson;
 import org.junit.jupiter.api.BeforeEach;
 
-
+import static com.mongodb.client.model.Filters.eq;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+
+//Following imports are necessary for MongoDB
+import java.net.UnknownHostException;
+import com.mongodb.BasicDBObject;
+import com.mongodb.DB;
+import com.mongodb.DBCollection;
+import com.mongodb.DBCursor;
+import com.mongodb.DBObject;
+import com.mongodb.MongoClient;
+import com.mongodb.MongoException;
+import com.mongodb.client.MongoClients;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoDatabase;
+
 import java.io.*;
 
 import java.util.Random;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class CreateAccountTest {
 	private static final Random rand = new Random();
@@ -35,6 +53,24 @@ public class CreateAccountTest {
 		final LoginScreenMock screen = new LoginScreenMock(newEmail, defaultPass, matchPass);
 		//and i click "Create Account" button
 		CreateAccountListenerMock createMock = new CreateAccountListenerMock(screen);
+		
+		//check my account was added to the database
+		String databaseName = "SayItAssistant";
+		String collectionName = "TestUsers";
+	    	
+	    String uri = "mongodb+srv://juli:Pyys5stHYEsnDtJw@cluster0.w01dcya.mongodb.net/?retryWrites=true&w=majority";
+	    
+	    //configure
+	    Logger mongoLogger = Logger.getLogger( "org.mongodb.driver" );
+		mongoLogger.setLevel(Level.OFF);
+		try (MongoClient mongoClient = (MongoClient) MongoClients.create(uri)) {
+			
+	        MongoDatabase userCluster = mongoClient.getDatabase(databaseName);
+	        MongoCollection<Document> entries = userCluster.getCollection(collectionName);
+	        
+	        Bson filter = eq("email_address", newEmail);
+	    }
+		//check switch to main app
 	}
 	
 	/*

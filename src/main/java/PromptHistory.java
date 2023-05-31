@@ -11,20 +11,21 @@ import java.io.*;
 import javax.swing.*;
 
 
+@SuppressWarnings("serial")
 public class PromptHistory extends JPanel implements listenerObserver {
     private JLabel header;
     private static JScrollPane sideBar;
     private static DefaultListModel<String> listPH;
     private static JList<String> list;
     private static String filePath = "bin/main/questionFile.txt";
-    private String username;
+    //private String username;
     LayoutManager phLayout = new BoxLayout(this, BoxLayout.PAGE_AXIS);
     
     /*
      * constructor
      */
     public PromptHistory(String username){
-    	this.username = username;
+    //this.username = username;
     	
       configBackground();
       configheader();
@@ -84,7 +85,7 @@ public class PromptHistory extends JPanel implements listenerObserver {
 
 	
     listPH = new DefaultListModel<>();
-    list = new JList(listPH);
+    list = new JList<String>(listPH);
     list.setFont(new Font("Sans-serif", Font.PLAIN, 20));
     list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
     sideBar = new JScrollPane(list);
