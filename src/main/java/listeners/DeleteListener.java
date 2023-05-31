@@ -1,9 +1,9 @@
 package listeners;
 
 import java.awt.event.*;
-
-import listeners.interfaces.ButtonSubject;
 import java.awt.event.ActionListener;
+
+import interfaces.ButtonSubject;
 import mainframe.ButtonPanelPresenter;
 //TODO - MAKE BUTTON INVISIBLE WHEN NOT VALID 
 

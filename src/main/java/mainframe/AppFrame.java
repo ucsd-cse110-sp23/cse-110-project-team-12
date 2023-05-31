@@ -9,8 +9,8 @@ import java.util.ArrayList;
 
 import javax.swing.*;
 
+import interfaces.ButtonSubject;
 import listeners.*;
-import listeners.interfaces.ButtonSubject;
 import server.MyServer;
 
 /*
@@ -20,13 +20,19 @@ import server.MyServer;
 public class AppFrame extends JFrame{
 
     private static final String TITLE = "SayIt Assistant - Team 12";
+
     private ButtonPanelPresenter presenter;
+    
+   
         
     LayoutManager afLayout = new BorderLayout();
     
-    public AppFrame() throws IOException {
+    public AppFrame(String email) throws IOException {
         //TODO
-        presenter.loadQuestions();
+        //this.email = email;
+
+        //TODO
+        // presenter.loadQuestions();
     	this.setTitle(TITLE);
         this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         this.setSize(800, 1000);
@@ -73,12 +79,5 @@ public class AppFrame extends JFrame{
         allButtons.add(lListener);
         return allButtons;
     }
-    
-    public static void main (String args[]) throws IOException{
-    	AppFrame app = new AppFrame();
-        app.setVisible(true);
-        //force exit app if server not connected
-        MyServer.checkServerAvailability();
-    }  
     
 }

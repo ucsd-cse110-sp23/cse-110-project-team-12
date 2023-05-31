@@ -1,4 +1,4 @@
-package listeners.interfaces;
+package interfaces;
 import mainframe.ButtonPanelPresenter;
 
 public interface ButtonSubject {

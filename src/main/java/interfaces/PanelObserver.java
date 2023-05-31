@@ -1,4 +1,4 @@
-package mainframe.interfaces;
+package interfaces;
 
 public interface PanelObserver {
     

@@ -1,7 +1,7 @@
 package listeners;
 import java.awt.event.*;
 
-import listeners.interfaces.ButtonSubject;
+import interfaces.ButtonSubject;
 import mainframe.ButtonPanelPresenter;
 
 /*

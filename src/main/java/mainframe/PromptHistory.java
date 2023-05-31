@@ -8,11 +8,11 @@
 
 
 package mainframe;
-import mainframe.interfaces.PanelSubject;
-
 import java.awt.*;
 // import java.io.*;
 import javax.swing.*;
+
+import interfaces.PanelSubject;
 
 
 

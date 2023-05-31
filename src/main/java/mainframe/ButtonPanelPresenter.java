@@ -3,8 +3,9 @@ import java.io.*;
 import java.util.ArrayList;
 
 import api.Recorder;
-import listeners.interfaces.*;
-import mainframe.interfaces.*;
+import interfaces.ButtonObserver;
+import interfaces.ButtonSubject;
+import interfaces.PanelObserver;
 import server.ServerCalls;
 
 public class ButtonPanelPresenter implements ButtonObserver, PanelObserver{

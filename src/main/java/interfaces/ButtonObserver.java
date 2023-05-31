@@ -1,4 +1,4 @@
-package listeners.interfaces;
+package interfaces;
 
 public interface ButtonObserver {
     void onStartStop(boolean startedRecording);

@@ -10,7 +10,7 @@ package mainframe;
 import java.awt.*;
 import javax.swing.*;
 
-import mainframe.interfaces.PanelSubject;
+import interfaces.PanelSubject;
 
 
  
