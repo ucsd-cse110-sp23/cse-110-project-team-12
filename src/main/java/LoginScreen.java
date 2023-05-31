@@ -55,5 +55,6 @@ public class LoginScreen extends JFrame {
         
         //login.addActionListener(new LoginListener());
 		createAccount.addActionListener(new CreateAccountListener(this));
+		login.addActionListener(new LoginListener(this));
 	}
 }
