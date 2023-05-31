@@ -19,9 +19,9 @@ dependencies {
     testImplementation "org.junit.jupiter:junit-jupiter-api:$junitVersion"
     // This provides the TestEngine to actually run the tests.
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junitVersion"
-    implementation files('lib/json-20230227.jar')
     testImplementation "org.mockito:mockito-core:3.+"
 	implementation 'org.mongodb:mongodb-driver-sync:4.9.1'
+	implementation 'org.json:json:20211205'
 
 }
 
