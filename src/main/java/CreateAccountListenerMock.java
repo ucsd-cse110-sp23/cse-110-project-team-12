@@ -18,15 +18,6 @@ public class CreateAccountListenerMock extends CreateAccountListener {
 			new CreateAccountMock(email, pass1, "TestUsers");
 			
 			myScreen.dispatchEvent(new WindowEvent(myScreen, WindowEvent.WINDOW_CLOSING));
-
-			try {
-				AppFrame app = new AppFrame(email);
-				app.setVisible(true);
-				//force exit app if server not connected
-	            MyServer.checkServerAvailability();
-			} catch (IOException e1) {
-				e1.printStackTrace();
-			}
     		
 		} else {
 			JOptionPane.showMessageDialog(null, "Error: Email or Password Invalid!");

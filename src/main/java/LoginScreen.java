@@ -3,6 +3,7 @@ import java.awt.*;
 import java.awt.event.*;  
 import java.lang.Exception; 
 
+@SuppressWarnings("serial")
 public class LoginScreen extends JFrame {
 	JButton login, createAccount;
 	JPanel panel;
@@ -54,7 +55,14 @@ public class LoginScreen extends JFrame {
         setVisible(true);
         
         //login.addActionListener(new LoginListener());
-		createAccount.addActionListener(new CreateAccountListener(this));
+        if (!GraphicsEnvironment.isHeadless()) {
+        	createAccount.addActionListener(new CreateAccountListener(this));
+        } 
+        /*
+        else {
+        	createAccount.addActionListener(new CreateAccountListenerMock());
+        }*/
+		//addListener(new CreateAccountListener(this));
 	}
 	
 	protected void setEmail(String s) {

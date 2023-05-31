@@ -16,8 +16,8 @@ public class ChatGPT {
 	private static final String API_ENDPOINT = "https://api.openai.com/v1/completions";
 	private static final String API_KEY = "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";
 	private static final String MODEL = "text-davinci-003";
-	private static String question = null;
-	public static String answer = null;
+	private String question = null;
+	public String answer = null;
 	
 	public ChatGPT(String question_text) throws IOException, InterruptedException {
 		question = question_text;
@@ -67,7 +67,7 @@ public class ChatGPT {
 	}
 	
 	//for testing purposes
-	public static void setResult(String s) {
+	public void setResult(String s) {
 		answer = s;
 	}
 

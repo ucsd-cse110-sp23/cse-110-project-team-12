@@ -11,7 +11,8 @@
  import javax.swing.*;
  
  
- class QuestionPanel extends JPanel implements listenerObserver{
+ @SuppressWarnings("serial")
+class QuestionPanel extends JPanel implements listenerObserver{
  
      private JLabel title;
      private static JTextArea question, answer;

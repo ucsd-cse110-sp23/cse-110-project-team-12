@@ -38,6 +38,9 @@ public class CreateAccountTest {
 	String defaultPass = "defaultPass";
 	String matchPass = "defaultPass";
 	String mismatchPass = "wrong";
+	String databaseName = "SayItAssistant";
+	String collectionName = "TestUsers";
+	String uri = "mongodb+srv://juli:Pyys5stHYEsnDtJw@cluster0.w01dcya.mongodb.net/?retryWrites=true&w=majority";
 	
 	/*
 	 * Scenario 1: User creates account with unique email and valid password
@@ -47,32 +50,31 @@ public class CreateAccountTest {
 	 * And the same new password twice
 	 * And I click “Create Account” button
 	 * Then an account associated with that email and password is created
-	 * And the app continues to the prompt/message page
 	 */
 	@Test
 	void testUniqueEmailAndPassword() {
-		//when i enter my email and password twice
-		final LoginScreenMock screen = new LoginScreenMock(newEmail, defaultPass, matchPass);
-		//and i click "Create Account" button
-		CreateAccountListenerMock createMock = new CreateAccountListenerMock(screen);
 		
-		//check my account was added to the database
-		String databaseName = "SayItAssistant";
-		String collectionName = "TestUsers";
-	    	
-	    String uri = "mongodb+srv://juli:Pyys5stHYEsnDtJw@cluster0.w01dcya.mongodb.net/?retryWrites=true&w=majority";
+		//mocks account creation for unique 
+		LoginScreenMock screen = new LoginScreenMock(newEmail, defaultPass, matchPass);
 	    
-	    //configure
+	    //configure logging
 	    Logger mongoLogger = Logger.getLogger( "org.mongodb.driver" );
 		mongoLogger.setLevel(Level.OFF);
+		
+		//check my Document was added to the database
+		Document foundDoc;
 		try (MongoClient mongoClient = MongoClients.create(uri)) {
 			
 	        MongoDatabase userCluster = mongoClient.getDatabase(databaseName);
 	        MongoCollection<Document> entries = userCluster.getCollection(collectionName);
 	        
 	        Bson filter = eq("email_address", newEmail);
+	        
+	        foundDoc = entries.find(filter).first();
+	        
 	    }
-		//check switch to main app
+		assertEquals(newEmail, foundDoc.get("email_address"));
+		assertEquals(defaultPass, foundDoc.get("password"));
 	}
 	
 	/*

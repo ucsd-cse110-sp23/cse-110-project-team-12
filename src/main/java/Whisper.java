@@ -21,10 +21,10 @@ public class Whisper {
 	 private static final String TOKEN = "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";
 	 private static final String MODEL = "whisper-1";
 	 //private static File question_audio = null;
-	 private static String command_prompt;
-	 private static String command_text = null;
-	 private static String question_text = null;
-	 private static String[] commands = {"Question", "Send email", "Create email", "Setup email", "Delete prompt", "Clear all"};
+	 private String command_prompt;
+	 private String command_text = null;
+	 private String question_text = null;
+	 private String[] commands = {"Question", "Send email", "Create email", "Setup email", "Delete prompt", "Clear all"};
 
 	 public Whisper(File question_audio) throws IOException {
 		 //Whisper.question_audio = question_audio;
@@ -73,7 +73,7 @@ public class Whisper {
 		return question_text;
 	}
 
-	public static String getCommandPrompt() {
+	public String getCommandPrompt() {
 		return command_prompt;
 	}
 	
@@ -114,7 +114,7 @@ public class Whisper {
 		 fileInputStream.close();
 	 }
 	 
-	 private static void handleSuccessResponse(HttpURLConnection connection) throws IOException, JSONException {
+	 private void handleSuccessResponse(HttpURLConnection connection) throws IOException, JSONException {
 		 BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
 		 String inputLine;
 		 StringBuilder response = new StringBuilder();
@@ -148,7 +148,7 @@ public class Whisper {
 	 
 	 
 	//	probably breaks srp !!!!!!!!!!??????
-	private static void parseCommandPrompt(String s) {
+	private void parseCommandPrompt(String s) {
 		//command_text and question_text only set if valid command used
 		for (int i = 0; i < commands.length; i++) {
 			

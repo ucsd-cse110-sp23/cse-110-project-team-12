@@ -18,7 +18,6 @@ import com.mongodb.client.MongoDatabase;
 public class CheckEmailDupe {
 	boolean emailExists = false;
 
-	@SuppressWarnings("deprecation")
 	public CheckEmailDupe(String email, String collectionName) {
 	
 		String databaseName = "SayItAssistant";

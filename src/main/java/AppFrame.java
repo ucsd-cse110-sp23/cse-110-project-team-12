@@ -11,19 +11,20 @@ import javax.swing.*;
  * Main interface for application
  * System exits if no server detected
  */
+@SuppressWarnings("serial")
 public class AppFrame extends JFrame{
 	
     private QuestionPanel qp;
     private PromptHistory ph;
-    private static LoginScreen login;
+    //private static LoginScreen login;
     private static boolean autoLogin = false;
     private static String defaultUserEmail; //TODO: set when user accepts auto login
-    private static String email;
+    //private String email;
         
     LayoutManager afLayout = new BorderLayout();
     
     public AppFrame(String email) throws IOException {
-    	this.email = email;
+    	//this.email = email;
     	
     	this.setTitle("SayIt Assistant - Team 12");
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -50,7 +51,7 @@ public class AppFrame extends JFrame{
     	//TODO: if automatic login is true, skip login screen
     	
     	if (!autoLogin) {
-	    	login = new LoginScreen();
+	    	//login = new LoginScreen();
     	} else {
 
     		AppFrame app = new AppFrame(defaultUserEmail);
