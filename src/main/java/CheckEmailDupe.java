@@ -19,6 +19,7 @@ public class CheckEmailDupe {
 	boolean emailExists = false;
 	int count;
 
+	@SuppressWarnings("deprecation")
 	public CheckEmailDupe(String email) {
 	
 		String databaseName = "SayItAssistant";
@@ -36,10 +37,8 @@ public class CheckEmailDupe {
 	        MongoCollection<Document> entries = userCluster.getCollection(collectionName);
 	        
 	        Bson filter = eq("email_address", email);
-	        count = 0;
-	        entries.find(filter).forEach((Block<? super Document>) (doc -> count++));
 	        
-	        if (count > 0) {
+	        if (entries.find(filter).first() != null) {
 	        	emailExists = true;
 	        }
 	    }
