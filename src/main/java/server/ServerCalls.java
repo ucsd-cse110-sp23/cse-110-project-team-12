@@ -33,20 +33,22 @@ public class ServerCalls {
       }
 
       public static String getFromServer(String query){
+    	  String response = "Getting from server...";
         query = query.replace(' ', '+');
-        try {
-          URL url = new URL(URL + "?=" + query);
-          HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-          conn.setRequestMethod("GET");
-          BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-          String response = in.readLine();
-          in.close();
-          
-         return response; 
-      }   
-      catch (Exception ex) {
-          return null;
-      }
+    	  try {
+    		  URL url = new URL(URL + "?=" + query);
+			  HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+			  conn.setRequestMethod("GET");
+			  
+			
+			  BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+			  response = in.readLine();
+			  in.close();
+			      
+			  return response; 
+    	  } catch (Exception ex) {
+    		  return response;
+		  }
       }
 
       public static void deleteFromServer(String question){
