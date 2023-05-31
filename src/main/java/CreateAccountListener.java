@@ -5,8 +5,8 @@ import java.io.IOException;
 import javax.swing.JOptionPane;
 
 public class CreateAccountListener implements myListener {
-	private String email, pass1, pass2;
-	private LoginScreen myScreen;
+	protected String email, pass1, pass2;
+	protected LoginScreen myScreen;
 	
 	public CreateAccountListener(LoginScreen screen) {
 		myScreen = screen;
@@ -18,10 +18,10 @@ public class CreateAccountListener implements myListener {
 		this.pass1 = myScreen.passField1.getText();
 		this.pass2 = myScreen.passField2.getText();
 		
-		CheckEmailDupe checkEmail = new CheckEmailDupe(email);
+		CheckEmailDupe checkEmail = new CheckEmailDupe(email, "Users");
 		
 		if (pass1.equals(pass2) && checkEmail.emailExists == false) {
-			new CreateAccount(email, pass1);
+			new CreateAccount(email, pass1, "Users");
 			
 			myScreen.dispatchEvent(new WindowEvent(myScreen, WindowEvent.WINDOW_CLOSING));
 

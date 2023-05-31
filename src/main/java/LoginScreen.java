@@ -56,4 +56,16 @@ public class LoginScreen extends JFrame {
         //login.addActionListener(new LoginListener());
 		createAccount.addActionListener(new CreateAccountListener(this));
 	}
+	
+	protected void setEmail(String s) {
+		emailField.setText(s);
+	}
+	
+	protected void setPass1(String s) {
+		passField1.setText(s);
+	}
+	
+	protected void setPass2(String s) {
+		passField2.setText(s);
+	}
 }

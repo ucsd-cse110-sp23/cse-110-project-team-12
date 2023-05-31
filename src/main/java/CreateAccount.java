@@ -12,12 +12,11 @@ public class CreateAccount {
 	private static String email; 
 	private static String password; 
 	
-	public CreateAccount(String emailField, String passwordField) {
+	public CreateAccount(String emailField, String passwordField, String collection) {
 		email = emailField;
 		password = passwordField;
 		
 		String databaseName = "SayItAssistant";
-		String collectionName = "Users";
 	    	
         String uri = "mongodb+srv://juli:Pyys5stHYEsnDtJw@cluster0.w01dcya.mongodb.net/?retryWrites=true&w=majority";
         
@@ -28,7 +27,7 @@ public class CreateAccount {
         try (MongoClient mongoClient = MongoClients.create(uri)) {
 
             MongoDatabase userCluster = mongoClient.getDatabase(databaseName);
-            MongoCollection<Document> entries = userCluster.getCollection(collectionName);
+            MongoCollection<Document> entries = userCluster.getCollection(collection);
 
             Document user = new Document("_id", new ObjectId());
             user.append("email_address", email)

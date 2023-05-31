@@ -17,13 +17,12 @@ import com.mongodb.client.MongoDatabase;
 
 public class CheckEmailDupe {
 	boolean emailExists = false;
-	int count;
 
 	@SuppressWarnings("deprecation")
-	public CheckEmailDupe(String email) {
+	public CheckEmailDupe(String email, String collectionName) {
 	
 		String databaseName = "SayItAssistant";
-		String collectionName = "Users";
+		//String collectionName = "Users";
 	    	
 	    String uri = "mongodb+srv://juli:Pyys5stHYEsnDtJw@cluster0.w01dcya.mongodb.net/?retryWrites=true&w=majority";
 	    

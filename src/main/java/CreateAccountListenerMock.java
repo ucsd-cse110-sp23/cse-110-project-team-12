@@ -1,0 +1,36 @@
+import java.awt.event.WindowEvent;
+import java.io.IOException;
+
+import javax.swing.JOptionPane;
+
+public class CreateAccountListenerMock extends CreateAccountListener {
+
+	public CreateAccountListenerMock(LoginScreenMock screen) {
+		super(screen);
+		
+		email = screen.emailField.getText();
+		pass1 = screen.passField1.getText();
+		pass2 = screen.passField2.getText();
+		
+		CheckEmailDupeMock checkEmail = new CheckEmailDupeMock(email, "TestUsers");
+		
+		if (pass1.equals(pass2) && checkEmail.emailExists == false) {
+			new CreateAccountMock(email, pass1, "TestUsers");
+			
+			myScreen.dispatchEvent(new WindowEvent(myScreen, WindowEvent.WINDOW_CLOSING));
+
+			try {
+				AppFrame app = new AppFrame(email);
+				app.setVisible(true);
+				//force exit app if server not connected
+	            MyServer.checkServerAvailability();
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			}
+    		
+		} else {
+			JOptionPane.showMessageDialog(null, "Error: Email or Password Invalid!");
+		}
+	}
+
+}

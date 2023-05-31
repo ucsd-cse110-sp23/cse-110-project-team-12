@@ -20,19 +20,19 @@ public class AudioToResult {
 		
 		/*
 		 * test Whisper
-		 
-		voiceToText = new WhisperMock("Question", "When is Christmas?");
+		 */
+		//voiceToText = new WhisperMock("Question", "When is Christmas?");
 		//voiceToText = new WhisperMock("Create email", "To Henry, let's meet. Tomorrow.");
 		
 		/*
 		 * actual Whisper
 		 
-        /*
+        
         try {                                                                              //Whisper parses audio into command + prompt
             voiceToText = new Whisper(question_audio);
         } catch (IOException e) {
             e.printStackTrace();
-        }*/
+        }
         
         /*
          * 3 scenarios
