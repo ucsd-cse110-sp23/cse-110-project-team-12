@@ -1,3 +1,4 @@
+package api;
 /*
  * ChatGPT class communicates with online ChatGPT server to get a response to the question we send.
  */

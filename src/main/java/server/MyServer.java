@@ -1,8 +1,10 @@
+package server;
 /*
  * MyServer class runs a local server to link our app with data storage capabilities. 
  */
 
 import com.sun.net.httpserver.*; //server create()
+
 import java.io.IOException;
 import java.net.*;
 import java.util.*;

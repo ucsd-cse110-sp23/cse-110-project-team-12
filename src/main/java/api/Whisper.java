@@ -1,3 +1,4 @@
+package api;
 /*
  * ChatGPT class communicates with Whisper server to get a translation of the voice recording.
  */
@@ -13,7 +14,7 @@ public class Whisper {
 	 private static File question_audio = null;
 	 public static String question_text = null;
 	 
-	 public Whisper(File question_audio) throws IOException {
+	  Whisper(File question_audio) throws IOException {
 		 Whisper.question_audio = question_audio;
 		 File file = question_audio;
 		 URL url = new URL(API_ENDPOINT);

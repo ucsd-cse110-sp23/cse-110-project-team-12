@@ -1,11 +1,13 @@
+package server;
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
 public class ServerCalls {
-    public static final String  URL = "http://localhost:8100/";
+    
+  public static final String  URL = "http://localhost:8100/";
 
-    public static void postToServer(){
+    public static void postToServer(String question, String answer){
       
         try {
           URL url = new URL(URL);
@@ -15,7 +17,7 @@ public class ServerCalls {
           OutputStreamWriter out = new OutputStreamWriter(
             conn.getOutputStream()
           );
-          out.write(QuestionPanel.getQuestion() + "," + QuestionPanel.getAnswer());
+          out.write(question + "," + answer);
           out.flush();
           out.close();
           BufferedReader in = new BufferedReader(
@@ -31,12 +33,11 @@ public class ServerCalls {
       }
 
       public static String getFromServer(String query){
+        query = query.replace(' ', '+');
         try {
           URL url = new URL(URL + "?=" + query);
           HttpURLConnection conn = (HttpURLConnection) url.openConnection();
           conn.setRequestMethod("GET");
-      
-
           BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
           String response = in.readLine();
           in.close();
@@ -44,9 +45,8 @@ public class ServerCalls {
          return response; 
       }   
       catch (Exception ex) {
-          //do nothing
+          return null;
       }
-        return null; //FIXFIXFIXFIXFIXFIXFIXFIXFIXFIXFIXFIXFIXFIXFIXFIXFIXFIXFIX
       }
 
       public static void deleteFromServer(String question){
