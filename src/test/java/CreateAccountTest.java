@@ -11,14 +11,16 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 
 //Following imports are necessary for MongoDB
+/*
 import java.net.UnknownHostException;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
-import com.mongodb.MongoClient;
 import com.mongodb.MongoException;
+*/
+import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
@@ -63,7 +65,7 @@ public class CreateAccountTest {
 	    //configure
 	    Logger mongoLogger = Logger.getLogger( "org.mongodb.driver" );
 		mongoLogger.setLevel(Level.OFF);
-		try (MongoClient mongoClient = (MongoClient) MongoClients.create(uri)) {
+		try (MongoClient mongoClient = MongoClients.create(uri)) {
 			
 	        MongoDatabase userCluster = mongoClient.getDatabase(databaseName);
 	        MongoCollection<Document> entries = userCluster.getCollection(collectionName);
