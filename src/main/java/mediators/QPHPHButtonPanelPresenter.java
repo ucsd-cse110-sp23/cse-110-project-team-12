@@ -1,20 +1,19 @@
-package mainframe;
+package mediators;
 import java.io.*;
 import java.util.ArrayList;
 
 import api.Recorder;
-import interfaces.ButtonObserver;
-import interfaces.ButtonSubject;
-import interfaces.PanelObserver;
+import interfaces.*;
+import mainframe.*;
 import server.ServerCalls;
 
-public class ButtonPanelPresenter implements ButtonObserver, PanelObserver{
+public class QPHPHButtonPanelPresenter implements ButtonObserver, PanelObserver{
     ArrayList<ButtonSubject> allButtons = new ArrayList<ButtonSubject>();
     QuestionPanel qp;
     PromptHistory ph;
     private static String filePath = "bin/main/questionFile.txt";
 
-    ButtonPanelPresenter(ArrayList<ButtonSubject> createdButtons, QuestionPanel createdqp, PromptHistory createdph){
+    public QPHPHButtonPanelPresenter(ArrayList<ButtonSubject> createdButtons, QuestionPanel createdqp, PromptHistory createdph){
         allButtons = createdButtons;
         qp = createdqp;
         ph = createdph;

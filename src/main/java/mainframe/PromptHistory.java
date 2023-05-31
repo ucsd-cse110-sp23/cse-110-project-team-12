@@ -13,12 +13,13 @@ import java.awt.*;
 import javax.swing.*;
 
 import interfaces.PanelSubject;
+import mediators.QPHPHButtonPanelPresenter;
 
 
 
 
 public class PromptHistory extends JPanel implements PanelSubject {
-  private ButtonPanelPresenter presenter;  
+  private QPHPHButtonPanelPresenter presenter;  
   private JLabel header;
     private static JScrollPane sideBar;
     private static DefaultListModel<String> listPH;
@@ -52,7 +53,7 @@ public class PromptHistory extends JPanel implements PanelSubject {
   //ON NOTIFY() METHODS 
 
   @Override
-  public void registerObserver(ButtonPanelPresenter presenter) {
+  public void registerObserver(QPHPHButtonPanelPresenter presenter) {
       this.presenter = presenter; 
   }
 

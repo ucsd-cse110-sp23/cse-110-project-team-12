@@ -11,7 +11,7 @@ import javax.swing.*;
 
 import interfaces.ButtonSubject;
 import listeners.*;
-import server.MyServer;
+import mediators.QPHPHButtonPanelPresenter;
 
 /*
  * Main interface for application
@@ -21,7 +21,7 @@ public class AppFrame extends JFrame{
 
     private static final String TITLE = "SayIt Assistant - Team 12";
 
-    private ButtonPanelPresenter presenter;
+    private QPHPHButtonPanelPresenter presenter;
     
    
         
@@ -47,7 +47,7 @@ public class AppFrame extends JFrame{
     
         QuestionPanel qp = new QuestionPanel();
         PromptHistory ph = new PromptHistory();
-        this.presenter = new ButtonPanelPresenter(addListeners(qp,ph),qp,ph);
+        this.presenter = new QPHPHButtonPanelPresenter(addListeners(qp,ph),qp,ph);
            
         this.add(qp, BorderLayout.CENTER); 
         this.add(ph, BorderLayout.WEST); 

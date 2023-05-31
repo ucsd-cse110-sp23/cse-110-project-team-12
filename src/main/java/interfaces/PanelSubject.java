@@ -1,7 +1,7 @@
 package interfaces;
-import mainframe.ButtonPanelPresenter;
+import mediators.QPHPHButtonPanelPresenter;
 
 public interface PanelSubject {
-    void registerObserver(ButtonPanelPresenter presenter); 
+    void registerObserver(QPHPHButtonPanelPresenter presenter); 
     void notifyObservers();
 }

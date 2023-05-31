@@ -9,12 +9,12 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import interfaces.ButtonSubject;
-import mainframe.ButtonPanelPresenter;
+import mediators.QPHPHButtonPanelPresenter;
 import server.ServerCalls;
 
 
 public class QuestionListHandler implements ListSelectionListener, ButtonSubject{
-    ButtonPanelPresenter presenter;
+    QPHPHButtonPanelPresenter presenter;
     String question;
     String answer;
 	/*
@@ -30,7 +30,7 @@ public class QuestionListHandler implements ListSelectionListener, ButtonSubject
         }
     }
 
-    public void registerObserver(ButtonPanelPresenter presenter) {
+    public void registerObserver(QPHPHButtonPanelPresenter presenter) {
         this.presenter = presenter;
     }
 

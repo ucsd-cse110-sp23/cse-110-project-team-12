@@ -13,11 +13,19 @@ public class app {
     public static void main (String args[]) throws IOException{
     	if (!autoLogin) {
 	    	loginFrame = new LoginScreen();
-            
     	} else {
     		appFrame = new AppFrame(defaultUserEmail);
             //force exit app if server not connected
             MyServer.checkServerAvailability();
     	}
+    }
+
+    public static void succesfullLogin() {
+        try {
+            new AppFrame(null);
+            MyServer.checkServerAvailability();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }  
 }

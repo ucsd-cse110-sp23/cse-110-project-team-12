@@ -4,7 +4,7 @@ import java.awt.event.*;
 import java.awt.event.ActionListener;
 
 import interfaces.ButtonSubject;
-import mainframe.ButtonPanelPresenter;
+import mediators.QPHPHButtonPanelPresenter;
 //TODO - MAKE BUTTON INVISIBLE WHEN NOT VALID 
 
 /*
@@ -15,7 +15,7 @@ import mainframe.ButtonPanelPresenter;
   */
 
 public class DeleteListener implements ButtonSubject,ActionListener {
-    ButtonPanelPresenter presenter;
+    QPHPHButtonPanelPresenter presenter;
     String question;
     int questionIndex;
     boolean retrievedQuestion = false;
@@ -25,7 +25,7 @@ public class DeleteListener implements ButtonSubject,ActionListener {
         notifyObservers();
     }
 
-        public void registerObserver(ButtonPanelPresenter presenter) {
+        public void registerObserver(QPHPHButtonPanelPresenter presenter) {
             this.presenter = presenter;
         }
     

@@ -11,6 +11,7 @@ import java.awt.*;
 import javax.swing.*;
 
 import interfaces.PanelSubject;
+import mediators.QPHPHButtonPanelPresenter;
 
 
  
@@ -23,7 +24,7 @@ import interfaces.PanelSubject;
      private static JButton startButton;
      private static JButton deleteButton;
      private static final String FONT = "Sans-serif";
-     private ButtonPanelPresenter presenter;
+     private QPHPHButtonPanelPresenter presenter;
  
      LayoutManager qpLayout = new BoxLayout(this, BoxLayout.PAGE_AXIS);    
  
@@ -110,7 +111,7 @@ import interfaces.PanelSubject;
     //ON NOTIFY() METHODS 
 
     @Override
-    public void registerObserver(ButtonPanelPresenter presenter) {
+    public void registerObserver(QPHPHButtonPanelPresenter presenter) {
         this.presenter = presenter; 
     }
 

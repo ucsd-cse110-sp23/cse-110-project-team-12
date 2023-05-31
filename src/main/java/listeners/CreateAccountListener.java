@@ -6,7 +6,6 @@ import interfaces.*;
 
 public class CreateAccountListener implements LoginUISubject,ActionListener {
 	LoginUIObserver observer;
-	protected String email, pass1, pass2;
 	
 	@Override
 	public void actionPerformed(ActionEvent e) {

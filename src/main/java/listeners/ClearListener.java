@@ -2,7 +2,7 @@ package listeners;
 import java.awt.event.*;
 
 import interfaces.ButtonSubject;
-import mainframe.ButtonPanelPresenter;
+import mediators.QPHPHButtonPanelPresenter;
 
 /*
   * clicking CLEAR ALL button
@@ -12,13 +12,13 @@ import mainframe.ButtonPanelPresenter;
   */
 
 public class ClearListener implements ButtonSubject,ActionListener{
-  ButtonPanelPresenter presenter;
+  QPHPHButtonPanelPresenter presenter;
 
     public void actionPerformed(ActionEvent e) {
         notifyObservers();
     }
 
-    public void registerObserver(ButtonPanelPresenter presenter) {
+    public void registerObserver(QPHPHButtonPanelPresenter presenter) {
       this.presenter = presenter;
     }
 

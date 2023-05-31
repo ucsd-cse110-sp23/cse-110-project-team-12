@@ -2,7 +2,7 @@ package listeners;
 import java.awt.event.*;
 
 import interfaces.ButtonSubject;
-import mainframe.ButtonPanelPresenter;
+import mediators.QPHPHButtonPanelPresenter;
 
 /*
          * clicking START button
@@ -15,7 +15,7 @@ import mainframe.ButtonPanelPresenter;
          */
 
 public class StartStopListener implements ButtonSubject,ActionListener{
-  ButtonPanelPresenter presenter;
+  QPHPHButtonPanelPresenter presenter;
   boolean startedRecording = false;
 
     public void actionPerformed(ActionEvent e) {
@@ -28,7 +28,7 @@ public class StartStopListener implements ButtonSubject,ActionListener{
         notifyObservers();
     }
 
-    public void registerObserver(ButtonPanelPresenter presenter) {
+    public void registerObserver(QPHPHButtonPanelPresenter presenter) {
       this.presenter = presenter;
     }
 

@@ -3,15 +3,10 @@ package mainframe;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.WindowEvent;
-import java.io.IOException;
 
 import api.MongoDB;
 import interfaces.LoginUIObserver;
-import listeners.*;
-import server.MyServer; 
-
-
-
+import listeners.*; 
 
 
 @SuppressWarnings("serial")
@@ -101,16 +96,7 @@ public class LoginScreen extends JFrame implements LoginUIObserver{
 		if (sPass1.equals(sPass2) && !MongoDB.checkEmail(sEmail, "Users")) {
 			MongoDB.createAccount(sEmail, sPass1, "Users"); 	
 			this.dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
-
-			//FIX for SRP
-			try {
-				new AppFrame(null);
-				MyServer.checkServerAvailability();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-            //force exit app if server not connected
+			app.succesfullLogin();
             
     		
 		} else {
