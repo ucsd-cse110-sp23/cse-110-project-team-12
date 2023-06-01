@@ -10,8 +10,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 //import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import api.MongoDB;
-
+import mock.*;
 import java.util.Random;
 
 public class CreateAccountTest {
@@ -22,9 +21,6 @@ public class CreateAccountTest {
 	String defaultPass = "test";
 	String matchPass = "test";
 	String mismatchPass = "wrong";
-	String databaseName = "SayItAssistant";
-	String collectionName = "TestUsers";
-	String uri = "mongodb+srv://juli:Pyys5stHYEsnDtJw@cluster0.w01dcya.mongodb.net/?retryWrites=true&w=majority";
 	
 	/*
 	 * Scenario 1: User creates account with unique email and valid password
@@ -38,7 +34,7 @@ public class CreateAccountTest {
 	@Test
 	void testUniqueEmailAndPassword() {
 		
-		MongoDB mockMongoSession = new MongoDB();
+		MongoDBMock mockMongoSession = new MongoDBMock();
 		boolean emailExistsBefore = mockMongoSession.checkEmail(newEmail);
 		
 		//email should NOT be taken so should be FALSE
