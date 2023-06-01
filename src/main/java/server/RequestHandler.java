@@ -1,8 +1,10 @@
+package server;
 /*
  * RequestHandler - how server should handle incoming requests
  */
 
 import com.sun.net.httpserver.*; //server create()
+
 import java.io.*;
 import java.net.*;
 import java.util.*;
@@ -24,7 +26,7 @@ public class RequestHandler implements HttpHandler {
 		return data;
 	}
 	
-	/* Called by HttpServer when HTTP request received
+	/* Called by HttpServer when HTTP request receivedgigit	
 	 * 
 	 * @param HttpExchange httpExchange
 	 */
