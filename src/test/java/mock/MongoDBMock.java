@@ -3,10 +3,13 @@ package mock;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.swing.JOptionPane;
+
 import org.bson.Document;
 import org.bson.types.ObjectId;
 
 import interfaces.MongoInterface;
+import mainframe.app;
 
 /*
  * mocks data base storage of emails and passwords with hashmap
@@ -53,6 +56,27 @@ public class MongoDBMock implements MongoInterface {
 		} else {
 			throw new Exception("Passwords do not match");
 		}
+	}
+
+	@Override
+	public void login(String email, String pass) throws Exception {
+		if (email.isBlank()) throw new Exception("Missing Email");
+		if (pass.isBlank()) throw new Exception("Missing First Password");
+		
+		//check if email exists
+		if (entries.containsKey(email)) {
+			//check that password is correct for email
+			if (entries.get(email).equals(pass)) {
+				//account exists so user logs in
+			} else {
+				JOptionPane.showMessageDialog(null, "Incorrect Password");
+				throw new Exception("Incorrect password");
+			}
+		} else {
+			JOptionPane.showMessageDialog(null, "Email Unrecognized");
+			throw new Exception("Email Unrecognized");
+		}
+		
 	}
 
 }

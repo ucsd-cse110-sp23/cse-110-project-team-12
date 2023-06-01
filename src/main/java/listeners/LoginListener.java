@@ -21,7 +21,6 @@ public class LoginListener implements LoginUISubject,ActionListener {
 
 	@Override
 	public void notifyObservers() throws Exception {
-		observer.onCreateAccount();
 		observer.onLogin();
 	}
 
