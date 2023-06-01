@@ -20,12 +20,12 @@ public class MongoDB {
 	private static MongoCollection<Document> entries;
 	
 	public MongoDB() {
-		try( MongoClient mongoClient = MongoClients.create(URI)) {
+		MongoClient mongoClient = MongoClients.create(URI);
 			MongoDatabase userCluster = mongoClient.getDatabase(DATABASENAME);
 			entries = userCluster.getCollection(COLLECTION);
 			Logger mongoLogger = Logger.getLogger( "org.mongodb.driver" );
 			mongoLogger.setLevel(Level.OFF);
-		}	
+		
 	}
 	
 	public MongoCollection<Document> getUserEntries() {

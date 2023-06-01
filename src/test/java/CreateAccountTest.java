@@ -39,16 +39,20 @@ public class CreateAccountTest {
 	void testUniqueEmailAndPassword() {
 		
 		MongoDB mockMongoSession = new MongoDB();
+		boolean emailExistsBefore = mockMongoSession.checkEmail(newEmail);
 		
 		//email should NOT be taken so should be FALSE
-		assertFalse(mockMongoSession.checkEmail(newEmail));
+		assertFalse(emailExistsBefore);
 		
 		//add new user to database
 		mockMongoSession.createAccount(newEmail, defaultPass);
 	    
-	    //check that account associated with email and password created
-		assertTrue(mockMongoSession.checkEmail(newEmail));
-		assertEquals(defaultPass, mockMongoSession.checkPass(newEmail));
+	    //check that account associated with email created
+		boolean emailExistsAfter = mockMongoSession.checkEmail(newEmail);
+		assertTrue(emailExistsAfter);
+		//check that correct password stored
+		String storedPass = mockMongoSession.checkPass(newEmail);
+		assertEquals(defaultPass, storedPass);
 	}
 	
 	/*
