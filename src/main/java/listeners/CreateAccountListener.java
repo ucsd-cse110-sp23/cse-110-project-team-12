@@ -15,7 +15,7 @@ public class CreateAccountListener implements LoginUISubject,ActionListener {
 
 	@Override
 	public void notifyObservers() {
-		observer.onLogin();
+		observer.onCreateAccount();
 	}
 
 	@Override
