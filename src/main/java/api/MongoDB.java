@@ -85,7 +85,7 @@ public class MongoDB implements MongoInterface {
 			  
     }
 	
-	public void login(String email, String pass1) throws Exception {
+	public boolean login(String email, String pass1) throws Exception {
 		if (email.isBlank()) throw new Exception("Missing Email");
 		if (pass1.isBlank()) throw new Exception("Missing Password");
 		
@@ -103,6 +103,7 @@ public class MongoDB implements MongoInterface {
 				if (entries.find(filter2).first() != null) {
 					//account exists so user logs in
 					app.succesfullLogin();
+					return true;
 				} else {
 					JOptionPane.showMessageDialog(null, "Incorrect Password");
 					throw new Exception("Incorrect password");

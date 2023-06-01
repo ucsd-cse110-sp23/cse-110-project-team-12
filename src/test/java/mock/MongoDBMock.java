@@ -59,21 +59,23 @@ public class MongoDBMock implements MongoInterface {
 	}
 
 	@Override
-	public void login(String email, String pass) throws Exception {
+	public boolean login(String email, String pass) throws Exception {
 		if (email.isBlank()) throw new Exception("Missing Email");
-		if (pass.isBlank()) throw new Exception("Missing First Password");
+		if (pass.isBlank()) throw new Exception("Missing Password");
 		
 		//check if email exists
 		if (entries.containsKey(email)) {
 			//check that password is correct for email
 			if (entries.get(email).equals(pass)) {
 				//account exists so user logs in
+				return true;
 			} else {
-				JOptionPane.showMessageDialog(null, "Incorrect Password");
+				
 				throw new Exception("Incorrect password");
+				
 			}
 		} else {
-			JOptionPane.showMessageDialog(null, "Email Unrecognized");
+			
 			throw new Exception("Email Unrecognized");
 		}
 		
