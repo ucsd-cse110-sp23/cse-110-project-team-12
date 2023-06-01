@@ -93,10 +93,10 @@ public class LoginScreen extends JFrame implements LoginUIObserver{
 		String sPass1 = this.passField1.getText();
 		String sPass2 = this.passField2.getText();
 		
-		MongoDB newUser = new MongoDB(sEmail, sPass1, "Users");
+		MongoDB mongoSession = new MongoDB();
 		
-		if (sPass1.equals(sPass2) && !newUser.checkEmail()) {
-			newUser.createAccount(); 	
+		if (sPass1.equals(sPass2) && !mongoSession.checkEmail(sEmail)) {
+			mongoSession.createAccount(sEmail, sPass1); 	
 			this.dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
 			
 			

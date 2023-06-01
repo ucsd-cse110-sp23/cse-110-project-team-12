@@ -59,22 +59,17 @@ public class CreateAccountTest {
 	@Test
 	void testUniqueEmailAndPassword() {
 		
-		MongoDB mockAccount = new MongoDB(newEmail, defaultPass, collectionName);
-		boolean emailExistsBefore = mockAccount.checkEmail();
-		mockAccount.createAccount();
-	    
-	    //configure logging
-	    Logger mongoLogger = Logger.getLogger( "org.mongodb.driver" );
-		mongoLogger.setLevel(Level.OFF);
+		MongoDB mockMongoSession = new MongoDB();
+		
+		//email should NOT be taken so should be FALSE
+		boolean emailExistsBefore = mockMongoSession.checkEmail(newEmail);
+		
+		//add new user to database
+		mockMongoSession.createAccount(newEmail, defaultPass);
 		
 		//check my Document was added to the database
-		Document foundDoc;
-		Bson filter = eq("email_address", newEmail);
-
-	    MongoDatabase userCluster = mockAccount.getMongoClient().getDatabase(databaseName);
-	    MongoCollection<Document> entries = userCluster.getCollection(collectionName);
-	        
-	    foundDoc = entries.find(filter).first();
+		Bson filter = eq("email_address", newEmail);    
+	    Document foundDoc = mockMongoSession.getUserEntries().find(filter).first();
 	    
 	    assertEquals(emailExistsBefore, false);
 	    //check that account associated with email and password created
