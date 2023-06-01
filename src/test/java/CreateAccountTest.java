@@ -1,39 +1,18 @@
 
 
 import org.junit.jupiter.api.Test;
-import org.bson.Document;
-import org.bson.conversions.Bson;
+
 //import org.junit.Rule;
 //import org.junit.jupiter.api.BeforeEach;
 
-import static com.mongodb.client.model.Filters.eq;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-//import static org.junit.jupiter.api.Assertions.assertTrue;
-//import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 //import static org.junit.jupiter.api.Assertions.assertThrows;
+
 import api.MongoDB;
 
-
-//Following imports are necessary for MongoDB
-/*
-import java.net.UnknownHostException;
-import com.mongodb.BasicDBObject;
-import com.mongodb.DB;
-import com.mongodb.DBCollection;
-import com.mongodb.DBCursor;
-import com.mongodb.DBObject;
-import com.mongodb.MongoException;
-*/
-import com.mongodb.client.MongoClient;
-import com.mongodb.client.MongoClients;
-import com.mongodb.client.MongoCollection;
-import com.mongodb.client.MongoDatabase;
-
-//import java.io.*;
-
 import java.util.Random;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class CreateAccountTest {
 	
@@ -62,19 +41,14 @@ public class CreateAccountTest {
 		MongoDB mockMongoSession = new MongoDB();
 		
 		//email should NOT be taken so should be FALSE
-		boolean emailExistsBefore = mockMongoSession.checkEmail(newEmail);
+		assertFalse(mockMongoSession.checkEmail(newEmail));
 		
 		//add new user to database
 		mockMongoSession.createAccount(newEmail, defaultPass);
-		
-		//check my Document was added to the database
-		Bson filter = eq("email_address", newEmail);    
-	    Document foundDoc = mockMongoSession.getUserEntries().find(filter).first();
 	    
-	    assertEquals(emailExistsBefore, false);
 	    //check that account associated with email and password created
-		assertEquals(newEmail, foundDoc.get("email_address"));
-		assertEquals(defaultPass, foundDoc.get("password"));
+		assertTrue(mockMongoSession.checkEmail(newEmail));
+		assertEquals(defaultPass, mockMongoSession.checkPass(newEmail));
 	}
 	
 	/*
