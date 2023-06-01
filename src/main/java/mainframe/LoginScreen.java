@@ -64,9 +64,12 @@ public class LoginScreen extends JFrame implements LoginUIObserver{
 	}
 
 	private void addActionListeners(){
+		LoginListener loginListener = new LoginListener();
+		loginListener.registerObserver(this);
 		CreateAccountListener createListener = new CreateAccountListener();
 		createListener.registerObserver(this);
 		if (!GraphicsEnvironment.isHeadless()) {
+			login.addActionListener(loginListener);
 			createAccount.addActionListener(createListener);
 		}
 	}
@@ -97,7 +100,21 @@ public class LoginScreen extends JFrame implements LoginUIObserver{
 
 		mongoSession.createAccount(sEmail, sPass1, sPass2); 	
 		this.dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
-			
+		
 		app.succesfullLogin();
+	}
+
+	@Override
+	public void onLogin() throws Exception {
+		String sEmail = this.emailField.getText();
+		String sPass1 = this.passField1.getText();
+		
+		MongoDB mongoSession = new MongoDB();
+		
+		mongoSession.login(sEmail, sPass1);
+		this.dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
+		
+		app.succesfullLogin();
+		
 	}
 }
