@@ -9,12 +9,16 @@ public class CreateAccountListener implements LoginUISubject,ActionListener {
 	
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		notifyObservers();
+		try {
+			notifyObservers();
+		} catch (Exception e1) {
+			e1.printStackTrace();
+		}
 
 	}
 
 	@Override
-	public void notifyObservers() {
+	public void notifyObservers() throws Exception {
 		observer.onCreateAccount();
 	}
 

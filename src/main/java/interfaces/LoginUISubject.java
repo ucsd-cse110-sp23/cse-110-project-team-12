@@ -2,5 +2,5 @@ package interfaces;
 
 public interface LoginUISubject {
     void registerObserver(LoginUIObserver observer);
-    void notifyObservers();
+    void notifyObservers() throws Exception;
 }

@@ -1,8 +1,8 @@
-
-
+import org.junit.Rule;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-
-//import org.junit.Rule;
+import org.junit.rules.ExpectedException;
+import static org.junit.Assert.*;
 //import org.junit.jupiter.api.BeforeEach;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -32,7 +32,7 @@ public class CreateAccountTest {
 	 * Then an account associated with that email and password is created
 	 */
 	@Test
-	void testUniqueEmailAndPassword() {
+	void testUniqueEmailAndPassword() throws Exception {
 		
 		MongoDBMock mockMongoSession = new MongoDBMock();
 		boolean emailExistsBefore = mockMongoSession.checkEmail(newEmail);
@@ -41,7 +41,7 @@ public class CreateAccountTest {
 		assertFalse(emailExistsBefore);
 		
 		//add new user to database
-		mockMongoSession.createAccount(newEmail, defaultPass);
+		mockMongoSession.createAccount(newEmail, defaultPass, matchPass);
 	    
 	    //check that account associated with email created
 		boolean emailExistsAfter = mockMongoSession.checkEmail(newEmail);
@@ -61,7 +61,20 @@ public class CreateAccountTest {
 	 * And I am returned to the create account/login page
 	 */
 	@Test
-	void testExistingEmail() {
+	void testExistingEmail() throws Exception {
+		
+		//email exists in database
+		MongoDBMock mockMongoSession = new MongoDBMock(takenEmail,defaultPass);
+		
+		//check for email in database
+		boolean emailExistsBefore = mockMongoSession.checkEmail(takenEmail);
+		assertTrue(emailExistsBefore);
+		
+		//error message seen when attempting to reuse email
+		Exception e = assertThrows(Exception.class, () -> {
+			mockMongoSession.createAccount(takenEmail, defaultPass, matchPass);
+		});
+		assertTrue(e.getMessage().contains("Email taken"));
 		
 	}
 	
@@ -78,6 +91,14 @@ public class CreateAccountTest {
 	@Test
 	void testDiffPasswords() {
 		
+		MongoDBMock mockMongoSession = new MongoDBMock();
+		
+		//error message seen when attempting to create account with diff passwords
+		Exception e = assertThrows(Exception.class, () -> {
+			mockMongoSession.createAccount(newEmail, defaultPass, mismatchPass);
+		});
+		assertTrue(e.getMessage().contains("Passwords do not match"));
+		
 	}
 	
 	/*
@@ -91,6 +112,25 @@ public class CreateAccountTest {
 	@Test
 	void testMissingFields() {
 		
+		MongoDBMock mockMongoSession = new MongoDBMock();
+		
+		//error message seen when attempting to create account without email
+		Exception e1 = assertThrows(Exception.class, () -> {
+			mockMongoSession.createAccount(new String(), defaultPass, matchPass);
+		});
+		assertTrue(e1.getMessage().contains("Missing Email"));
+		
+		//error message seen when attempting to create account without pass1
+		Exception e2 = assertThrows(Exception.class, () -> {
+			mockMongoSession.createAccount(newEmail, new String(), matchPass);
+		});
+		assertTrue(e2.getMessage().contains("Missing First Password"));
+		
+		//error message seen when attempting to create account without pass2
+		Exception e3 = assertThrows(Exception.class, () -> {
+			mockMongoSession.createAccount(newEmail, defaultPass, new String());
+		});
+		assertTrue(e3.getMessage().contains("Missing Password Authentication"));
 	}
 
 }

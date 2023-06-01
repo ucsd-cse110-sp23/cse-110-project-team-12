@@ -22,7 +22,7 @@ public class LoginScreen extends JFrame implements LoginUIObserver{
 		setTitle("Login or Create Account");
 		//label for email
 		email = new JLabel();
-		email.setText("Email");
+		email.setText("Email (Required)");
 		
 		//text field to get email
 		emailField = new JTextField(fieldLength);
@@ -88,23 +88,16 @@ public class LoginScreen extends JFrame implements LoginUIObserver{
 	}
 
 	@Override
-	public void onCreateAccount() {
+	public void onCreateAccount() throws Exception {
 		String sEmail = this.emailField.getText();
 		String sPass1 = this.passField1.getText();
 		String sPass2 = this.passField2.getText();
 		
 		MongoDB mongoSession = new MongoDB();
-		
-		if (sPass1.equals(sPass2) && !mongoSession.checkEmail(sEmail)) {
-			mongoSession.createAccount(sEmail, sPass1); 	
-			this.dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
+
+		mongoSession.createAccount(sEmail, sPass1, sPass2); 	
+		this.dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
 			
-			
-			app.succesfullLogin();
-            
-    		
-		} else {
-			JOptionPane.showMessageDialog(null, "Error: Email or Password Invalid!");
-		}
+		app.succesfullLogin();
 	}
 }

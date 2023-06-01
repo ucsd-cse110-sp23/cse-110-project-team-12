@@ -54,12 +54,23 @@ public class MongoDB implements MongoInterface {
 		return (String) (foundDoc.get("password"));
 	}
 
-	public void createAccount(String email, String password) {	    	
-
-        Document user = new Document("_id", new ObjectId());
-        user.append("email_address", email)
-            .append("password", password);
-
-        entries.insertOne(user);
+	public void createAccount(String email, String pass1, String pass2) throws Exception {
+		if (email.isBlank()) throw new Exception("Missing Email");
+		if (pass1.isBlank()) throw new Exception("Missing First Password");
+		if (pass2.isBlank()) throw new Exception("Missing Password Authentication");
+		
+		if (!pass1.equals(pass2)) {
+			if (!checkEmail(email)) {
+				Document user = new Document("_id", new ObjectId());
+		        user.append("email_address", email)
+		            .append("password", pass1);
+		
+		        entries.insertOne(user);
+			} else {
+				throw new Exception("Email taken");
+			}
+		} else {
+			throw new Exception("Passwords do not match");
+		}   
     }
 }

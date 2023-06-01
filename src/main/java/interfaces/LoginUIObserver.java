@@ -1,5 +1,5 @@
 package interfaces;
 
 public interface LoginUIObserver {
-    void onCreateAccount();
+    void onCreateAccount() throws Exception;
 }
