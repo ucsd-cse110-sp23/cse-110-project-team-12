@@ -27,11 +27,16 @@ public class MongoDB {
 	private static final String DATABASENAME = "SayItAssistant";
 	
 	private String email, collectionName, password;
+	private static final MongoClient mongoClient = MongoClients.create(URI);
 	
 	public MongoDB(String email, String password, String collectionName) {
 		this.email = email;
 		this.collectionName = collectionName;
 		this.password = password;
+	}
+	
+	public MongoClient getMongoClient() {
+		return mongoClient;
 	}
 	
 	public boolean checkEmail() {
@@ -41,7 +46,7 @@ public class MongoDB {
 	    //Logger mongoLogger = Logger.getLogger( "org.mongodb.driver" );
 		//mongoLogger.setLevel(Level.OFF);
 		boolean emailExists = false;
-	    try (MongoClient mongoClient = MongoClients.create(URI)) {
+	    try {
 	
 	        MongoDatabase userCluster = mongoClient.getDatabase(DATABASENAME);
 	        MongoCollection<Document> entries = userCluster.getCollection(collectionName);
@@ -51,6 +56,8 @@ public class MongoDB {
 	        if (entries.find(filter).first() != null) {
 	        	emailExists = true;
 	        }
+	    } catch (Exception e) {
+	    	//
 	    }
 		return emailExists;
 	}
@@ -61,7 +68,7 @@ public class MongoDB {
         //Logger mongoLogger = Logger.getLogger( "org.mongodb.driver" );
  	    //mongoLogger.setLevel(Level.OFF);
         
-        try (MongoClient mongoClient = MongoClients.create(URI)) {
+        try {
 
             MongoDatabase userCluster = mongoClient.getDatabase(DATABASENAME);
             MongoCollection<Document> entries = userCluster.getCollection(collectionName);
@@ -71,6 +78,8 @@ public class MongoDB {
                 .append("password", password);
 
             entries.insertOne(user);
+        } catch (Exception e){
+        	//
         }
     }
 }
