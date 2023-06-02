@@ -45,10 +45,21 @@ public class PromptHistory extends JPanel implements PanelSubject {
       this.add(header);
       this.add(sideBar);
       this.add(clearAll);
-      setVisible(true);
-      
-      
+      setVisible(true);   
   }
+    
+    public PromptHistory(DefaultListModel<String> entries) {
+    	configBackground();
+        configheader();
+        configClearAll();
+        // loadQuestions();
+        configList(entries);
+        
+        this.add(header);
+        this.add(sideBar);
+        this.add(clearAll);
+        setVisible(true); 
+    }
 
   //ON NOTIFY() METHODS 
 
@@ -107,6 +118,14 @@ public class PromptHistory extends JPanel implements PanelSubject {
   private static void configList(){
     listPH = new DefaultListModel<>();
     list = new JList<String>(listPH);
+    list.setFont(new Font(FONT, Font.PLAIN, 20));
+    list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+    sideBar = new JScrollPane(list);
+    sideBar.setPreferredSize(new Dimension(400, 800));
+  }
+  
+  private static void configList(DefaultListModel<String> entries){
+    list = new JList<String>(entries);
     list.setFont(new Font(FONT, Font.PLAIN, 20));
     list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
     sideBar = new JScrollPane(list);

@@ -20,16 +20,16 @@ import mediators.QPHPHButtonPanelPresenter;
 public class AppFrame extends JFrame{
 
     private static final String TITLE = "SayIt Assistant - Team 12";
+    
+    private String email;
 
     private QPHPHButtonPanelPresenter presenter;
-    
-   
         
     LayoutManager afLayout = new BorderLayout();
     
     public AppFrame(String email) throws IOException {
-        //TODO
-        //this.email = email;
+        
+        this.email = email;
 
         //TODO
         // presenter.loadQuestions();
@@ -47,6 +47,34 @@ public class AppFrame extends JFrame{
     
         QuestionPanel qp = new QuestionPanel();
         PromptHistory ph = new PromptHistory();
+        this.presenter = new QPHPHButtonPanelPresenter(addListeners(qp,ph),qp,ph);
+           
+        this.add(qp, BorderLayout.CENTER); 
+        this.add(ph, BorderLayout.WEST); 
+
+        revalidate();
+    }
+    
+    public AppFrame(String email, DefaultListModel<String> entries) throws IOException {
+        
+        this.email = email;
+
+        //TODO
+        // presenter.loadQuestions();
+    	this.setTitle(TITLE);
+        this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        this.setSize(800, 1000);
+        this.setLayout(afLayout);
+        
+        //windowed fullscreen
+        GraphicsEnvironment graph = GraphicsEnvironment.getLocalGraphicsEnvironment();
+        GraphicsDevice dev = graph.getDefaultScreenDevice();
+        dev.setFullScreenWindow(this);
+        
+        this.setVisible(true);
+    
+        QuestionPanel qp = new QuestionPanel();
+        PromptHistory ph = new PromptHistory(entries);
         this.presenter = new QPHPHButtonPanelPresenter(addListeners(qp,ph),qp,ph);
            
         this.add(qp, BorderLayout.CENTER); 

@@ -2,6 +2,8 @@ package mainframe;
 
 import java.io.IOException;
 
+import javax.swing.DefaultListModel;
+
 import server.MyServer;
 
 public class app {
@@ -20,12 +22,21 @@ public class app {
     	}
     }
 
-    public static void succesfullLogin() {
+    public static void succesfulLogin(String email) {
         try {
-            new AppFrame(null);
+            new AppFrame(email);
             MyServer.checkServerAvailability();
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }  
+    }
+    
+    public static void succesfulLogin(String email, DefaultListModel<String> entries) {
+        try {
+            new AppFrame(email, entries);
+            MyServer.checkServerAvailability();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    } 
 }

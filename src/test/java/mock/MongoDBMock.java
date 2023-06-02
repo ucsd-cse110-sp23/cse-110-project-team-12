@@ -3,6 +3,7 @@ package mock;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.swing.DefaultListModel;
 import javax.swing.JOptionPane;
 
 import org.bson.Document;
@@ -59,16 +60,17 @@ public class MongoDBMock implements MongoInterface {
 	}
 
 	@Override
-	public boolean login(String email, String pass) throws Exception {
+	public DefaultListModel<String> login(String email, String pass) throws Exception {
 		if (email.isBlank()) throw new Exception("Missing Email");
 		if (pass.isBlank()) throw new Exception("Missing Password");
+		DefaultListModel<String> list = new DefaultListModel<String> ();
 		
 		//check if email exists
 		if (entries.containsKey(email)) {
 			//check that password is correct for email
 			if (entries.get(email).equals(pass)) {
 				//account exists so user logs in
-				return true;
+				return list;
 			} else {
 				
 				throw new Exception("Incorrect password");

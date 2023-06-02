@@ -101,7 +101,7 @@ public class LoginScreen extends JFrame implements LoginUIObserver{
 		mongoSession.createAccount(sEmail, sPass1, sPass2); 	
 		this.dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
 		
-		app.succesfullLogin();
+		app.succesfulLogin(sEmail);
 	}
 
 	@Override
@@ -111,10 +111,10 @@ public class LoginScreen extends JFrame implements LoginUIObserver{
 		
 		MongoDB mongoSession = new MongoDB();
 		
-		mongoSession.login(sEmail, sPass1);
+		DefaultListModel<String> entries = mongoSession.login(sEmail, sPass1);
 		this.dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
 		
-		app.succesfullLogin();
+		app.succesfulLogin(sEmail, entries);
 		
 	}
 }
