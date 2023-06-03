@@ -11,9 +11,7 @@ public class AudioToResult implements AudioToResultInterface{
     private final String[] COMMANDS = {"Question", "Send email", "Create email", "Setup email", "Delete prompt", "Clear all"};
     private WhisperInterface WhisperSession;
     private ChatGPTInterface ChatGPTSession;
-    private String command;
-    private String prompt;
-    private String result;
+    private Entry entry = null;
 
     public AudioToResult(File audioFile){
         try {
@@ -23,30 +21,37 @@ public class AudioToResult implements AudioToResultInterface{
           }
           parseFile();
     }
+
+    public Entry getEntry(){
+        return entry;
+    }
     
-    @Override
-    public String getCommand() {
-        return command;
-    }
+    // @Override
+    // public String getCommand() {
+    //     return command;
+    // }
 
-    @Override
-    public String getPrompt() {
-        return prompt;
-    }
+    // @Override
+    // public String getPrompt() {
+    //     return prompt;
+    // }
 
-    @Override
-    public String getResult() {
-        return result;
-    }
+    // @Override
+    // public String getResult() {
+    //     return result;
+    // }
 
     private void parseFile(){
         
         String voiceOutput = this.WhisperSession.getQuestionText();
+        String command = null;
+        String prompt = null;
+        String result = null;
         //No Audio detected
         if (voiceOutput == null){
-            //TODO
+            return;
         } 
-        else {
+        else{
             for (int i = 0; i < COMMANDS.length; i++) {
 			
                 if (voiceOutput.startsWith(COMMANDS[i])) {
@@ -60,6 +65,11 @@ public class AudioToResult implements AudioToResultInterface{
                     }
                 }
             }
+        }
+
+        if (command == null){
+            entry = null;
+            return;
         }
 
         //US10: Command is a question
@@ -78,8 +88,11 @@ public class AudioToResult implements AudioToResultInterface{
 
             String answerString = this.ChatGPTSession.getAnswer();
             result = answerString.substring(2);
+            entry = new QuestionEntry(command, prompt, result);
         }
     }
+
+    
 
    
     

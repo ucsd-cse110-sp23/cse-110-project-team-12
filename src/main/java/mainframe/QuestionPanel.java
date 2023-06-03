@@ -12,6 +12,7 @@ import javax.swing.*;
 
 import interfaces.PanelSubject;
 import mediators.QPHPHButtonPanelPresenter;
+import processing.*;
 
 
  
@@ -22,7 +23,6 @@ import mediators.QPHPHButtonPanelPresenter;
      private static JTextArea question, answer;
      private static JLabel recordingLabel;
      private static JButton startButton;
-     private static JButton deleteButton;
      private static final String FONT = "Sans-serif";
      private QPHPHButtonPanelPresenter presenter;
  
@@ -39,7 +39,6 @@ import mediators.QPHPHButtonPanelPresenter;
          configTitle();
          configquestion();
          configanswer();
-         configdeleteButton();
          configstartButton();
          configrecordingLabel();
  
@@ -50,10 +49,33 @@ import mediators.QPHPHButtonPanelPresenter;
          this.add(answer);
          this.add(Box.createRigidArea(new Dimension(100,40)));
          this.add(recordingLabel);
-         this.add(deleteButton);
-         deleteButton.setVisible(false);
          this.add(startButton);
          this.add(Box.createRigidArea(new Dimension(100,20)));
+     }
+
+     public void startedRecording(){
+        setRecordingLableVisible();
+        setStartButtonText("Stop Recording");
+     }
+
+     public void stoppedRecording(){
+        setRecordingLableInvisible();
+        setStartButtonText("Start Recording");
+     }
+
+     public void onNewEntry(Entry entry){
+        if (entry == null){
+            setQuestion("Invalid Input");
+        }
+        if (entry instanceof QuestionEntry){
+            setQuestion(entry.getCommand() + ": " + entry.getPrompt());
+            setAnswer(entry.getResult());
+        }
+     }
+
+     public void onListChange(String question, String answer){
+        setQuestion(question);
+        setAnswer(answer);
      }
 
      //StartButton getter setter
@@ -62,41 +84,26 @@ import mediators.QPHPHButtonPanelPresenter;
         return startButton;      
     }
 
-     public void setStartButtonText(String s){
+    private void setStartButtonText(String s){
         startButton.setText(s);
    }
 
    //RecordingLabel getter setter
 
-   public void setRecordingLableVisible(){
+   private void setRecordingLableVisible(){
         recordingLabel.setVisible(true);
     }
 
-    public void setRecordingLableInvisible(){
+    private void setRecordingLableInvisible(){
       recordingLabel.setVisible(false);
   }
-
-  //DeleteButton getter setter
-
-     public void setDeleteButtonVisible(){
-        deleteButton.setVisible(true);
-    }
-
-    public void setDeleteButtonInvisible(){
-        deleteButton.setVisible(false);
-    }
-
-    public JButton getDeleteButton(){
-        return deleteButton;
-    }
-
     //Q & A getter setter
 
-    public void setQuestion(String q) {
+    private void setQuestion(String q) {
         question.setText(q);
     }
     
-    public void setAnswer(String a) {
+    private void setAnswer(String a) {
         answer.setText(a);
     }
 
@@ -165,13 +172,6 @@ private void configTitle(){
         answer.setMaximumSize(new Dimension(600,700));
         answer.setFont(new Font(FONT, Font.PLAIN, 20));
     }
-    
-    private static void configdeleteButton() {
-        deleteButton = new JButton("Delete");
-        deleteButton.setFont(new Font(FONT, Font.PLAIN, 24));
-        deleteButton.setAlignmentX(CENTER_ALIGNMENT);
-    }
-
     private static void configstartButton(){
         startButton = new JButton("New Question"); 
         startButton.setFont(new Font(FONT, Font.PLAIN, 24));

@@ -12,6 +12,8 @@ import java.awt.*;
 // import java.io.*;
 import javax.swing.*;
 
+
+import processing.*;
 import interfaces.PanelSubject;
 import mediators.QPHPHButtonPanelPresenter;
 
@@ -50,6 +52,12 @@ public class PromptHistory extends JPanel implements PanelSubject {
       
   }
 
+  public void onNewEntry(Entry entry){
+    if (entry instanceof QuestionEntry){
+      listPH.addElement(entry.getCommand() + ": " + entry.getPrompt());
+  }
+ }
+
   //ON NOTIFY() METHODS 
 
   @Override
@@ -63,42 +71,41 @@ public class PromptHistory extends JPanel implements PanelSubject {
       //
   }
 
-  //ClearButton getter 
+  //Getter methods
 
   public JButton getClearButton(){
     return clearAll;      
 }
-
-//List Editors and getter
-
-  public void resetPH() {
-      listPH.clear();
-  }
-
-  public int getPHSize(){
-      return listPH.getSize();
-  }
-
-  public String getElementInPH(int index){
-      return (String)listPH.getElementAt(index);
-  }
-
-  public int getIndexInPH(String s){
-    return listPH.indexOf(s);
+public JList<String> getPromptList(){
+  return list;
 }
 
-  public void addPH(String s){
+public int getPHSize(){
+  return listPH.getSize();
+}
+
+public String getElementInPH(int index){
+  return (String)listPH.getElementAt(index);
+}
+
+public int getIndexInPH(String s){
+return listPH.indexOf(s);
+}
+
+//TODO Get rid of these public methods.
+
+
+public void addPH(String s){
     listPH.addElement(s);
   }
 
-  public void removePH(int index){
+  private void removePH(int index){
     listPH.remove(index);
   }
 
-
-    public JList<String> getPromptList(){
-    return list;
-  }
+  private void resetPH() {
+    listPH.clear();
+}
 
 
   //Configure and Create elements in PH

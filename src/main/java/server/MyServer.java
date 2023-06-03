@@ -33,7 +33,7 @@ public class MyServer {
 		return false;
 	}
 	
-	public static void main(String[] args) throws IOException {
+	public static void runServer() throws IOException {
 		//create a thread pool to handle requests
 		ThreadPoolExecutor threadPoolExecutor = (ThreadPoolExecutor)Executors.newFixedThreadPool(10);
 		

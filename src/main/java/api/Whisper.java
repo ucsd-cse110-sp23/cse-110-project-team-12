@@ -91,8 +91,10 @@ public class Whisper implements WhisperInterface{
 		 
 		 JSONObject responseJson = new JSONObject(response.toString());
 		 
-		 question_text = responseJson.getString("text");
-		 
+		 String responseString = responseJson.getString("text");
+		 if (!responseString.isBlank()) {
+			question_text = responseJson.getString("text");
+		 }		 
 	 }
 	 
 	 private void handleErrorResponse(HttpURLConnection connection) throws IOException, JSONException{

@@ -1,7 +1,7 @@
 package interfaces;
 
+import processing.Entry;
+
 public interface AudioToResultInterface {
-    public String getCommand();
-    public String getPrompt();
-    public String getResult();
+    public Entry getEntry();
 }
