@@ -8,20 +8,23 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 
 import org.json.JSONObject;
+
+import interfaces.ChatGPTInterface;
+
 import org.json.JSONArray;
 
 import java.io.IOException;
-
-public class ChatGPT {
+public class ChatGPT implements ChatGPTInterface{
 	
 	private static final String API_ENDPOINT = "https://api.openai.com/v1/completions";
 	private static final String API_KEY = "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";
 	private static final String MODEL = "text-davinci-003";
-	private static String question = null;
-	public static String answer = null;
+	private String question = null;
+	private String answer = null;
+
 	
 	public ChatGPT(String question_text) throws IOException, InterruptedException {
-		ChatGPT.question = question_text;
+		question = question_text;
 		
 		//Set request parameters
 		String prompt = question;
@@ -56,6 +59,14 @@ public class ChatGPT {
 		
 		JSONArray choices = responseJson.getJSONArray("choices");
 		answer = choices.getJSONObject(0).getString("text");
+	}
+
+	public String getQuestion(){
+		return question;
+	}
+
+	public String getAnswer(){
+		return answer;
 	}
 
 }

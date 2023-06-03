@@ -7,15 +7,15 @@ import java.io.*;
 import java.net.*;
 import org.json.*;
 
-public class Whisper {
-	 private static final String API_ENDPOINT = "https://api.openai.com/v1/audio/transcriptions";
-	 private static final String TOKEN = "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";
-	 private static final String MODEL = "whisper-1";
-	 private static File question_audio = null;
-	 public static String question_text = null;
+import interfaces.WhisperInterface;
+
+public class Whisper implements WhisperInterface{
+	 private final String API_ENDPOINT = "https://api.openai.com/v1/audio/transcriptions";
+	 private final String TOKEN = "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";
+	 private final String MODEL = "whisper-1";
+	 private String question_text = null;
 	 
 	  Whisper(File question_audio) throws IOException {
-		 Whisper.question_audio = question_audio;
 		 File file = question_audio;
 		 URL url = new URL(API_ENDPOINT);
          HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -47,6 +47,10 @@ public class Whisper {
 
 	}
 
+	public String getQuestionText(){
+		return question_text;
+	}
+
 	private static void writeParameterToOutputStream(
 			 OutputStream outputStream,
 			 String parameterName,
@@ -58,7 +62,7 @@ public class Whisper {
 		 outputStream.write((parameterValue + "\r\n").getBytes());
 	 }
 	 
-	 private static void writeFileToOutputStream(
+	 private void writeFileToOutputStream(
 			 OutputStream outputStream,
 			 File file,
 			 String boundary
@@ -76,7 +80,7 @@ public class Whisper {
 		 fileInputStream.close();
 	 }
 	 
-	 private static void handleSuccessResponse(HttpURLConnection connection) throws IOException, JSONException {
+	 private void handleSuccessResponse(HttpURLConnection connection) throws IOException, JSONException {
 		 BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
 		 String inputLine;
 		 StringBuilder response = new StringBuilder();
@@ -91,7 +95,7 @@ public class Whisper {
 		 
 	 }
 	 
-	 private static void handleErrorResponse(HttpURLConnection connection) throws IOException, JSONException{
+	 private void handleErrorResponse(HttpURLConnection connection) throws IOException, JSONException{
         BufferedReader errorReader = new BufferedReader(new InputStreamReader(connection.getErrorStream()));
         String errorLine;
         StringBuilder errorResponse = new StringBuilder();
@@ -100,6 +104,7 @@ public class Whisper {
         }
         errorReader.close();
         String errorResult = errorResponse.toString();
+		//TODO Deal with println as an exception instead.
         System.out.println("Error Result: " + errorResult);
     }
 
