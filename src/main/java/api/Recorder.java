@@ -3,21 +3,30 @@ package api;
 
 import java.io.*;
 import java.util.ArrayList;
-
 import javax.sound.sampled.*;
 
+import interfaces.ChatGPTInterface;
+import interfaces.WhisperInterface;
 
 public class Recorder {
    
-    private static AudioFormat audioFormat = getAudioFormat();
-    private static TargetDataLine targetDataLine;
+    private  AudioFormat audioFormat = getAudioFormat();
+    private TargetDataLine targetDataLine;
     // the file that will contain the audio data
-    private static final String AUDIOFILENAME = "question_audio.wav";
-    private static File audioFile = new File(AUDIOFILENAME);
-    private static int count = 0;
+    private final String AUDIOFILENAME = "question_audio.wav";
+    private File audioFile = new File(AUDIOFILENAME);
+    private ChatGPTInterface ChatGPTSession = null;
+    private WhisperInterface WhisperSession = null;
+
+    private int temp_count = 0;
+
+    public Recorder(ChatGPTInterface ChatGPTSession, WhisperInterface WhisperSession){
+      this.ChatGPTSession = ChatGPTSession;
+      this.WhisperSession = WhisperSession;
+  }
     
 
-    public static void startRecording() {
+    public void startRecording() {
         Thread t = new Thread(
                 new Runnable() {
                     @override
@@ -56,37 +65,37 @@ public class Recorder {
        * creates new ChatGPT obj with question text to get answer
        * 
        */
-      public static ArrayList<String> stopRecording() {
+      public ArrayList<String> stopRecording() {
         ArrayList<String> qanda = new ArrayList<String>();
         targetDataLine.stop();
         
         try {
-            new Whisper(audioFile);
+          WhisperSession = new Whisper(audioFile);
         } catch (IOException e) {
             e.printStackTrace();
         }
-            qanda.add(Whisper.question_text);
+            qanda.add(this.WhisperSession.getQuestionText());
         try {
-            new ChatGPT(Whisper.question_text);
+          ChatGPTSession = new ChatGPT(this.WhisperSession.getQuestionText());
         } catch (IOException e) {
             e.printStackTrace();
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        String answerString = ChatGPT.answer;
+        String answerString = this.ChatGPTSession.getAnswer();
         answerString = answerString.substring(2);
         qanda.add(answerString);
         targetDataLine.close();
         
         //todo
-        qanda.add("question" + count);
-        qanda.add("answer" + count);
-        count ++;
+        qanda.add("question" + temp_count);
+        qanda.add("answer" + temp_count);
+        temp_count ++;
 
         return qanda;
       }
 
-      private static AudioFormat getAudioFormat() {
+      private AudioFormat getAudioFormat() {
         // the number of samples of audio per second.
         // 44100 represents the typical sample rate for CD-quality audio.
         float sampleRate = 44100;
@@ -110,5 +119,9 @@ public class Recorder {
           signed,
           bigEndian
         );
+      }
+
+      private @interface override {
+
       }
 }

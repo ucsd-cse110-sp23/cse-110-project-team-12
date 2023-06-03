@@ -12,6 +12,8 @@ public class QPHPHButtonPanelPresenter implements ButtonObserver, PanelObserver{
     QuestionPanel qp;
     PromptHistory ph;
     private static String filePath = "bin/main/questionFile.txt";
+    Recorder recorder = new Recorder(null, null);
+
 
     public QPHPHButtonPanelPresenter(ArrayList<ButtonSubject> createdButtons, QuestionPanel createdqp, PromptHistory createdph){
         allButtons = createdButtons;
@@ -29,13 +31,13 @@ public class QPHPHButtonPanelPresenter implements ButtonObserver, PanelObserver{
     public void onStartStop(boolean startedRecording) {
         if (startedRecording){
             System.out.println("startedRecording");
-            Recorder.startRecording();
+            recorder.startRecording();
             qp.setRecordingLableVisible();
             qp.setStartButtonText("Stop Recording");
         }
         else {
             System.out.println("stoppedRecording");
-            ArrayList<String> qanda = Recorder.stopRecording();
+            ArrayList<String> qanda = recorder.stopRecording();
             String question = qanda.get(0);
             String answer = qanda.get(1);
             ph.addPH(question);
