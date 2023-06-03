@@ -10,13 +10,11 @@ import javax.swing.event.ListSelectionListener;
 
 import interfaces.ButtonSubject;
 import mediators.QPHPHButtonPanelPresenter;
-import server.ServerCalls;
 
 
 public class QuestionListHandler implements ListSelectionListener, ButtonSubject{
     QPHPHButtonPanelPresenter presenter;
     String question;
-    String answer;
 	/*
 	 * gets selected question from server upon clicking
 	 * displays saved answer
@@ -25,7 +23,6 @@ public class QuestionListHandler implements ListSelectionListener, ButtonSubject
     public void valueChanged(ListSelectionEvent e){
         question = (String) ((JList<String>) e.getSource()).getSelectedValue();
         if (question != null){
-            answer = ServerCalls.getFromServer(question);
             notifyObservers();
         }
     }
@@ -35,6 +32,6 @@ public class QuestionListHandler implements ListSelectionListener, ButtonSubject
     }
 
     public void notifyObservers(){
-        presenter.onListChange(question, answer);
+        presenter.onListChange(question);
     }
 }

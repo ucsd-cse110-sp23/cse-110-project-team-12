@@ -53,6 +53,9 @@ public class PromptHistory extends JPanel implements PanelSubject {
   }
 
   public void onNewEntry(Entry entry){
+    if (entry == null){
+      //does nothing
+  }
     if (entry instanceof QuestionEntry){
       listPH.addElement(entry.getCommand() + ": " + entry.getPrompt());
   }

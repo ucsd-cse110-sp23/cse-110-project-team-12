@@ -8,23 +8,17 @@ import com.sun.net.httpserver.*; //server create()
 import java.io.*;
 import java.net.*;
 import java.util.*;
+import java.net.URLEncoder;
+import java.net.URLDecoder;
 
 
 public class RequestHandler implements HttpHandler {
 
-	private static Map<String,String> data;
-	
-	public RequestHandler(Map<String, String> data) {
-		RequestHandler.data = data;
-	}
-	
-	/* Get map of previous questions and answers
-	 * 
-	 * @return Map<String,String> of q/a pairs
-	 */
-	public static Map<String,String> getMap() {
-		return data;
-	}
+	private final Map<String, String> data;
+    
+    public RequestHandler(Map<String, String> data) {
+        this.data = data;
+    }
 	
 	/* Called by HttpServer when HTTP request receivedgigit	
 	 * 
@@ -36,13 +30,16 @@ public class RequestHandler implements HttpHandler {
 		
 		//handle request method - GET, POST, PUT, DELETE
 		try {
-			if (method.equals("GET")) {
-				response = handleGet(httpExchange);
-			} else if (method.equals("POST")) {
+			if (method.equals("POST")) {
 				response = handlePost(httpExchange);
-			} else if (method.equals("DELETE")) {
-				response = handleDelete(httpExchange);
-			} else {
+			} 
+			else if (method.equals("GET")) {
+				response = handleGet(httpExchange);
+			} 
+			// else if (method.equals("DELETE")) {
+			// 	response = handleDelete(httpExchange);
+			// } 
+			else {
 				throw new Exception("Not Valid Request Method");
 			}
 		} catch (Exception e) {
@@ -57,6 +54,29 @@ public class RequestHandler implements HttpHandler {
 		outStream.write(response.getBytes());
 		outStream.close();
 	}
+
+	/* Handles HTTP POST request received by server
+	 * Gets data from server and sends response to client
+	 * 
+	 * @param HttpExchange httpExchange
+	 * @return String response - parsed retrieved data
+	 */
+	private String handlePost(HttpExchange httpExchange) throws IOException {
+		//retrieve and read input stream
+		InputStream inStream = httpExchange.getRequestBody();
+		Scanner scanner = new Scanner(inStream); 
+		String question = scanner.nextLine();
+		String answer = scanner.nextLine();
+
+		//store data in hashmap and local server
+		data.put(question, answer);
+		
+		String response = question + "\n" + answer ;
+
+		scanner.close();
+		
+		return response;
+	}
 	
 	/* Handles HTTP GET request received by server
 	 * Queries are names of programming languages
@@ -70,12 +90,10 @@ public class RequestHandler implements HttpHandler {
 		String query = uri.getRawQuery();
 		
 		if (query != null) {
-			//extract value of query param from query string
-			
-			String question = query.substring(query.indexOf("=") + 1);
-			question = question.replace(' ', '+');
-			
-			String answer = data.get(question); //retrieve data from hashmap
+			//Decode query to get the question which is the key for the map
+			String encodedQuestion = query.substring(query.indexOf("=") + 1);
+			String question = URLDecoder.decode(encodedQuestion, "UTF-8");
+			String answer = data.get(question); 
 			
 			if (answer != null) {
 				response = answer;
@@ -87,61 +105,36 @@ public class RequestHandler implements HttpHandler {
 		return response;
 	}
 	
-	/* Handles HTTP POST request received by server
-	 * Gets data from server and sends response to client
-	 * 
-	 * @param HttpExchange httpExchange
-	 * @return String response - parsed retrieved data
-	 */
-	private String handlePost(HttpExchange httpExchange) throws IOException {
-		//retrieve and read input stream
-		InputStream inStream = httpExchange.getRequestBody();
-		Scanner scanner = new Scanner(inStream); 
-		String postData = scanner.nextLine();
-		
-		//extract question and answer vals
-		String question = postData.substring(0,postData.indexOf(",")), answer = postData.substring(postData.indexOf(",")+1);
-		question = question.replace(' ', '+');
-
-		//store data in hashmap
-		data.put(question, answer);
-		MyServer.allData.put(question, answer);
-		
-		String response = "Posted entry {" + question + ", " + answer + "}";
-
-		scanner.close();
-		
-		return response;
-	}
 	
-	/* Delete data from HashMap
-	 * 
-	 * @param HttpExchange httpExchange
-	 * @return String response - parsed deleted data
-	 */
-	private String handleDelete(HttpExchange httpExchange) throws IOException {
-		String response = "Invalid DELETE Request";
-		URI uri = httpExchange.getRequestURI();
-		String query = uri.getRawQuery();
+	
+	// /* Delete data from HashMap
+	//  * 
+	//  * @param HttpExchange httpExchange
+	//  * @return String response - parsed deleted data
+	//  */
+	// private String handleDelete(HttpExchange httpExchange) throws IOException {
+	// 	String response = "Invalid DELETE Request";
+	// 	URI uri = httpExchange.getRequestURI();
+	// 	String query = uri.getRawQuery();
 		
-		if (query != null) {
+	// 	if (query != null) {
 			
-			//extract value of query param from query string
-			String question = query.substring(query.indexOf("=")+1);
-			question = question.replace(' ', '+');
-			String answer = data.get(question); //retrieve data from hashmap
+	// 		//extract value of query param from query string
+	// 		String question = query.substring(query.indexOf("=")+1);
+	// 		question = question.replace(' ', '+');
+	// 		String answer = data.get(question); //retrieve data from hashmap
 			
 			
-			if (answer != null) { //valid query
+	// 		if (answer != null) { //valid query
 				
-				response = "Deleted entry {" + question + ", " + answer + "}";
+	// 			response = "Deleted entry {" + question + ", " + answer + "}";
 
 				
-				data.remove(question);
-			} else {            //invalid query
-				response = "No data found for " + question;
-			}
-		}
-		return response;
-	}
+	// 			data.remove(question);
+	// 		} else {            //invalid query
+	// 			response = "No data found for " + question;
+	// 		}
+	// 	}
+	// 	return response;
+	// }
 }

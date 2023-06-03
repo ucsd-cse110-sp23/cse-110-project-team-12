@@ -40,26 +40,30 @@ public class QPHPHButtonPanelPresenter implements ButtonObserver, PanelObserver{
 
         }
         else {
-          System.out.println("stoppedRecording");
-          File audioFile = recorder.stopRecording();
-          qp.stoppedRecording();
-        //   audioToResult = new AudioToResult(audioFile);
-        //   Entry entry = audioToResult.getEntry();
+            System.out.println("stoppedRecording");
+            File audioFile = recorder.stopRecording();
+            qp.stoppedRecording();
+            //   audioToResult = new AudioToResult(audioFile);
+            //   Entry entry = audioToResult.getEntry();
 
-        //TESTING
-        Entry entry = new QuestionEntry("Question", "When is christmas" + TEMPCOUNT, "25 December");
-        TEMPCOUNT++;
-        qp.onNewEntry(entry);
-        ph.onNewEntry(entry);
-            //<TODO>: fix server calls and change for MONGODB??
-            //ServerCalls.postToServer(prompt, answer);
+            //TESTING
+            Entry entry = new QuestionEntry("Question", "When is christmas" + TEMPCOUNT, "25 December" + TEMPCOUNT);
+            TEMPCOUNT++;
+            qp.onNewEntry(entry);
+            ph.onNewEntry(entry);
+            ServerCalls.postToServer(entry);   
         }
     }
 
+    //String prompt is formatted as "Question: <Prompt>"
     @Override
-    public void onListChange(String question, String answer) {
+    public void onListChange(String prompt) {
         System.out.println("listChanged");
-        qp.onListChange(question, answer);
+        if (prompt.startsWith("Question")){
+            String question = prompt.substring(prompt.indexOf(":") + 2); 
+            String answer = ServerCalls.getFromServer(question);
+            qp.onListChange(question, answer);
+        }   
     }
 
     // @Override
