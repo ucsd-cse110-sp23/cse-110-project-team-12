@@ -15,7 +15,7 @@ public class Whisper implements WhisperInterface{
 	 private final String MODEL = "whisper-1";
 	 private String question_text = null;
 	 
-	  Whisper(File question_audio) throws IOException {
+	  public Whisper(File question_audio) throws IOException {
 		 File file = question_audio;
 		 URL url = new URL(API_ENDPOINT);
          HttpURLConnection connection = (HttpURLConnection) url.openConnection();

@@ -2,9 +2,10 @@ package mediators;
 import java.io.*;
 import java.util.ArrayList;
 
-import api.Recorder;
 import interfaces.*;
 import mainframe.*;
+import processing.AudioToResult;
+import processing.Recorder;
 import server.ServerCalls;
 
 public class QPHPHButtonPanelPresenter implements ButtonObserver, PanelObserver{
@@ -12,7 +13,8 @@ public class QPHPHButtonPanelPresenter implements ButtonObserver, PanelObserver{
     QuestionPanel qp;
     PromptHistory ph;
     private static String filePath = "bin/main/questionFile.txt";
-    Recorder recorder = new Recorder(null, null);
+    Recorder recorder;
+    AudioToResultInterface audioToResult;
 
 
     public QPHPHButtonPanelPresenter(ArrayList<ButtonSubject> createdButtons, QuestionPanel createdqp, PromptHistory createdph){
@@ -30,22 +32,26 @@ public class QPHPHButtonPanelPresenter implements ButtonObserver, PanelObserver{
     @Override
     public void onStartStop(boolean startedRecording) {
         if (startedRecording){
-            System.out.println("startedRecording");
-            recorder.startRecording();
-            qp.setRecordingLableVisible();
-            qp.setStartButtonText("Stop Recording");
+          recorder = new Recorder(); 
+          System.out.println("startedRecording");
+          recorder.startRecording();
+          qp.setRecordingLableVisible();
+          qp.setStartButtonText("Stop Recording");
         }
         else {
-            System.out.println("stoppedRecording");
-            ArrayList<String> qanda = recorder.stopRecording();
-            String question = qanda.get(0);
-            String answer = qanda.get(1);
-            ph.addPH(question);
-            qp.setQuestion(question);
-            qp.setAnswer(answer);
-            qp.setRecordingLableInvisible();
-            qp.setStartButtonText("New Question");
-            ServerCalls.postToServer(question, answer);
+          System.out.println("stoppedRecording");
+          File audioFile = recorder.stopRecording();
+          audioToResult = new AudioToResult(audioFile);
+          String command = audioToResult.getCommand();
+          String prompt = audioToResult.getPrompt();
+          String answer = audioToResult.getResult();
+          //<TODO>
+          ph.addPH(prompt);
+          qp.setQuestion(prompt);
+          qp.setAnswer(answer);
+          qp.setRecordingLableInvisible();
+          qp.setStartButtonText("New Question");
+          ServerCalls.postToServer(prompt, answer);
         }
     }
 

@@ -1,12 +1,8 @@
-package api;
+package processing;
 
 
 import java.io.*;
-import java.util.ArrayList;
 import javax.sound.sampled.*;
-
-import interfaces.ChatGPTInterface;
-import interfaces.WhisperInterface;
 
 public class Recorder {
    
@@ -15,16 +11,6 @@ public class Recorder {
     // the file that will contain the audio data
     private final String AUDIOFILENAME = "question_audio.wav";
     private File audioFile = new File(AUDIOFILENAME);
-    private ChatGPTInterface ChatGPTSession = null;
-    private WhisperInterface WhisperSession = null;
-
-    private int temp_count = 0;
-
-    public Recorder(ChatGPTInterface ChatGPTSession, WhisperInterface WhisperSession){
-      this.ChatGPTSession = ChatGPTSession;
-      this.WhisperSession = WhisperSession;
-  }
-    
 
     public void startRecording() {
         Thread t = new Thread(
@@ -65,34 +51,11 @@ public class Recorder {
        * creates new ChatGPT obj with question text to get answer
        * 
        */
-      public ArrayList<String> stopRecording() {
-        ArrayList<String> qanda = new ArrayList<String>();
+      public File stopRecording() {
         targetDataLine.stop();
-        
-        try {
-          WhisperSession = new Whisper(audioFile);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-            qanda.add(this.WhisperSession.getQuestionText());
-        try {
-          ChatGPTSession = new ChatGPT(this.WhisperSession.getQuestionText());
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        String answerString = this.ChatGPTSession.getAnswer();
-        answerString = answerString.substring(2);
-        qanda.add(answerString);
         targetDataLine.close();
-        
-        //todo
-        qanda.add("question" + temp_count);
-        qanda.add("answer" + temp_count);
-        temp_count ++;
-
-        return qanda;
+        return audioFile;
+       
       }
 
       private AudioFormat getAudioFormat() {
