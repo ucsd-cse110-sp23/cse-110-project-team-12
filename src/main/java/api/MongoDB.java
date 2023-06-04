@@ -15,6 +15,7 @@ import static com.mongodb.client.model.Filters.eq;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.swing.DefaultListModel;
 import javax.swing.JOptionPane;
 
 public class MongoDB implements MongoInterface {
@@ -85,7 +86,7 @@ public class MongoDB implements MongoInterface {
 			  
     }
 	
-	public void login(String email, String pass1) throws Exception {
+	public boolean login(String email, String pass1) throws Exception {
 		if (email.isBlank()) throw new Exception("Missing Email");
 		if (pass1.isBlank()) throw new Exception("Missing Password");
 		
@@ -112,5 +113,20 @@ public class MongoDB implements MongoInterface {
 				throw new Exception("Email Unrecognized");
 			}
 		}
+		//<todo>
+	return true;
 	}
+
+	@Override
+	public DefaultListModel<String> getPrompts(String email) {
+		// TODO Auto-generated method stub
+		throw new UnsupportedOperationException("Unimplemented method 'getPrompts'");
+	}
+
+	@Override
+	public void mongoToServer(String email) {
+		// TODO Auto-generated method stub
+		throw new UnsupportedOperationException("Unimplemented method 'mongoToServer'");
+	}
+	
 }

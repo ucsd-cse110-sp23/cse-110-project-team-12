@@ -12,6 +12,8 @@ import javax.swing.*;
 import interfaces.ButtonSubject;
 import listeners.*;
 import mediators.QPHPHButtonPanelPresenter;
+import processing.AudioToResult;
+import processing.Recorder;
 
 /*
  * Main interface for application
@@ -45,7 +47,7 @@ public class AppFrame extends JFrame{
     
         QuestionPanel qp = new QuestionPanel();
         PromptHistory ph = new PromptHistory();
-        this.presenter = new QPHPHButtonPanelPresenter(addListeners(qp,ph),qp,ph);
+        this.presenter = new QPHPHButtonPanelPresenter(addListeners(qp,ph),qp,ph, new Recorder(), null);
            
         this.add(qp, BorderLayout.CENTER); 
         this.add(ph, BorderLayout.WEST); 

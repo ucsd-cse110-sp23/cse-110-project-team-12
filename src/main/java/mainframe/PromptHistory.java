@@ -57,7 +57,7 @@ public class PromptHistory extends JPanel implements PanelSubject {
       //does nothing
   }
     if (entry instanceof QuestionEntry){
-      listPH.addElement(entry.getCommand() + ": " + entry.getPrompt());
+      listPH.addElement(entry.getTitle());
   }
  }
 

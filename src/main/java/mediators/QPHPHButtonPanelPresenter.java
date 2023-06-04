@@ -8,17 +8,19 @@ import processing.*;
 import server.ServerCalls;
 
 public class QPHPHButtonPanelPresenter implements ButtonObserver, PanelObserver{
+    private static String filePath = "bin/main/questionFile.txt";
     ArrayList<ButtonSubject> allButtons = new ArrayList<ButtonSubject>();
     QuestionPanel qp;
     PromptHistory ph;
-    private static String filePath = "bin/main/questionFile.txt";
     Recorder recorder;
     AudioToResultInterface audioToResult;
 
     int TEMPCOUNT = 0;
 
 
-    public QPHPHButtonPanelPresenter(ArrayList<ButtonSubject> createdButtons, QuestionPanel createdqp, PromptHistory createdph){
+    public QPHPHButtonPanelPresenter(ArrayList<ButtonSubject> createdButtons, QuestionPanel createdqp, PromptHistory createdph, Recorder recorder, AudioToResultInterface audioToResult){
+        this.recorder = recorder;
+        this.audioToResult = audioToResult;
         allButtons = createdButtons;
         qp = createdqp;
         ph = createdph;
@@ -43,12 +45,12 @@ public class QPHPHButtonPanelPresenter implements ButtonObserver, PanelObserver{
             System.out.println("stoppedRecording");
             File audioFile = recorder.stopRecording();
             qp.stoppedRecording();
-            //   audioToResult = new AudioToResult(audioFile);
-            //   Entry entry = audioToResult.getEntry();
+            audioToResult = new AudioToResult(audioFile);
+            Entry entry = audioToResult.getEntry();
 
-            //TESTING
-            Entry entry = new QuestionEntry("Question", "When is christmas" + TEMPCOUNT, "25 December" + TEMPCOUNT);
-            TEMPCOUNT++;
+            // //TESTING
+            // Entry entry = new QuestionEntry("Question", "When is christmas" , "25 December" );
+            // TEMPCOUNT++;
             qp.onNewEntry(entry);
             ph.onNewEntry(entry);
             ServerCalls.postToServer(entry);   

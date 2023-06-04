@@ -68,7 +68,7 @@ import processing.*;
             setQuestion("Invalid Input");
         }
         if (entry instanceof QuestionEntry){
-            setQuestion(entry.getCommand() + ": " + entry.getPrompt());
+            setQuestion(entry.getTitle());
             setAnswer(entry.getResult());
         }
      }

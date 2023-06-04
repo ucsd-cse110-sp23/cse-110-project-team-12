@@ -22,11 +22,9 @@ public abstract class Entry {
 	public String getResult() {
 		return result;
 	}
-	
-	// public void addToHistory() {
-	// 	String comPrompt = command + ": " + prompt;
-	// 	HistoryList.addEntry(comPrompt);
-	// }
-	
+
+	public String getTitle() {
+		return command + ": " + prompt;
+	}
 	
 }
