@@ -3,31 +3,27 @@ package server;
  * MyServer class runs a local server to link our app with data storage capabilities. 
  */
 
-// import com.mongodb.internal.connection.Server;
+import com.mongodb.internal.connection.Server;
 import com.sun.net.httpserver.*; //server create()
 
-import interfaces.ServerInterface;
-import processing.Entry;
-
+import java.io.IOException;
 import java.net.*;
 import java.util.*;
 import java.util.concurrent.*; //ThreadPoolExecutor
-import java.io.*;
 
 import javax.swing.JOptionPane;
 
 /*
  * basic HTTP server
  */
-public class MyServer implements ServerInterface{
+public class MyServer{
 	
 	//initialize server port and hostname
 	private static final int SERVER_PORT = 8100;
 	private static final String SERVER_HOSTNAME = "localhost";
 	private static final String SERVER_ADDRESS = "127.0.0.1";
-	private static final String  URL = "http://localhost:8100/";
 
-	public  boolean checkServerAvailability() {
+	public static boolean checkServerAvailability() {
 		try (Socket s = new Socket(SERVER_ADDRESS, SERVER_PORT)) {
 			return true;
 		} catch (IOException e) {
@@ -37,7 +33,7 @@ public class MyServer implements ServerInterface{
 		return false;
 	}
 	
-	public void runServer() throws IOException {
+	public static void runServer() throws IOException {
 		//create a thread pool to handle requests
 		ThreadPoolExecutor threadPoolExecutor = (ThreadPoolExecutor)Executors.newFixedThreadPool(10);
 		
@@ -55,59 +51,5 @@ public class MyServer implements ServerInterface{
 		
 		System.out.println("Server started on port " + SERVER_PORT);
 	}
-
-	public void postToServer(Entry entry){
-		if (entry == null){
-		  return;
-		}
-  
-		String question = entry.getPrompt();
-		String answer = entry.getResult();
-		  try {
-			URL url = new URL(URL);
-			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-			conn.setRequestMethod("POST");
-			conn.setDoOutput(true);
-			OutputStreamWriter out = new OutputStreamWriter(
-			  conn.getOutputStream()
-			);
-			out.write(question + "\n" + answer);
-			out.flush();
-			out.close();
-			
-			//Read output from http post 
-			BufferedReader in = new BufferedReader(
-			  new InputStreamReader(conn.getInputStream())
-			);
-  
-			question = in.readLine();
-			answer = in.readLine();
-			in.close();
-			//TODO Boolean if server is not running?
-			
-			
-		  } catch (Exception ex) {
-			ex.printStackTrace();
-		  }
-	  
-		}
-  
-		public String getFromServer(String question){
-			String response = "Getting from server...";
-		  
-			try {
-			String encodedQuery = URLEncoder.encode(question, "UTF-8");
-			URL url = new URL(URL + "?=" + encodedQuery);
-			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-			conn.setRequestMethod("GET");
-			BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-			response = in.readLine();
-			in.close();
-			return response; 
-			} catch (Exception ex) {
-			  ex.printStackTrace();
-			  return response;
-		  }
-		}
 
 }

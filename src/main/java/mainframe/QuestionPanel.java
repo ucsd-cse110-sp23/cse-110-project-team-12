@@ -73,11 +73,6 @@ import processing.*;
         }
      }
 
-     public void InvalidInputDetected(String question){
-        setQuestion(question);
-        setAnswer("Invalid Input Detected");
-     }
-
      public void onListChange(String question, String answer){
         setQuestion(question);
         setAnswer(answer);

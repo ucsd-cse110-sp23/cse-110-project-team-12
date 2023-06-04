@@ -6,23 +6,21 @@ import java.net.*;
 import java.util.*;
 
 import server.MyServer;
-import interfaces.*;
 
 
 public class app {
-    private static ServerInterface ServerInstance;
     private static LoginScreen loginFrame;
     private static AppFrame appFrame;
     private static boolean autoLogin = false;
     private static String defaultUserEmail = null;
 
     public static void main (String args[]) throws IOException{
-        ServerInstance = new MyServer();
-        ServerInstance.runServer();
+
+        MyServer.runServer();
     	// if (!autoLogin) {
 	    // 	loginFrame = new LoginScreen();
     	// } else {
-    		appFrame = new AppFrame(ServerInstance);
+    		appFrame = new AppFrame(defaultUserEmail);
             //force exit app if server not connected
         //     MyServer.checkServerAvailability();
     	// }
@@ -31,7 +29,7 @@ public class app {
     public static void succesfullLogin() {
         try {
             new AppFrame(null);
-            ServerInstance.checkServerAvailability();
+            MyServer.checkServerAvailability();
         } catch (IOException e) {
             e.printStackTrace();
         }
