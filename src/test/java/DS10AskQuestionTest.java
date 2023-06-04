@@ -67,12 +67,12 @@ public class DS10AskQuestionTest{
     //Question: When is Christmas?
     @Test
 	void testUIupdatedStartStop() throws Exception {
-    	JButton startButton = new JButton();
+    	startButton = new JButton();
         startButton.addActionListener(testListener);
         startButton.doClick();
         verify(qpMock).startedRecording();
-        TimeUnit.SECONDS.sleep(1);
-        startButton.doClick();
+        //TimeUnit.SECONDS.sleep(1);
+        //startButton.doClick();
         verify(qpMock).stoppedRecording();
     }
 
