@@ -52,10 +52,10 @@ public class DS10AskQuestionTest{
     @BeforeAll
     public static void setup(){
         ArrayList<ButtonSubject> createdButtons = new ArrayList<ButtonSubject>();
-       // eventMock = mock(ActionEvent.class);
+        eventMock = mock(ActionEvent.class);
         qpMock = mock(QuestionPanel.class);
         phMock = mock(PromptHistory.class);
-        //recorderMock = mock(Recorder.class);
+        recorderMock = mock(Recorder.class);
         audioToResultMock = mock(AudioToResult.class);
         testListener = new StartStopListener();
         startButton = new JButton();
@@ -67,6 +67,8 @@ public class DS10AskQuestionTest{
     //Question: When is Christmas?
     @Test
 	void testUIupdatedStartStop() throws Exception {
+    	startButton = new JButton();
+        startButton.addActionListener(testListener);
         startButton.doClick();
         verify(qpMock).startedRecording();
         TimeUnit.SECONDS.sleep(1);
