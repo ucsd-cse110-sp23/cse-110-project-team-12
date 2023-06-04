@@ -17,7 +17,7 @@ dependencies {
 
     // This provides the JUnit API.
     testImplementation group: 'org.mockito', name: 'mockito-junit-jupiter', version: '5.3.1'
-    // testImplementation "org.junit.jupiter:junit-jupiter-api:$junitVersion"
+    testImplementation "org.junit.jupiter:junit-jupiter-api:$junitVersion"
     // This provides the TestEngine to actually run the tests.
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junitVersion"
 
