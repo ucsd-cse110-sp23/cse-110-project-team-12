@@ -2,12 +2,10 @@ package mediators;
 import java.io.*;
 import java.util.ArrayList;
 
-import api.ChatGPT;
-import api.Whisper;
+import api.*;
 import interfaces.*;
 import mainframe.*;
 import processing.*;
-import server.ServerCalls;
 
 public class QPHPHButtonPanelPresenter implements ButtonObserver, PanelObserver{
     private static String filePath = "bin/main/questionFile.txt";
@@ -15,17 +13,19 @@ public class QPHPHButtonPanelPresenter implements ButtonObserver, PanelObserver{
     QuestionPanel qp;
     PromptHistory ph;
     Recorder recorder;
-    AudioToResultInterface audioToResult;
+    WhisperInterface WhisperSession;
+    ChatGPTInterface ChatGPTSession;
+    ServerInterface ServerSession;
 
-    int TEMPCOUNT = 0;
-
-
-    public QPHPHButtonPanelPresenter(ArrayList<ButtonSubject> createdButtons, QuestionPanel createdqp, PromptHistory createdph, Recorder recorder, AudioToResultInterface audioToResult){
-        this.recorder = recorder;
-        this.audioToResult = audioToResult;
+    public QPHPHButtonPanelPresenter(ArrayList<ButtonSubject> createdButtons, QuestionPanel createdqp, PromptHistory createdph, Recorder recorder, WhisperInterface WhisperSession, ChatGPTInterface ChatGPTSession, ServerInterface ServerSession){
         allButtons = createdButtons;
         qp = createdqp;
         ph = createdph;
+        this.recorder = recorder;
+        this.WhisperSession = WhisperSession;
+        this.ChatGPTSession = ChatGPTSession;
+        this.ServerSession = ServerSession;
+        
         for (ButtonSubject button : allButtons){
             button.registerObserver(this);
         }
@@ -37,7 +37,6 @@ public class QPHPHButtonPanelPresenter implements ButtonObserver, PanelObserver{
     @Override
     public void onStartStop(boolean startedRecording) {
         if (startedRecording){
-          recorder = new Recorder(); 
           System.out.println("startedRecording");
           recorder.startRecording();
           qp.startedRecording();
@@ -47,34 +46,87 @@ public class QPHPHButtonPanelPresenter implements ButtonObserver, PanelObserver{
             System.out.println("stoppedRecording");
             File audioFile = recorder.stopRecording();
             qp.stoppedRecording();
-            WhisperInterface WhisperSession = null;
+            String question = null;
             try {
-                WhisperSession = new Whisper(audioFile);
+                this.WhisperSession.setWhisperFile(audioFile);
+                question = WhisperSession.getQuestionText();
+                System.out.println(question);
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            audioToResult = new AudioToResult(WhisperSession, new ChatGPT());
-            Entry entry = audioToResult.getEntry();
+            ArrayList<String> result = parseCommand(question);
+            if (result != null){
+                String command = result.get(0);
+                String prompt = result.get(1);
+                Entry entry = null;
 
-            // //TESTING
-            // Entry entry = new QuestionEntry("Question", "When is christmas" , "25 December" );
-            // TEMPCOUNT++;
-            qp.onNewEntry(entry);
-            ph.onNewEntry(entry);
-            ServerCalls.postToServer(entry);   
+                //Case 1 where command is a question
+                if (command.equalsIgnoreCase("Question")) {            
+                
+                    //real ask question to chatGPT    
+                    try {
+                        this.ChatGPTSession.askChatGPT(prompt);
+                    } 
+                    catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    catch (IOException e) {
+                        e.printStackTrace();
+                    } 
+        
+                    String answer = this.ChatGPTSession.getAnswer();
+                    entry = new QuestionEntry(command, prompt, answer);
+                }
+                qp.onNewEntry(entry);
+                ph.onNewEntry(entry);
+                this.ServerSession.postToServer(entry);   
+            }
+            else{
+                qp.InvalidInputDetected(question);
+            }
         }
-    }
-
-    //String prompt is formatted as "Question: <Prompt>"
+            
+        }
+        //String prompt is formatted as "Question: <Prompt>"
     @Override
     public void onListChange(String prompt) {
         System.out.println("listChanged");
         if (prompt.startsWith("Question")){
             String question = prompt.substring(prompt.indexOf(":") + 2); 
-            String answer = ServerCalls.getFromServer(question);
+            String answer = this.ServerSession.getFromServer(question);
             qp.onListChange(question, answer);
         }   
     }
+
+    public ArrayList<String> parseCommand(String question){
+        final String[] COMMANDS = {"Question", "Send email", "Create email", "Setup email", "Delete prompt", "Clear all"};
+        ArrayList<String> result = null;
+        if (question != null){
+            for (int i = 0; i < COMMANDS.length; i++) {
+			
+                if (question.startsWith(COMMANDS[i])) {
+                    result = new ArrayList<String>();
+                    String command = COMMANDS[i];
+                    result.add(command);
+                    //check if there are remaining words first
+                    try {
+                        String prompt = question.substring(COMMANDS[i].length()+2);
+                        result.add(prompt);
+                        System.out.println(prompt);
+                    }
+                    catch (StringIndexOutOfBoundsException e){
+                        //No question detected
+                        return null;
+                    }
+                }
+            }
+        }
+
+        return result;
+    }
+}
+
+    
 
     // @Override
     // public void onDelete() {
@@ -144,4 +196,3 @@ public class QPHPHButtonPanelPresenter implements ButtonObserver, PanelObserver{
 //   }
   
 // }
-}
