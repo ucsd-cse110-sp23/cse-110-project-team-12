@@ -1,0 +1,28 @@
+package api;
+
+public class Entry {
+	String command, prompt, result;
+	
+	public Entry(String command, String prompt, String result) {
+		this.command = command;
+		this.prompt = prompt;
+		this.result = result;
+	}
+	
+	public String getCommand() {
+		return command;
+	}
+	
+	public String getPrompt() {
+		return prompt;
+	}
+	
+	public String getResult() {
+		return result;
+	}
+	
+	public String getTitle() {
+		return command + ": " + prompt;
+	}
+	
+}

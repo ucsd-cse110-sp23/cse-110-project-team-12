@@ -16,16 +16,16 @@ import mediators.QPHPHButtonPanelPresenter;
 
  
  
- public class QuestionPanel extends JPanel implements PanelSubject{
+ @SuppressWarnings("serial")
+public class QuestionPanel extends JPanel implements PanelSubject{
  
      private JLabel title;
-     private static JTextArea question, answer;
+     private static JTextArea question;
+	 private static JTextArea answer;
      private static JLabel recordingLabel;
      private static JButton startButton;
      private static JButton deleteButton;
      private static final String FONT = "Sans-serif";
-     private QPHPHButtonPanelPresenter presenter;
- 
      LayoutManager qpLayout = new BoxLayout(this, BoxLayout.PAGE_AXIS);    
  
      /*
@@ -111,8 +111,7 @@ import mediators.QPHPHButtonPanelPresenter;
     //ON NOTIFY() METHODS 
 
     @Override
-    public void registerObserver(QPHPHButtonPanelPresenter presenter) {
-        this.presenter = presenter; 
+    public void registerObserver(QPHPHButtonPanelPresenter presenter) { 
     }
 
 

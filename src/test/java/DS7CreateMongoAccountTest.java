@@ -1,10 +1,5 @@
-//import org.junit.Rule;
-//import org.junit.jupiter.api.Assertions;
-//import static org.junit.Assert.*;
 import org.junit.jupiter.api.Test;
-//import org.junit.rules.ExpectedException;
-
-//import org.junit.jupiter.api.BeforeEach;
+import api.MongoDB;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -14,7 +9,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import mock.*;
 import java.util.Random;
 
-public class CreateAccountTest {
+public class DS7CreateMongoAccountTest {
 	
 	private static final Random rand = new Random();
 	String takenEmail = "user@gmail.com";
@@ -51,6 +46,27 @@ public class CreateAccountTest {
 		String storedPass = mockMongoSession.checkPass(newEmail);
 		assertEquals(defaultPass, storedPass);
 	}
+	
+	/*
+	@Test
+	void realTestUniqueEmailAndPassword() throws Exception {
+		
+		MongoDB realMongoSession = new MongoDB();
+		boolean emailExistsBefore = realMongoSession.checkEmail(newEmail);
+		
+		//email should NOT be taken so should be FALSE
+		assertFalse(emailExistsBefore);
+		
+		//add new user to database
+		realMongoSession.createAccount(newEmail, defaultPass, matchPass);
+	    
+	    //check that account associated with email created
+		boolean emailExistsAfter = realMongoSession.checkEmail(newEmail);
+		assertTrue(emailExistsAfter);
+		//check that correct password stored
+		String storedPass = realMongoSession.checkPass(newEmail);
+		assertEquals(defaultPass, storedPass);
+	}*/
 	
 	/*
 	 * Scenario 2: User tries to create account with an existing email

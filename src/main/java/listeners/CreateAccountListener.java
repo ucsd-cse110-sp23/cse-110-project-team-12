@@ -20,10 +20,12 @@ public class CreateAccountListener implements LoginUISubject,ActionListener {
 	@Override
 	public void notifyObservers() throws Exception {
 		observer.onCreateAccount();
+	
 	}
 
 	@Override
 	public void registerObserver(LoginUIObserver observer) {
 		this.observer = observer;
 	}
+
 }

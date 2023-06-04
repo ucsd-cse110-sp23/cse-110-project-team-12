@@ -3,20 +3,30 @@ package mainframe;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.WindowEvent;
+import java.io.IOException;
 
 import api.MongoDB;
 import interfaces.LoginUIObserver;
-import listeners.*; 
+import listeners.*;
+
+import server.MyServer; 
 
 
 @SuppressWarnings("serial")
-public class LoginScreen extends JFrame implements LoginUIObserver{
-	JButton login, createAccount;
+public class LoginScreen extends JFrame implements LoginUIObserver {
+	JButton login;
+	JButton createAccount;
 	JPanel panel;
-	JLabel email, pass1, pass2;
-	JTextField emailField, passField1, passField2;
+	JLabel email;
+	JLabel pass1;
+	JLabel pass2;
+	JTextField emailField;
+	JTextField passField1;
+	JTextField passField2;
 	int fieldLength = 20;
 	boolean loggedIn = false;
+	
+	private DefaultListModel<String> entries = new DefaultListModel<>();
 	
 	public LoginScreen() {
 		setTitle("Login or Create Account");
@@ -60,30 +70,46 @@ public class LoginScreen extends JFrame implements LoginUIObserver{
         add(panel, BorderLayout.CENTER);
         setSize(500,300);
         setVisible(true);
+        
+        this.addWindowListener(new java.awt.event.WindowAdapter() {
+        	@Override
+        	public void windowClosing(java.awt.event.WindowEvent windowEvent) {
+        		if (!loggedIn) {
+        			return;
+        		} else { 
+	        		try {
+						new AppFrame(emailField.getText(), entries);
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+	        		MyServer.checkServerAvailability();
+        		}
+        	
+        	}
+        });
                
 	}
 
 	private void addActionListeners(){
-		LoginListener loginListener = new LoginListener();
+		final LoginListener loginListener = new LoginListener();
 		loginListener.registerObserver(this);
-		CreateAccountListener createListener = new CreateAccountListener();
+		final CreateAccountListener createListener = new CreateAccountListener();
 		createListener.registerObserver(this);
-		if (!GraphicsEnvironment.isHeadless()) {
-			login.addActionListener(loginListener);
-			createAccount.addActionListener(createListener);
-		}
+		login.addActionListener(loginListener);
+		createAccount.addActionListener(createListener);
+		
 	}
 	
-	protected void setEmail(String s) {
-		emailField.setText(s);
+	public String getEmail() {
+		return emailField.getText();
 	}
 	
-	protected void setPass1(String s) {
-		passField1.setText(s);
+	public String getPassword() {
+		return passField1.getText();
 	}
 	
-	protected void setPass2(String s) {
-		passField2.setText(s);
+	public String getPass2() {
+		return passField2.getText();
 	}
 
 	public boolean loggedInStatus(){
@@ -92,29 +118,34 @@ public class LoginScreen extends JFrame implements LoginUIObserver{
 
 	@Override
 	public void onCreateAccount() throws Exception {
-		String sEmail = this.emailField.getText();
-		String sPass1 = this.passField1.getText();
-		String sPass2 = this.passField2.getText();
-		
-		MongoDB mongoSession = new MongoDB();
+		final String sEmail = emailField.getText();
+		final String sPass1 = passField1.getText();
+		final String sPass2 = passField2.getText();
 
-		mongoSession.createAccount(sEmail, sPass1, sPass2); 	
+		final MongoDB mongo = new MongoDB();
+		mongo.createAccount(sEmail, sPass1, sPass2); 
+		
+		loggedIn = true;
 		this.dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
 		
-		app.succesfullLogin();
+        
 	}
 
 	@Override
 	public void onLogin() throws Exception {
-		String sEmail = this.emailField.getText();
-		String sPass1 = this.passField1.getText();
+		final String sEmail = emailField.getText();
+		final String sPass1 = passField1.getText();
+
+		final MongoDB mongo = new MongoDB();
 		
-		MongoDB mongoSession = new MongoDB();
-		
-		mongoSession.login(sEmail, sPass1);
+		if (!mongo.login(sEmail, sPass1)) {
+			return;
+		}
+		entries = mongo.getPrompts(sEmail);
+		mongo.mongoToServer(sEmail);
+		loggedIn = true;
 		this.dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
-		
-		app.succesfullLogin();
-		
 	}
+
+	
 }

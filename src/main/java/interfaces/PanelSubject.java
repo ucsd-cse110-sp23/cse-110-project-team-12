@@ -1,5 +1,5 @@
 package interfaces;
-import mediators.QPHPHButtonPanelPresenter;
+import mediators.*;
 
 public interface PanelSubject {
     void registerObserver(QPHPHButtonPanelPresenter presenter); 

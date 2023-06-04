@@ -28,4 +28,5 @@ public class LoginListener implements LoginUISubject,ActionListener {
 	public void registerObserver(LoginUIObserver observer) {
 		this.observer = observer;
 	}
+
 }

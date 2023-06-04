@@ -1,5 +1,4 @@
 package mediators;
-import java.io.*;
 import java.util.ArrayList;
 
 import api.Recorder;
@@ -8,10 +7,9 @@ import mainframe.*;
 import server.ServerCalls;
 
 public class QPHPHButtonPanelPresenter implements ButtonObserver, PanelObserver{
-    ArrayList<ButtonSubject> allButtons = new ArrayList<ButtonSubject>();
+    ArrayList<ButtonSubject> allButtons = new ArrayList<>();
     QuestionPanel qp;
     PromptHistory ph;
-    private static String filePath = "bin/main/questionFile.txt";
     Recorder recorder = new Recorder(null, null);
 
 
@@ -19,9 +17,7 @@ public class QPHPHButtonPanelPresenter implements ButtonObserver, PanelObserver{
         allButtons = createdButtons;
         qp = createdqp;
         ph = createdph;
-        for (ButtonSubject button : allButtons){
-            button.registerObserver(this);
-        }
+        allButtons.forEach(button -> button.registerObserver(this));
         qp.registerObserver(this);
         ph.registerObserver(this);
     }
@@ -37,9 +33,9 @@ public class QPHPHButtonPanelPresenter implements ButtonObserver, PanelObserver{
         }
         else {
             System.out.println("stoppedRecording");
-            ArrayList<String> qanda = recorder.stopRecording();
-            String question = qanda.get(0);
-            String answer = qanda.get(1);
+            final ArrayList<String> qanda = recorder.stopRecording();
+            final String question = qanda.get(0);
+            final String answer = qanda.get(1);
             ph.addPH(question);
             qp.setQuestion(question);
             qp.setAnswer(answer);
@@ -60,8 +56,8 @@ public class QPHPHButtonPanelPresenter implements ButtonObserver, PanelObserver{
     @Override
     public void onDelete() {
         System.out.println("deleted");
-        String question = qp.getQuestion();
-        int questionIndex = ph.getIndexInPH(question);
+        final String question = qp.getQuestion();
+        final int questionIndex = ph.getIndexInPH(question);
         System.out.println(questionIndex);
         ServerCalls.deleteFromServer(question);
         ph.removePH(questionIndex);
@@ -74,7 +70,7 @@ public class QPHPHButtonPanelPresenter implements ButtonObserver, PanelObserver{
     public void onClear(){
         System.out.println("cleared");
         for (int i = 0; i < ph.getPHSize(); i++) {
-            String question = ph.getElementInPH(i);
+            final String question = ph.getElementInPH(i);
             ServerCalls.deleteFromServer(question);
         }
           //TODO Should be some kind of update method with ClearListener
@@ -86,8 +82,8 @@ public class QPHPHButtonPanelPresenter implements ButtonObserver, PanelObserver{
     //_______________________________
 
 
-// * save asked questions to text file
-// */
+/* save asked questions to text file
+
 public void saveQuestions() {
   try {
     FileWriter questionFile = new FileWriter(filePath);
@@ -107,7 +103,7 @@ public void saveQuestions() {
 
  /*
 * load asked questions from text file
-*/
+*//*
 public void loadQuestions() {
 
   try {
@@ -126,5 +122,5 @@ public void loadQuestions() {
     System.out.println("loadQuestions() failed");
   }
   
-}
+}*/
 }

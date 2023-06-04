@@ -18,8 +18,8 @@ import mediators.QPHPHButtonPanelPresenter;
 
 
 
+@SuppressWarnings("serial")
 public class PromptHistory extends JPanel implements PanelSubject {
-  private QPHPHButtonPanelPresenter presenter;  
   private JLabel header;
     private static JScrollPane sideBar;
     private static DefaultListModel<String> listPH;
@@ -49,12 +49,24 @@ public class PromptHistory extends JPanel implements PanelSubject {
       
       
   }
+    
+  public PromptHistory(DefaultListModel<String> entries) {
+	  configBackground();
+      configheader();
+      configClearAll();
+      // loadQuestions();
+      configList(entries);
+      
+      this.add(header);
+      this.add(sideBar);
+      this.add(clearAll);
+      setVisible(true);
+  }
 
   //ON NOTIFY() METHODS 
 
   @Override
-  public void registerObserver(QPHPHButtonPanelPresenter presenter) {
-      this.presenter = presenter; 
+  public void registerObserver(QPHPHButtonPanelPresenter presenter) { 
   }
 
 
@@ -80,7 +92,7 @@ public class PromptHistory extends JPanel implements PanelSubject {
   }
 
   public String getElementInPH(int index){
-      return (String)listPH.getElementAt(index);
+      return listPH.getElementAt(index);
   }
 
   public int getIndexInPH(String s){
@@ -106,7 +118,15 @@ public class PromptHistory extends JPanel implements PanelSubject {
 
   private static void configList(){
     listPH = new DefaultListModel<>();
-    list = new JList<String>(listPH);
+    list = new JList<>(listPH);
+    list.setFont(new Font(FONT, Font.PLAIN, 20));
+    list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+    sideBar = new JScrollPane(list);
+    sideBar.setPreferredSize(new Dimension(400, 800));
+  }
+  
+  private static void configList(DefaultListModel<String> entries){
+    list = new JList<>(entries);
     list.setFont(new Font(FONT, Font.PLAIN, 20));
     list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
     sideBar = new JScrollPane(list);
