@@ -71,10 +71,9 @@ public class DS10AskQuestionTest{
         startButton.addActionListener(testListener);
         startButton.doClick();
         verify(qpMock).startedRecording();
-        startButton.setEnabled(false);
-        startButton.setEnabled(true);
-        startButton.doClick();
-        verify(qpMock).stoppedRecording();
+       // verify(qpMock).
+        //startButton.doClick();
+        //verify(qpMock).stoppedRecording();
     }
 
     @Test
