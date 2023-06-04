@@ -3,5 +3,5 @@ package interfaces;
 import processing.Entry;
 
 public interface AudioToResultInterface {
-    public Entry getEntry();
+    public String getCommand(String question);
 }

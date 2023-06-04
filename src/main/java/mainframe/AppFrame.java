@@ -9,10 +9,10 @@ import java.util.ArrayList;
 
 import javax.swing.*;
 
-import interfaces.ButtonSubject;
+import interfaces.*;
 import listeners.*;
 import mediators.QPHPHButtonPanelPresenter;
-import processing.AudioToResult;
+import api.*;
 import processing.Recorder;
 
 /*
@@ -27,7 +27,7 @@ public class AppFrame extends JFrame{
         
     LayoutManager afLayout = new BorderLayout();
     
-    public AppFrame(String email) throws IOException {
+    public AppFrame(ServerInterface ServerSession) throws IOException {
         //TODO
         //this.email = email;
 
@@ -47,7 +47,7 @@ public class AppFrame extends JFrame{
     
         QuestionPanel qp = new QuestionPanel();
         PromptHistory ph = new PromptHistory();
-        this.presenter = new QPHPHButtonPanelPresenter(addListeners(qp,ph),qp,ph, new Recorder(), null);
+        this.presenter = new QPHPHButtonPanelPresenter(addListeners(qp,ph),qp,ph, new Recorder(), new Whisper(), new ChatGPT(), ServerSession);
            
         this.add(qp, BorderLayout.CENTER); 
         this.add(ph, BorderLayout.WEST); 
