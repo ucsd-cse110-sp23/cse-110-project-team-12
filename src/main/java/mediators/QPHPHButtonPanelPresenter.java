@@ -37,7 +37,6 @@ public class QPHPHButtonPanelPresenter implements ButtonObserver, PanelObserver{
     @Override
     public void onStartStop(boolean startedRecording) {
         if (startedRecording){
-          recorder = new Recorder(); 
           System.out.println("startedRecording");
           recorder.startRecording();
           qp.startedRecording();
