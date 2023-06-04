@@ -4,6 +4,10 @@ import static org.mockito.Mockito.when;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+
+import api.ChatGPT;
+import api.Whisper;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.File;
@@ -49,11 +53,11 @@ public class DS10AskQuestionTest{
     @BeforeAll
     public static void setup(){
         ArrayList<ButtonSubject> createdButtons = new ArrayList<ButtonSubject>();
-        audioToResultMock = mock(AudioToResult.class);
         eventMock = mock(ActionEvent.class);
         qpMock = mock(QuestionPanel.class);
         phMock = mock(PromptHistory.class);
         recorderMock = mock(Recorder.class);
+        audioToResultMock = mock(AudioToResult.class);
         testListener = new StartStopListener();
         startButton = new JButton();
         startButton.addActionListener(testListener);
@@ -63,14 +67,33 @@ public class DS10AskQuestionTest{
     
     //Question: When is Christmas?
     @Test
-	void testValidQuestion() throws Exception {
+	void testUIupdatedStartStop() throws Exception {
         startButton.doClick();
         verify(qpMock).startedRecording();
         TimeUnit.SECONDS.sleep(1);
         startButton.doClick();
         verify(qpMock).stoppedRecording();
-        Entry entry = new QuestionEntry("Question", "When is Christmas", "25 December");
-        verify(audioToResultMock).getEntry();
-        
     }
+
+    @Test
+    void unitTestAudioToResultParser(){
+        Entry expectedEntry = new QuestionEntry("Question", "When is Christmas", "25 December");
+        WhisperInterface WhisperMock = mock(Whisper.class);
+        ChatGPTInterface ChatGPTMock = mock(ChatGPT.class);
+        when(WhisperMock.getQuestionText()).thenReturn("Question, When is Christmas");
+        when(ChatGPTMock.getAnswer()).thenReturn("25 December");
+
+        AudioToResult audioToResult = new AudioToResult(WhisperMock, ChatGPTMock);
+        Entry entry = audioToResult.getEntry();
+        System.out.println(entry.getCommand());
+        System.out.println(entry.getPrompt());
+        System.out.println(entry.getResult());
+        System.out.println(expectedEntry.getCommand());
+        System.out.println(expectedEntry.getPrompt());
+        System.out.println(expectedEntry.getResult());
+        
+        assertTrue(entry.getCommand().equals(expectedEntry.getCommand()));
+        assertTrue(entry.getPrompt().equals(expectedEntry.getPrompt()));
+        assertTrue(entry.getResult().equals(expectedEntry.getResult()));
+    } 
 }

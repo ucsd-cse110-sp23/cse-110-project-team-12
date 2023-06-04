@@ -2,6 +2,8 @@ package mediators;
 import java.io.*;
 import java.util.ArrayList;
 
+import api.ChatGPT;
+import api.Whisper;
 import interfaces.*;
 import mainframe.*;
 import processing.*;
@@ -45,7 +47,13 @@ public class QPHPHButtonPanelPresenter implements ButtonObserver, PanelObserver{
             System.out.println("stoppedRecording");
             File audioFile = recorder.stopRecording();
             qp.stoppedRecording();
-            audioToResult = new AudioToResult(audioFile);
+            WhisperInterface WhisperSession = null;
+            try {
+                WhisperSession = new Whisper(audioFile);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            audioToResult = new AudioToResult(WhisperSession, new ChatGPT());
             Entry entry = audioToResult.getEntry();
 
             // //TESTING

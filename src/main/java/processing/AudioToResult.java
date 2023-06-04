@@ -13,28 +13,16 @@ public class AudioToResult implements AudioToResultInterface{
     private ChatGPTInterface ChatGPTSession;
     private Entry entry = null;
 
-    public AudioToResult(File audioFile){
-        try {
-            WhisperSession = new Whisper(audioFile);
-          } catch (IOException e) {
-              e.printStackTrace();
-          }
-          parseFile();
+    public AudioToResult(WhisperInterface WhisperSession, ChatGPTInterface ChatGPTSession){
+        this.WhisperSession = WhisperSession;
+        this.ChatGPTSession = ChatGPTSession;
+        parseFile();
     }
 
     public Entry getEntry(){
         return entry;
     }
     
-    // @Override
-    // public String getCommand() {
-    //     return command;
-    // }
-
-    // @Override
-    // public String getPrompt() {
-    //     return prompt;
-    // }
 
     // @Override
     // public String getResult() {
@@ -58,7 +46,7 @@ public class AudioToResult implements AudioToResultInterface{
                     command = COMMANDS[i];
                     //check if there are remaining words first
                     try {
-                        prompt = voiceOutput.substring(COMMANDS[i].length()+1);
+                        prompt = voiceOutput.substring(COMMANDS[i].length()+2);
                     }
                     catch (StringIndexOutOfBoundsException e){
                         e.printStackTrace();
@@ -77,7 +65,7 @@ public class AudioToResult implements AudioToResultInterface{
             
             //real ask question to chatGPT    
             try {
-                ChatGPTSession = new ChatGPT(prompt);
+                this.ChatGPTSession.askChatGPT(prompt);
             } 
             catch (InterruptedException e) {
                 e.printStackTrace();
@@ -86,11 +74,11 @@ public class AudioToResult implements AudioToResultInterface{
                 e.printStackTrace();
             } 
 
-            String answerString = this.ChatGPTSession.getAnswer();
-            result = answerString.substring(2);
+            result = this.ChatGPTSession.getAnswer();
             entry = new QuestionEntry(command, prompt, result);
         }
     }
+    
 
     
 

@@ -23,7 +23,7 @@ public class ChatGPT implements ChatGPTInterface{
 	private String answer = null;
 
 	
-	public ChatGPT(String question_text) throws IOException, InterruptedException {
+	public void askChatGPT(String question_text) throws IOException, InterruptedException {
 		question = question_text;
 		
 		//Set request parameters
