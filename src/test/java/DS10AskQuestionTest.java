@@ -4,7 +4,6 @@ import static org.mockito.Mockito.when;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-
 import api.ChatGPT;
 import api.Whisper;
 
@@ -53,10 +52,10 @@ public class DS10AskQuestionTest{
     @BeforeAll
     public static void setup(){
         ArrayList<ButtonSubject> createdButtons = new ArrayList<ButtonSubject>();
-        eventMock = mock(ActionEvent.class);
+       // eventMock = mock(ActionEvent.class);
         qpMock = mock(QuestionPanel.class);
         phMock = mock(PromptHistory.class);
-        recorderMock = mock(Recorder.class);
+        //recorderMock = mock(Recorder.class);
         audioToResultMock = mock(AudioToResult.class);
         testListener = new StartStopListener();
         startButton = new JButton();

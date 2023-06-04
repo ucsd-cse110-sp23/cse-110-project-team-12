@@ -3,17 +3,22 @@ package mainframe;
  * AppFrame is the main interface of our program, contains 2 subpanels
  */
 
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
+import java.awt.LayoutManager;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import javax.swing.*;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JList;
+import javax.swing.WindowConstants;
 
 import interfaces.ButtonSubject;
-import listeners.*;
 import mediators.QPHPHButtonPanelPresenter;
-import processing.AudioToResult;
 import processing.Recorder;
+import listeners.*;
 
 /*
  * Main interface for application
