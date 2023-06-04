@@ -71,7 +71,7 @@ public class DS10AskQuestionTest{
         startButton.addActionListener(testListener);
         startButton.doClick();
         verify(qpMock).startedRecording();
-        TimeUnit.SECONDS.wait(1);
+        //TimeUnit.SECONDS.wait(1);
         startButton = new JButton();
         startButton.doClick();
         verify(qpMock).stoppedRecording();
