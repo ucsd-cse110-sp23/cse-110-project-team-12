@@ -19,6 +19,7 @@ import javax.swing.JOptionPane;
 /*
  * basic HTTP server
  */
+
 public class MyServer implements ServerInterface{
 	
 	//initialize server port and hostname
@@ -28,6 +29,7 @@ public class MyServer implements ServerInterface{
 	private static final String  URL = "http://localhost:8100/";
 
 	public  boolean checkServerAvailability() {
+
 		try (Socket s = new Socket(SERVER_ADDRESS, SERVER_PORT)) {
 			return true;
 		} catch (IOException e) {
@@ -38,6 +40,7 @@ public class MyServer implements ServerInterface{
 	}
 	
 	public void runServer() throws IOException {
+
 		//create a thread pool to handle requests
 		ThreadPoolExecutor threadPoolExecutor = (ThreadPoolExecutor)Executors.newFixedThreadPool(10);
 		
@@ -109,5 +112,4 @@ public class MyServer implements ServerInterface{
 			  return response;
 		  }
 		}
-
 }
