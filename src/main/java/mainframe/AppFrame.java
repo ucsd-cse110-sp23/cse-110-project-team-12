@@ -28,20 +28,16 @@ public class AppFrame extends JFrame implements MediatorObserver{
     LayoutManager afLayout = new BorderLayout();
     
     public AppFrame(ServerInterface ServerSession) throws IOException {
-        //TODO
-        //this.email = email;
-
-        //TODO
-        // presenter.loadQuestions();
     	this.setTitle(TITLE);
         this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         this.setSize(800, 1000);
         this.setLayout(afLayout);
         
         //windowed fullscreen
-        GraphicsEnvironment graph = GraphicsEnvironment.getLocalGraphicsEnvironment();
-        GraphicsDevice dev = graph.getDefaultScreenDevice();
-        dev.setFullScreenWindow(this);
+        // GraphicsEnvironment graph = GraphicsEnvironment.getLocalGraphicsEnvironment();
+        // GraphicsDevice dev = graph.getDefaultScreenDevice();
+        // dev.setFullScreenWindow(this);
+        this.setExtendedState(JFrame.MAXIMIZED_BOTH); 
         
         this.setVisible(false);
     
@@ -51,8 +47,6 @@ public class AppFrame extends JFrame implements MediatorObserver{
            
         this.add(qp, BorderLayout.CENTER); 
         this.add(ph, BorderLayout.WEST); 
-
-        revalidate();
     }
 
     ArrayList<ButtonSubject> addListeners(QuestionPanel qp,PromptHistory ph){
@@ -79,6 +73,8 @@ public class AppFrame extends JFrame implements MediatorObserver{
     @Override
     public void onLoginClosing() {
         this.setVisible(true);
+        this.setAlwaysOnTop(true);
+        this.setAlwaysOnTop(false);
     }
     
 }

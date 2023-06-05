@@ -24,7 +24,7 @@ public class LoginFrame extends JFrame implements MediatorObserver{
 		
 		LoginPanel lp = new LoginPanel();
 
-		mediator = new LoginMediator(addListeners(lp), lp, new MongoDB(), new ErrorMessages());// addListeners(); 
+		mediator = new LoginMediator(addListeners(lp), lp, new MongoDB(), new ErrorMessages());
 		mediator.registerObserver(this);
 		mediator.registerObserver(appFrame);  
         add(lp, BorderLayout.CENTER);

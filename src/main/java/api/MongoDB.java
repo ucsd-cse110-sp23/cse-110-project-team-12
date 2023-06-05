@@ -8,19 +8,17 @@ import com.mongodb.client.*;
 import com.mongodb.client.model.Filters;
 
 import interfaces.MongoInterface;
-import mainframe.app;
 
 import static com.mongodb.client.model.Filters.eq;
 
 import javax.swing.DefaultListModel;
-import javax.swing.JOptionPane;
 
 public class MongoDB implements MongoInterface {
 
-	private static final String URI = "mongodb+srv://juli:Pyys5stHYEsnDtJw@cluster0.w01dcya.mongodb.net/?retryWrites=true&w=majority";
-	private static final String DATABASENAME = "SayItAssistant";
-	private static final String COLLECTION = "Users";
-	private static final String EMAILADDRESS = "email_address";
+	private final String URI = "mongodb+srv://juli:Pyys5stHYEsnDtJw@cluster0.w01dcya.mongodb.net/?retryWrites=true&w=majority";
+	private final String DATABASENAME = "SayItAssistant";
+	private final String COLLECTION = "Users";
+	private final String EMAILADDRESS = "email_address";
 	
 	public boolean checkEmailExists(String email) {
 	    	 
@@ -69,35 +67,27 @@ public class MongoDB implements MongoInterface {
 			  
     }
 	
-	public boolean login(String email, String pass1) throws Exception {
-		// if (email.isBlank()) throw new Exception("Missing Email");
-		// if (pass1.isBlank()) throw new Exception("Missing Password");
+	public boolean checkValidLogin(String email, String pass1) {
 		
-		// Bson filter1 = eq(EMAILADDRESS, email);
-		// Bson filter2 = Filters.and(eq(EMAILADDRESS, email), eq("password", pass1));
-		
-		// try (MongoClient mongoClient = MongoClients.create(URI)) {
-			
-		// 	MongoDatabase userCluster = mongoClient.getDatabase(DATABASENAME);
-        //     MongoCollection<Document> entries = userCluster.getCollection(COLLECTION);
+		Bson filter1 = eq(EMAILADDRESS, email);
+		Bson filter2 = Filters.and(eq(EMAILADDRESS, email), eq("password", pass1));
+	
+		MongoClient mongoClient = MongoClients.create(URI);
+		MongoDatabase userCluster = mongoClient.getDatabase(DATABASENAME);
+		MongoCollection<Document> entries = userCluster.getCollection(COLLECTION);
             
-		// 	//check if email exists
-		// 	if (entries.find(filter1).first() != null) {
-		// 		//check that password is correct for email
-		// 		if (entries.find(filter2).first() != null) {
-		// 			//account exists so user logs in
-		// 			app.succesfullLogin();
-		// 		} else {
-		// 			JOptionPane.showMessageDialog(null, "Incorrect Password");
-		// 			throw new Exception("Incorrect password");
-		// 		}
-		// 	} else {
-		// 		JOptionPane.showMessageDialog(null, "Email Unrecognized");
-		// 		throw new Exception("Email Unrecognized");
-		// 	}
-	// 	}
-		//<todo>
-	return true;
+		//check if email exists
+		if (entries.find(filter1).first() != null) {
+			//check that password is correct for email
+			if (entries.find(filter2).first() != null) {
+				//account exists so user logs in
+				return true;
+			} 
+			return false;
+		}	
+		else {
+				return false;
+		}
 	}
 
 	@Override

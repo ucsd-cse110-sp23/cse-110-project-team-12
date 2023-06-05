@@ -1,14 +1,8 @@
 package mediators;
-import java.io.*;
 import java.util.ArrayList;
 
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
-
-import api.*;
 import interfaces.*;
 import mainframe.*;
-import processing.*;
 
 public class LoginMediator implements LoginButtonsObserver, LoginPanelObserver, MediatorSubject{
    
@@ -29,6 +23,7 @@ public class LoginMediator implements LoginButtonsObserver, LoginPanelObserver, 
         }
         lp.registerObserver(this);
     }
+
 
 
     @Override
@@ -62,15 +57,20 @@ public class LoginMediator implements LoginButtonsObserver, LoginPanelObserver, 
 
 	@Override
 	public void onLogin() {
-		// String sEmail = this.emailField.getText();
-		// String sPass1 = this.passField1.getText();
-		
-		// MongoDB mongoSession = new MongoDB();
-		
-		// mongoSession.login(sEmail, sPass1);
-		// this.dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
-		
-		// app.succesfullLogin();
+        String Email = lp.getEmail();
+		String Pass1 = lp.getPass1();
+        if (Email.isBlank()){
+            ErrorMessagesSession.showErrorMessage("Missing Email");
+        }
+        else if (Pass1.isBlank()){
+            ErrorMessagesSession.showErrorMessage("Missing Password");
+        }
+        if (MongoSession.checkValidLogin(Email,Pass1)){
+            notifyObservers();
+        }
+        else{
+            ErrorMessagesSession.showErrorMessage("Incorrect Login Details");
+        }
 		
 	}
 

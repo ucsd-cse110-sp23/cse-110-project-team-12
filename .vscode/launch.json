@@ -6,6 +6,13 @@
     "configurations": [
         {
             "type": "java",
+            "name": "app",
+            "request": "launch",
+            "mainClass": "mainframe.app",
+            "projectName": "cse-110-project-team-12"
+        },
+        {
+            "type": "java",
             "name": "AppFrame",
             "request": "launch",
             "mainClass": "AppFrame",
