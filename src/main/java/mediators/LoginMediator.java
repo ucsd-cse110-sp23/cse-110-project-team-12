@@ -32,7 +32,7 @@ public class LoginMediator implements LoginButtonsObserver, LoginPanelObserver, 
 
 
     @Override
-	public void onCreateAccount() throws Exception {
+	public void onCreateAccount() {
 		String Email = lp.getEmail();
 		String Pass1 = lp.getPass1();
 		String Pass2 = lp.getPass2();
@@ -61,7 +61,7 @@ public class LoginMediator implements LoginButtonsObserver, LoginPanelObserver, 
 	}
 
 	@Override
-	public void onLogin() throws Exception {
+	public void onLogin() {
 		// String sEmail = this.emailField.getText();
 		// String sPass1 = this.passField1.getText();
 		
