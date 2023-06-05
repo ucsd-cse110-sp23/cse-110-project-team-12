@@ -12,6 +12,18 @@ public class LoginMediator implements LoginButtonsObserver, LoginPanelObserver, 
     ErrorMessagesInterface ErrorMessagesSession;
     ArrayList<MediatorObserver> parentFrames;
 
+    public LoginMediator(LoginFrame lf, MongoInterface MongoSession, ErrorMessagesInterface ErrorMessagesSession){
+        this.parentFrames = new ArrayList<MediatorObserver>();
+        this.lp = lf.getLoginPanel();
+        this.allButtons = lf.addListeners(lp);
+        this.MongoSession = MongoSession;
+        this.ErrorMessagesSession = ErrorMessagesSession;
+        for (LoginButtonsSubject button : allButtons){
+            button.registerObserver(this);
+        }
+        lp.registerObserver(this);
+    }
+
     public LoginMediator(ArrayList<LoginButtonsSubject> allButtons, LoginPanel lp, MongoInterface MongoSession, ErrorMessagesInterface ErrorMessagesSession){
         this.parentFrames = new ArrayList<MediatorObserver>();
         this.allButtons = allButtons;

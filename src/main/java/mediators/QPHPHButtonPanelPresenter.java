@@ -7,17 +7,40 @@ import interfaces.*;
 import mainframe.*;
 import processing.*;
 
-public class QPHPHButtonPanelPresenter implements ButtonObserver, PanelObserver{
+public class QPHPHButtonPanelPresenter implements ButtonObserver, PanelObserver, MediatorSubject{
+
+    ArrayList<MediatorObserver> parentFrames;
     private static String filePath = "bin/main/questionFile.txt";
-    ArrayList<ButtonSubject> allButtons = new ArrayList<ButtonSubject>();
-    QuestionPanel qp;
-    PromptHistory ph;
+    
     Recorder recorder;
     WhisperInterface WhisperSession;
     ChatGPTInterface ChatGPTSession;
     ServerInterface ServerSession;
 
+    ArrayList<ButtonSubject> allButtons = new ArrayList<ButtonSubject>();
+    QuestionPanel qp;
+    PromptHistory ph;
+
+    public QPHPHButtonPanelPresenter(AppFrame appFrame, Recorder recorder, WhisperInterface WhisperSession, ChatGPTInterface ChatGPTSession, ServerInterface ServerSession){
+        this.parentFrames = new ArrayList<MediatorObserver>();
+        QuestionPanel qp = appFrame.getQuestionPanel();
+        PromptHistory ph = appFrame.getPromptHistory();
+        ArrayList<ButtonSubject> allButtons = appFrame.addListeners(qp, ph);
+        
+        this.recorder = recorder;
+        this.WhisperSession = WhisperSession;
+        this.ChatGPTSession = ChatGPTSession;
+        this.ServerSession = ServerSession;
+        
+        for (ButtonSubject button : allButtons){
+            button.registerObserver(this);
+        }
+        qp.registerObserver(this);
+        ph.registerObserver(this);
+    }
+
     public QPHPHButtonPanelPresenter(ArrayList<ButtonSubject> createdButtons, QuestionPanel createdqp, PromptHistory createdph, Recorder recorder, WhisperInterface WhisperSession, ChatGPTInterface ChatGPTSession, ServerInterface ServerSession){
+        this.parentFrames = new ArrayList<MediatorObserver>();
         allButtons = createdButtons;
         qp = createdqp;
         ph = createdph;
@@ -123,6 +146,18 @@ public class QPHPHButtonPanelPresenter implements ButtonObserver, PanelObserver{
         }
 
         return result;
+    }
+
+    @Override
+    public void registerObserver(MediatorObserver parentFrame) {
+        this.parentFrames.add(parentFrame);
+    }
+
+    @Override
+    public void notifyObservers() {
+        for (MediatorObserver panel : parentFrames){
+            panel.onEmailSetup();
+        }  
     }
 }
 

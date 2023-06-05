@@ -17,28 +17,28 @@ import processing.ErrorMessages;
 @SuppressWarnings("serial")
 public class LoginFrame extends JFrame implements MediatorObserver{
 
-	LoginMediator mediator;
+	LoginPanel lp;
 	
-	public LoginFrame(MediatorObserver appFrame) {
+	public LoginFrame() {
 		setTitle("Login or Create Account");
 		
-		LoginPanel lp = new LoginPanel();
-
-		mediator = new LoginMediator(addListeners(lp), lp, new MongoDB(), new ErrorMessages());
-		mediator.registerObserver(this);
-		mediator.registerObserver(appFrame);  
+		lp = new LoginPanel();
         add(lp, BorderLayout.CENTER);
         setSize(500,300);
         setVisible(true);
-             
+
 		
+	}
+
+	public LoginPanel getLoginPanel(){
+		return lp;
 	}
 
 	public void closeLoginFrame(){
 		this.dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
 	}
 
-	private ArrayList<LoginButtonsSubject> addListeners(LoginPanel lp){
+	public ArrayList<LoginButtonsSubject> addListeners(LoginPanel lp){
 		ArrayList<LoginButtonsSubject> allLoginButtons = new ArrayList<LoginButtonsSubject>();
 		JButton loginButton = lp.getLoginButton();
 		JButton createAccountButton = lp.getcreateAccountButton();
@@ -57,8 +57,10 @@ public class LoginFrame extends JFrame implements MediatorObserver{
 		closeLoginFrame();
 	}
 
-
-	
+	@Override
+	public void onEmailSetup() {
+		// Not used
+	}
 	
 	
 }
