@@ -99,10 +99,29 @@ public class QPHPHButtonPanelPresenter implements ButtonObserver, PanelObserver,
         
                     String answer = this.ChatGPTSession.getAnswer();
                     entry = new QuestionEntry(command, prompt, answer);
+                    qp.onNewEntry(entry);
+                    ph.onNewEntry(entry);
+                    this.ServerSession.postToServer(entry);  
                 }
-                qp.onNewEntry(entry);
-                ph.onNewEntry(entry);
-                this.ServerSession.postToServer(entry);   
+
+                //Case 2 where command is email setup
+                if (command.equalsIgnoreCase("Setup Email")) {            
+                    notifyObservers();
+                //     //real ask question to chatGPT    
+                //     try {
+                //         this.ChatGPTSession.askChatGPT(prompt);
+                //     } 
+                //     catch (InterruptedException e) {
+                //         e.printStackTrace();
+                //     }
+                //     catch (IOException e) {
+                //         e.printStackTrace();
+                //     } 
+        
+                //     String answer = this.ChatGPTSession.getAnswer();
+                }
+
+                 
             }
             else{
                 qp.InvalidInputDetected(question);
