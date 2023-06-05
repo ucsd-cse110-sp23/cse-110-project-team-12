@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="DS10AskQuestionTest" tests="2" skipped="0" failures="0" errors="0" timestamp="2023-06-05T02:28:44" hostname="SHAWN-XPS15" time="1.161">
+  <properties/>
+  <testcase name="testUIupdatedStartStop()" classname="DS10AskQuestionTest" time="1.153"/>
+  <testcase name="unitTestParseCommand()" classname="DS10AskQuestionTest" time="0.008"/>
+  <system-out><![CDATA[startedRecording
+stoppedRecording
+null
+When is Christmas
+[Question, When is Christmas]
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>
