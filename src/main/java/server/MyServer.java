@@ -26,6 +26,7 @@ public class MyServer implements ServerInterface{
 	private static final String SERVER_HOSTNAME = "localhost";
 	private static final String SERVER_ADDRESS = "127.0.0.1";
 	private static final String  URL = "http://localhost:8100/";
+	private static final String UTF8 = "UTF-8";
 
 	public  boolean checkServerAvailability() {
 		try (Socket s = new Socket(SERVER_ADDRESS, SERVER_PORT)) {
@@ -61,31 +62,30 @@ public class MyServer implements ServerInterface{
 		  return;
 		}
   
-		String question = entry.getPrompt();
+		String title = entry.getTitle();
 		String answer = entry.getResult();
+	
 		  try {
 			URL url = new URL(URL);
 			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 			conn.setRequestMethod("POST");
 			conn.setDoOutput(true);
+
+			String encodedQuestion = URLEncoder.encode(title, UTF8);
+			String encodedAnswer = URLEncoder.encode(answer, UTF8);
 			OutputStreamWriter out = new OutputStreamWriter(
 			  conn.getOutputStream()
 			);
-			out.write(question + "\n" + answer);
+			String encodedData = encodedQuestion + "," + encodedAnswer;
+			System.out.println(encodedData);
+			out.write(encodedData);	
 			out.flush();
 			out.close();
-			
-			//Read output from http post 
 			BufferedReader in = new BufferedReader(
-			  new InputStreamReader(conn.getInputStream())
-			);
-  
-			question = in.readLine();
-			answer = in.readLine();
-			in.close();
-			//TODO Boolean if server is not running?
-			
-			
+              new InputStreamReader(conn.getInputStream())
+            );
+            String response = in.readLine();
+            in.close();
 		  } catch (Exception ex) {
 			ex.printStackTrace();
 		  }
@@ -96,6 +96,7 @@ public class MyServer implements ServerInterface{
 			String response = "Getting from server...";
 		  
 			try {
+				
 			String encodedQuery = URLEncoder.encode(question, "UTF-8");
 			URL url = new URL(URL + "?=" + encodedQuery);
 			HttpURLConnection conn = (HttpURLConnection) url.openConnection();

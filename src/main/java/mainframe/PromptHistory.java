@@ -9,6 +9,8 @@
 
 package mainframe;
 import java.awt.*;
+import java.util.ArrayList;
+
 // import java.io.*;
 import javax.swing.*;
 
@@ -52,14 +54,16 @@ public class PromptHistory extends JPanel implements PanelSubject {
       
   }
 
-  public void onNewEntry(Entry entry){
-    if (entry == null){
-      //does nothing
-  }
-    if (entry instanceof QuestionEntry){
-      listPH.addElement(entry.getTitle());
-  }
- }
+  
+ ///////////////////////// SETTERS /////////////////////////////////////////////
+ public void onNewEntry(Entry entry){
+  if (entry == null){
+    //does nothing
+}
+  if (entry.getCommand().equalsIgnoreCase("Question")){
+    listPH.addElement(entry.getTitle());
+}
+}
 
   //ON NOTIFY() METHODS 
 
@@ -81,6 +85,9 @@ public class PromptHistory extends JPanel implements PanelSubject {
 }
 public JList<String> getPromptList(){
   return list;
+}
+public ListModel<String> getListModel(){
+  return listPH;
 }
 
 public int getPHSize(){

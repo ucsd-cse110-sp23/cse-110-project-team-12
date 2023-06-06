@@ -5,12 +5,10 @@ package mainframe;
 
 import java.awt.*;
 import java.io.IOException;
-import java.util.ArrayList;
 
 import javax.swing.*;
 
 import interfaces.*;
-import listeners.*;
 
 /*
  * Main interface for application
@@ -26,7 +24,7 @@ public class AppFrame extends JFrame implements MediatorObserver{
     
     public AppFrame() throws IOException {
     	this.setTitle(TITLE);
-        this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        this.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
         this.setSize(800, 1000);
         this.setLayout(afLayout);
         
@@ -51,27 +49,6 @@ public class AppFrame extends JFrame implements MediatorObserver{
 
     public PromptHistory getPromptHistory(){
         return ph;
-    }
-
-    public ArrayList<ButtonSubject> addListeners(QuestionPanel qp,PromptHistory ph){
-        ArrayList<ButtonSubject> allButtons = new ArrayList<ButtonSubject>();
-
-        JButton startButton = qp.getStartButton();
-        // JButton clearButton = ph.getClearButton(); 
-        JList<String> promptList = ph.getPromptList(); 
-        
-        StartStopListener ssListener = new StartStopListener();
-        // ClearListener cListener = new ClearListener();
-        QuestionListHandler lListener = new QuestionListHandler();
-
-        startButton.addActionListener(ssListener);
-        // clearButton.addActionListener(cListener);
-        promptList.addListSelectionListener(lListener);
-
-        allButtons.add(ssListener);
-        // allButtons.add(cListener);
-        allButtons.add(lListener);
-        return allButtons;
     }
 
     @Override
