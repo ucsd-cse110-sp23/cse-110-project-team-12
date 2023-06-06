@@ -5,15 +5,10 @@ package mainframe;
 
 import java.awt.*;
 import java.io.IOException;
-import java.util.ArrayList;
 
 import javax.swing.*;
 
 import interfaces.*;
-import listeners.*;
-import mediators.QPHPHButtonPanelPresenter;
-import api.*;
-import processing.Recorder;
 
 /*
  * Main interface for application
@@ -22,14 +17,14 @@ import processing.Recorder;
 public class AppFrame extends JFrame implements MediatorObserver{
 
     private static final String TITLE = "SayIt Assistant - Team 12";
-
-    private QPHPHButtonPanelPresenter presenter;
+    private QuestionPanel qp;
+    private PromptHistory ph;
         
     LayoutManager afLayout = new BorderLayout();
     
-    public AppFrame(ServerInterface ServerSession) throws IOException {
+    public AppFrame() throws IOException {
     	this.setTitle(TITLE);
-        this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        this.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
         this.setSize(800, 1000);
         this.setLayout(afLayout);
         
@@ -41,33 +36,19 @@ public class AppFrame extends JFrame implements MediatorObserver{
         
         this.setVisible(false);
     
-        QuestionPanel qp = new QuestionPanel();
-        PromptHistory ph = new PromptHistory();
-        this.presenter = new QPHPHButtonPanelPresenter(addListeners(qp,ph),qp,ph, new Recorder(), new Whisper(), new ChatGPT(), ServerSession);
+        qp = new QuestionPanel();
+        ph = new PromptHistory();
            
         this.add(qp, BorderLayout.CENTER); 
         this.add(ph, BorderLayout.WEST); 
     }
 
-    ArrayList<ButtonSubject> addListeners(QuestionPanel qp,PromptHistory ph){
-        ArrayList<ButtonSubject> allButtons = new ArrayList<ButtonSubject>();
+    public QuestionPanel getQuestionPanel(){
+        return qp;
+    }
 
-        JButton startButton = qp.getStartButton();
-        // JButton clearButton = ph.getClearButton(); 
-        JList<String> promptList = ph.getPromptList(); 
-        
-        StartStopListener ssListener = new StartStopListener();
-        // ClearListener cListener = new ClearListener();
-        QuestionListHandler lListener = new QuestionListHandler();
-
-        startButton.addActionListener(ssListener);
-        // clearButton.addActionListener(cListener);
-        promptList.addListSelectionListener(lListener);
-
-        allButtons.add(ssListener);
-        // allButtons.add(cListener);
-        allButtons.add(lListener);
-        return allButtons;
+    public PromptHistory getPromptHistory(){
+        return ph;
     }
 
     @Override
@@ -75,6 +56,11 @@ public class AppFrame extends JFrame implements MediatorObserver{
         this.setVisible(true);
         this.setAlwaysOnTop(true);
         this.setAlwaysOnTop(false);
+    }
+
+    @Override
+    public void onEmailSetup() {
+        //
     }
     
 }

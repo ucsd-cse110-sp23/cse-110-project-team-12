@@ -12,6 +12,18 @@ public class LoginMediator implements LoginButtonsObserver, LoginPanelObserver, 
     ErrorMessagesInterface ErrorMessagesSession;
     ArrayList<MediatorObserver> parentFrames;
 
+    public LoginMediator(LoginFrame lf, MongoInterface MongoSession, ErrorMessagesInterface ErrorMessagesSession){
+        this.parentFrames = new ArrayList<MediatorObserver>();
+        this.lp = lf.getLoginPanel();
+        this.allButtons = lf.addListeners(lp);
+        this.MongoSession = MongoSession;
+        this.ErrorMessagesSession = ErrorMessagesSession;
+        for (LoginButtonsSubject button : allButtons){
+            button.registerObserver(this);
+        }
+        lp.registerObserver(this);
+    }
+
     public LoginMediator(ArrayList<LoginButtonsSubject> allButtons, LoginPanel lp, MongoInterface MongoSession, ErrorMessagesInterface ErrorMessagesSession){
         this.parentFrames = new ArrayList<MediatorObserver>();
         this.allButtons = allButtons;
@@ -49,10 +61,11 @@ public class LoginMediator implements LoginButtonsObserver, LoginPanelObserver, 
             ErrorMessagesSession.showErrorMessage("Email taken");
         }
         else{
-           MongoSession.createAccount(Email, Pass1, Pass2); 	
+           MongoSession.createAccount(Email, Pass1, Pass2); 
+           //sucessful Login
+            notifyObservers();	
         }
-        //sucessful Login
-        notifyObservers();
+        
 	}
 
 	@Override

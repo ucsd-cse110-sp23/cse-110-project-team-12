@@ -14,7 +14,10 @@ import java.net.URLDecoder;
 
 public class RequestHandler implements HttpHandler {
 
-	private final Map<String, String> data;
+	private	 Map<String, String> data;
+	private final String ASCII = "ASCII";
+	private static final String UTF8 = "UTF-8";
+
     
     public RequestHandler(Map<String, String> data) {
         this.data = data;
@@ -63,11 +66,13 @@ public class RequestHandler implements HttpHandler {
 	 */
 	private String handlePost(HttpExchange httpExchange) throws IOException {
 		//retrieve and read input stream
+
 		InputStream inStream = httpExchange.getRequestBody();
 		Scanner scanner = new Scanner(inStream); 
-		String question = scanner.nextLine();
-		String answer = scanner.nextLine();
-
+		String postData = scanner.nextLine();
+		String question = postData.substring(0,postData.indexOf(","));
+		String answer = postData.substring(postData.indexOf(",") + 1);
+		
 		//store data in hashmap and local server
 		data.put(question, answer);
 		
@@ -87,14 +92,16 @@ public class RequestHandler implements HttpHandler {
 	private String handleGet(HttpExchange httpExchange) throws IOException {
 		String response = "Invalid GET Request";
 		URI uri = httpExchange.getRequestURI();
-		String query = uri.getRawQuery();
+		String encodedQuery = uri.getRawQuery();
 		
-		if (query != null) {
+		if (encodedQuery != null) {
 			//Decode query to get the question which is the key for the map
-			String encodedQuestion = query.substring(query.indexOf("=") + 1);
-			String question = URLDecoder.decode(encodedQuestion, "UTF-8");
-			String answer = data.get(question); 
+			encodedQuery = encodedQuery.substring(encodedQuery.indexOf("=") + 1);
+			String question = URLDecoder.decode(encodedQuery, UTF8);
+			String encodedAnswer = data.get(encodedQuery); 
 			
+			String answer = URLDecoder.decode(encodedAnswer, UTF8);
+	
 			if (answer != null) {
 				response = answer;
 			} else {
