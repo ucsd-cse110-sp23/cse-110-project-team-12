@@ -67,6 +67,22 @@ public class QPHPHButtonPanelPresenter implements ButtonObserver, PanelObserver,
     
     //////////////////////////////////////////////////////////BUTTON OBSERVER METHODS//////////////////////////////////////////////////////////////////////////////////////////////////
 
+    //When user first opens the appframe after login
+    @Override
+    public void onStart() {
+        //pulls data from MongoDB server
+        ArrayList<Entry> savedPromptHistory = this.MongoDBSession.retrieveSavedPromptHistory();
+        //populates prompt history with entries and posts to local server.
+        for (Entry entry : savedPromptHistory){
+            if (entry != null){
+                System.out.println(entry.getTitle());
+                System.out.println(entry.getResult());
+                ph.onNewEntry(entry);
+                this.ServerSession.postToServer(entry);
+            }
+        }
+    }
+
     //When start button is clicked. Can be used to start recording or stop recording.
     @Override
     public void onStartStop(boolean startedRecording) {
@@ -95,24 +111,8 @@ public class QPHPHButtonPanelPresenter implements ButtonObserver, PanelObserver,
 
                 //Case 1 where command is a question
                 if (command.equalsIgnoreCase("Question")) {            
-                
-                    //real ask question to chatGPT    
-                    try {
-                        this.ChatGPTSession.askChatGPT(prompt);
-                    } 
-                    catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                    catch (IOException e) {
-                        e.printStackTrace();
-                    } 
-        
-                    String answer = this.ChatGPTSession.getAnswer();
-                    entry = new Entry(command, prompt, answer);
-                    qp.onNewEntry(entry);
-                    ph.onNewEntry(entry);
-                    System.out.println(command + prompt + answer);
-                    this.ServerSession.postToServer(entry);  
+                    onQuestionCommand(command, prompt);
+                     
                 }
 
                 //Case 2 where command is email setup
@@ -120,6 +120,7 @@ public class QPHPHButtonPanelPresenter implements ButtonObserver, PanelObserver,
                     notifyObservers();
                 }
 
+                
                  
             }
             else{
@@ -140,7 +141,7 @@ public class QPHPHButtonPanelPresenter implements ButtonObserver, PanelObserver,
         }   
     }
 
-    //When user closes the frame
+    //When user closes the appframe
     @Override
     public void onClose() {
         boolean confirmation = ErrorMessages.confirmClosing();
@@ -157,22 +158,34 @@ public class QPHPHButtonPanelPresenter implements ButtonObserver, PanelObserver,
         }        
     }
 
-    @Override
-    public void onStart() {
-        //pulls data from MongoDB server
-        ArrayList<Entry> savedPromptHistory = this.MongoDBSession.retrieveSavedPromptHistory();
-        //populates prompt history with entries and posts to local server.
-        for (Entry entry : savedPromptHistory){
-            if (entry != null){
-                System.out.println(entry.getTitle());
-                System.out.println(entry.getResult());
-                ph.onNewEntry(entry);
-                this.ServerSession.postToServer(entry);
-            }
+
+
+    //////////////////////////////////////////////////////////LOGIC HELPER METHODS//////////////////////////////////////////////////////////////////////////////////////////////////
+    
+    //Stop button is clicked:Question command is parsed
+    public Entry onQuestionCommand(String command, String prompt){
+        Entry entry;
+        //real ask question to chatGPT    
+        try {
+            this.ChatGPTSession.askChatGPT(prompt);
+        } 
+        catch (InterruptedException e) {
+            e.printStackTrace();
         }
+        catch (IOException e) {
+            e.printStackTrace();
+        } 
+
+        String answer = this.ChatGPTSession.getAnswer();
+        entry = new Entry(command, prompt, answer);
+        qp.onNewEntry(entry);
+        ph.onNewEntry(entry);
+        System.out.println(command + prompt + answer);
+        this.ServerSession.postToServer(entry); 
+        return entry;
     }
 
-    //
+    //Setup button is clicked: Setup Email is completed.
     public void onEmailSetup(){
         if (!ep.checkAllFieldsFilled()){
             ErrorMessages.showErrorMessage("Fill up all fields");
@@ -188,8 +201,11 @@ public class QPHPHButtonPanelPresenter implements ButtonObserver, PanelObserver,
         
         
     }
+    
 
     //////////////////////////////////////////////////////////Helper METHODS//////////////////////////////////////////////////////////////////////////////////////////////////
+
+    //Helper method to convert recordings to entries.
     public Entry convertToEntry (ArrayList<String> deconstructedEntry) {
         String command = deconstructedEntry.get(0);
         String question = deconstructedEntry.get(1);
