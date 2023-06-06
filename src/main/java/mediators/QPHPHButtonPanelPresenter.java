@@ -120,6 +120,11 @@ public class QPHPHButtonPanelPresenter implements ButtonObserver, PanelObserver,
                     notifyObservers();
                 }
 
+                //Case 3 where command is delete
+                if (command.equalsIgnoreCase("Delete")){
+                    onDelete();
+                }
+
                 
                  
             }
@@ -183,6 +188,11 @@ public class QPHPHButtonPanelPresenter implements ButtonObserver, PanelObserver,
         System.out.println(command + prompt + answer);
         this.ServerSession.postToServer(entry); 
         return entry;
+    }
+
+    //Stop button is clicked: Delete is the given command
+    public void onDelete(){
+
     }
 
     //Setup button is clicked: Setup Email is completed.

@@ -54,8 +54,8 @@ public class PromptHistory extends JPanel implements PanelSubject {
       
   }
 
+ ///////////////////////////////////////////////////////////////////////SETTER METHODS//////////////////////////////////////////////////////////////////////////////////////////
   
- ///////////////////////// SETTERS /////////////////////////////////////////////
  public void onNewEntry(Entry entry){
   if (entry == null){
     //does nothing
@@ -65,20 +65,8 @@ public class PromptHistory extends JPanel implements PanelSubject {
 }
 }
 
-  //ON NOTIFY() METHODS 
 
-  @Override
-  public void registerObserver(QPHPHButtonPanelPresenter presenter) {
-      this.presenter = presenter; 
-  }
-
-
-  @Override
-  public void notifyObservers() {
-      //
-  }
-
-  //Getter methods
+///////////////////////////////////////////////////////////////////////GETTER METHODS//////////////////////////////////////////////////////////////////////////////////////////
 
   public JButton getClearButton(){
     return clearAll;      
@@ -102,12 +90,9 @@ public int getIndexInPH(String s){
 return listPH.indexOf(s);
 }
 
-//TODO Get rid of these public methods.
+///////////////////////////////////////////////////////////////////////GETTER METHODS//////////////////////////////////////////////////////////////////////////////////////////
 
 
-public void addPH(String s){
-    listPH.addElement(s);
-  }
 
   private void removePH(int index){
     listPH.remove(index);
@@ -117,8 +102,23 @@ public void addPH(String s){
     listPH.clear();
 }
 
+  
+///////////////////////////////////////////////////////////////////////SUBJECT METHODS//////////////////////////////////////////////////////////////////////////////////////////
 
-  //Configure and Create elements in PH
+
+@Override
+public void registerObserver(QPHPHButtonPanelPresenter presenter) {
+    this.presenter = presenter; 
+}
+
+
+@Override
+public void notifyObservers() {
+    //
+}
+
+///////////////////////////////////////////////////////////////////////PRIVATE CONFIGURE METHODS//////////////////////////////////////////////////////////////////////////////////////////
+
 
 
   private static void configList(){
@@ -147,6 +147,8 @@ public void addPH(String s){
     clearAll.setFont(new Font(FONT, Font.PLAIN, 24));
       clearAll.setAlignmentX(CENTER_ALIGNMENT);
   }    
+
+
 
 
 
