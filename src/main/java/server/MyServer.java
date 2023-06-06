@@ -61,9 +61,12 @@ public class MyServer implements ServerInterface{
 		  return;
 		}
   
-		String question = entry.getPrompt();
+		String title = entry.getTitle();
 		String answer = entry.getResult();
+		System.out.println("Title" + title + "," + "Answer" + answer);
 		  try {
+			
+			answer = URLEncoder.encode(answer, "UTF-8");
 			URL url = new URL(URL);
 			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 			conn.setRequestMethod("POST");
@@ -71,7 +74,7 @@ public class MyServer implements ServerInterface{
 			OutputStreamWriter out = new OutputStreamWriter(
 			  conn.getOutputStream()
 			);
-			out.write(question + "\n" + answer);
+			out.write(title + "\n" + answer);
 			out.flush();
 			out.close();
 			
@@ -80,7 +83,7 @@ public class MyServer implements ServerInterface{
 			  new InputStreamReader(conn.getInputStream())
 			);
   
-			question = in.readLine();
+			title = in.readLine();
 			answer = in.readLine();
 			in.close();
 			//TODO Boolean if server is not running?
@@ -92,17 +95,18 @@ public class MyServer implements ServerInterface{
 	  
 		}
   
-		public String getFromServer(String question){
+		public String getFromServer(String prompt){
 			String response = "Getting from server...";
 		  
 			try {
-			String encodedQuery = URLEncoder.encode(question, "UTF-8");
+			String encodedQuery = URLEncoder.encode(prompt, "UTF-8");
 			URL url = new URL(URL + "?=" + encodedQuery);
 			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 			conn.setRequestMethod("GET");
 			BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-			response = in.readLine();
+			response = URLDecoder.decode(in.readLine(), "ASCII");
 			in.close();
+			System.out.println("response" + response);
 			return response; 
 			} catch (Exception ex) {
 			  ex.printStackTrace();

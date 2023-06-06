@@ -67,10 +67,8 @@ import processing.*;
         if (entry == null){
             setQuestion("Invalid Input");
         }
-        if (entry instanceof QuestionEntry){
-            setQuestion(entry.getTitle());
-            setAnswer(entry.getResult());
-        }
+        setQuestion(entry.getTitle());
+        setAnswer(entry.getResult());
      }
 
      public void InvalidInputDetected(String question){
@@ -78,8 +76,8 @@ import processing.*;
         setAnswer("Invalid Input Detected");
      }
 
-     public void onListChange(String question, String answer){
-        setQuestion(question);
+     public void onListChange(String title, String answer){
+        setQuestion(title);
         setAnswer(answer);
      }
 

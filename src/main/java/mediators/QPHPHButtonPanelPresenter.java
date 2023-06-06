@@ -9,6 +9,7 @@ import processing.*;
 
 public class QPHPHButtonPanelPresenter implements ButtonObserver, PanelObserver{
     private static String filePath = "bin/main/questionFile.txt";
+    String defaultEmailUsername = "User";
     ArrayList<ButtonSubject> allButtons = new ArrayList<ButtonSubject>();
     QuestionPanel qp;
     PromptHistory ph;
@@ -63,7 +64,7 @@ public class QPHPHButtonPanelPresenter implements ButtonObserver, PanelObserver{
                 //Case 1 where command is a question
                 if (command.equalsIgnoreCase("Question")) {            
                 
-                    //real ask question to chatGPT    
+                    //ask question to chatGPT    
                     try {
                         this.ChatGPTSession.askChatGPT(prompt);
                     } 
@@ -75,7 +76,24 @@ public class QPHPHButtonPanelPresenter implements ButtonObserver, PanelObserver{
                     } 
         
                     String answer = this.ChatGPTSession.getAnswer();
-                    entry = new QuestionEntry(command, prompt, answer);
+                    entry = new Entry(command, prompt, answer);
+                    
+                //Case 2 where command is to create email draft
+                } else if (command.equalsIgnoreCase("Create email")) {
+                	
+                	//create email with chatGPT    
+                    try {
+                        this.ChatGPTSession.askChatGPT("Create an email draft that ends in Best regards, " + defaultEmailUsername + "and the email's body is" + prompt);
+                    } 
+                    catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    catch (IOException e) {
+                        e.printStackTrace();
+                    } 
+        
+                    String answer = this.ChatGPTSession.getAnswer().trim();
+                    entry = new Entry(command, prompt, answer);
                 }
                 qp.onNewEntry(entry);
                 ph.onNewEntry(entry);
@@ -86,16 +104,14 @@ public class QPHPHButtonPanelPresenter implements ButtonObserver, PanelObserver{
             }
         }
             
-        }
-        //String prompt is formatted as "Question: <Prompt>"
+    }
+    
+    //String prompt is formatted as "Question: <Prompt>"
     @Override
     public void onListChange(String prompt) {
-        System.out.println("listChanged");
-        if (prompt.startsWith("Question")){
-            String question = prompt.substring(prompt.indexOf(":") + 2); 
-            String answer = this.ServerSession.getFromServer(question);
-            qp.onListChange(question, answer);
-        }   
+        //String question = prompt.substring(prompt.indexOf(":") + 2); 
+        String answer = this.ServerSession.getFromServer(prompt);
+        qp.onListChange(prompt, answer);  
     }
 
     public ArrayList<String> parseCommand(String question){
@@ -110,7 +126,7 @@ public class QPHPHButtonPanelPresenter implements ButtonObserver, PanelObserver{
                     result.add(command);
                     //check if there are remaining words first
                     try {
-                        String prompt = question.substring(COMMANDS[i].length()+2);
+                        String prompt = question.substring(COMMANDS[i].length()+1);
                         result.add(prompt);
                         System.out.println(prompt);
                     }
