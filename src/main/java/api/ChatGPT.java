@@ -2,10 +2,10 @@ package api;
 /*
  * ChatGPT class communicates with online ChatGPT server to get a response to the question we send.
  */
-import java.net.URI;
+/*import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
+import java.net.http.HttpResponse;*/
 
 import org.json.JSONObject;
 

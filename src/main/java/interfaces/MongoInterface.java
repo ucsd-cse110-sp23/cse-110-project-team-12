@@ -5,8 +5,10 @@ import java.util.ArrayList;
 import processing.Entry;
 
 public interface MongoInterface {
+	void setURI(String URI);
+	void setCollection(String col);
 	boolean checkEmailExists(String email);
-	String checkPass(String email);
+	//String checkPass(String email);
 	void createAccount(String emailField, String passwordField, String passCheck);
 	boolean checkValidLogin(String email, String pass);
 	//US9-3,4: Retrieve User-Data: (Prompt History)

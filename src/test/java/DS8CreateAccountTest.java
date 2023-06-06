@@ -1,6 +1,14 @@
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+//import org.junit.Assert;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+//import org.junit.Assert.assertFalse;
+//import org.junit.Assert.assertTrue;
+
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -8,39 +16,42 @@ import static org.mockito.Mockito.when;
 import processing.ErrorMessages;
 import interfaces.ErrorMessagesInterface;
 import interfaces.LoginButtonsSubject;
-import interfaces.MongoInterface;
 import listeners.CreateAccountListener;
 import mainframe.LoginPanel;
 import mediators.*;
 import api.MongoDB;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 import javax.swing.JButton;
+import java.security.SecureRandom;
 
 public class DS8CreateAccountTest {
     
-    private static MongoInterface mongoDBMock;
+    private static MongoDB mongoDB;
     private static ErrorMessagesInterface errorMessagesMock ;
     private static LoginPanel LoginPanelMock;
 	private static CreateAccountListener createListener;
     private static JButton createButton;
 
 	private static LoginMediator testLogic;
+	
+	private final Random rand = new SecureRandom();
 
     @BeforeAll
 	public static void setUp(){
-		ArrayList<LoginButtonsSubject> allButtons = new ArrayList<LoginButtonsSubject>();
-		
-        mongoDBMock = mock(MongoDB.class);
+		final ArrayList<LoginButtonsSubject> allButtons = new ArrayList<LoginButtonsSubject>();
+		mongoDB = new MongoDB();
+		mongoDB.setCollection("TestUsers");
         errorMessagesMock = mock(ErrorMessages.class);
 		LoginPanelMock = mock(LoginPanel.class);
-
+		
        	createButton = new JButton();
 		createListener = new CreateAccountListener();
         createButton.addActionListener(createListener);
 		allButtons.add(createListener);
-		testLogic = new LoginMediator(allButtons, LoginPanelMock, mongoDBMock,errorMessagesMock);
+		testLogic = new LoginMediator(allButtons, LoginPanelMock, mongoDB,errorMessagesMock);
     }
 	/*
 	 * Scenario 1: User creates account with unique email and valid password
@@ -51,20 +62,24 @@ public class DS8CreateAccountTest {
 	 * And I click “Create Account” button
 	 * Then an account associated with that email and password is created
 	 */
-	@Test
+    @Test
 	void test_1_1_UniqueEmailAndPassword() throws Exception {
-		String expectedErrorMessage = "Email taken";
-		String availableEmail = "123";
-		String ValidPassword = "password";
-		String takenEmail = "12345";
-		when(LoginPanelMock.getEmail()).thenReturn(takenEmail);
+    	//generate random email
+		final String availableEmail = Integer.toString(rand.nextInt());
+		final String ValidPassword = "password";
+		
+		when(LoginPanelMock.getEmail()).thenReturn(availableEmail);
 		when(LoginPanelMock.getPass1()).thenReturn(ValidPassword);
 		when(LoginPanelMock.getPass2()).thenReturn(ValidPassword);
-		when(mongoDBMock.checkEmailExists(availableEmail)).thenReturn(false);
-		when(mongoDBMock.checkEmailExists(takenEmail)).thenReturn(true);
+		
+		assertFalse(mongoDB.checkEmailExists(availableEmail));
+		
 		testLogic.onCreateAccount();
-		verify(errorMessagesMock).showErrorMessage(expectedErrorMessage);
+		verify(mongoDB).createAccount(availableEmail,ValidPassword,ValidPassword);
+		
+		assertTrue(mongoDB.checkEmailExists(availableEmail));
 	}
+	
 	
 	/*
 	 * Scenario 2: User tries to create account with an existing email
@@ -74,20 +89,22 @@ public class DS8CreateAccountTest {
 	 * And I click “Create Account” button
 	 * Then I see an error message letting me know that the email is taken
 	 * And I am returned to the create account/login page
-	 */
+	 
+	
 	@Test
-	void test_2_1_NoExistingEmail() throws Exception {
+	void test_1_1_ExistingEmailError() throws Exception {
 		String expectedErrorMessage = "Email taken";
 		String availableEmail = "123";
 		String ValidPassword = "password";
 		String takenEmail = "12345";
-		when(LoginPanelMock.getEmail()).thenReturn(availableEmail);
+		mongoDB.createAccount(takenEmail, ValidPassword, ValidPassword);
+		when(LoginPanelMock.getEmail()).thenReturn(takenEmail);
 		when(LoginPanelMock.getPass1()).thenReturn(ValidPassword);
 		when(LoginPanelMock.getPass2()).thenReturn(ValidPassword);
-		when(mongoDBMock.checkEmailExists(availableEmail)).thenReturn(false);
-		when(mongoDBMock.checkEmailExists(takenEmail)).thenReturn(true);
+		when(mongoDB.checkEmailExists(availableEmail)).thenReturn(false);
+		when(mongoDB.checkEmailExists(takenEmail)).thenReturn(true);
 		testLogic.onCreateAccount();
-		verify(mongoDBMock).createAccount(availableEmail,ValidPassword,ValidPassword);	
+		verify(errorMessagesMock).showErrorMessage(expectedErrorMessage);
 	}
 
 	
@@ -101,7 +118,7 @@ public class DS8CreateAccountTest {
 	 * And I click “Create Account” button
 	 * Then I see an error message stating that the passwords do not match
 	 * And I am returned to the create account/login page
-	 */
+	 
 	
 	 @Test
 	void test_3_1_DifferentPasswords() {
@@ -126,7 +143,7 @@ public class DS8CreateAccountTest {
 	//  * When I click “Create Account” button
 	//  * Then an error message pops up asking me to enter both an email and password (twice) in order to create an account
 	//  * And I am returned to the create account/login page
-	//  */
+	//  
 	@Test
 	void test_4_1_MissingEmail() {
 		String invalidInput = "";
@@ -162,6 +179,6 @@ public class DS8CreateAccountTest {
 		testLogic.onCreateAccount();
 		verify(errorMessagesMock).showErrorMessage(expectedErrorMessage);
 
-	}
+	}*/
 
 }

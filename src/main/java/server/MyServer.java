@@ -28,10 +28,11 @@ public class MyServer implements ServerInterface{
 	private static final String  URL = "http://localhost:8100/";
 	private static final String UTF8 = "UTF-8";
 
-	public  boolean checkServerAvailability() {
-		try (Socket s = new Socket(SERVER_ADDRESS, SERVER_PORT)) {
+	public  boolean checkServerAvailability() throws IOException {
+		Socket s = new Socket(SERVER_ADDRESS, SERVER_PORT);
+		if (!s.isClosed()) {
 			return true;
-		} catch (IOException e) {
+		} else {
 			JOptionPane.showMessageDialog(null, "Error: Server Connection Unavailable");
 			System.exit(1);
 		}
@@ -46,7 +47,7 @@ public class MyServer implements ServerInterface{
 		HttpServer server = HttpServer.create(new InetSocketAddress(SERVER_HOSTNAME, SERVER_PORT),0);
 		
 		//create map to store data in RequestHandler
-		Map<String, String> data = new HashMap<>();
+		Map<String, String> data = new HashMap<String,String>();
 		
 		//set and start server
 		server.createContext("/", new RequestHandler(data));

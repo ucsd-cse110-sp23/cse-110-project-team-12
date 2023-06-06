@@ -1,4 +1,5 @@
 package interfaces;
+
 import mediators.QPHPHButtonPanelPresenter;
 
 public interface ButtonSubject {

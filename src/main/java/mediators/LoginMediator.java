@@ -18,8 +18,8 @@ public class LoginMediator implements LoginButtonsObserver, LoginPanelObserver, 
         this.allButtons = lf.addListeners(lp);
         this.MongoSession = MongoSession;
         this.ErrorMessagesSession = ErrorMessagesSession;
-        for (LoginButtonsSubject button : allButtons){
-            button.registerObserver(this);
+        for(LoginButtonsSubject button : allButtons) {
+        	button.registerObserver(this);
         }
         lp.registerObserver(this);
     }
@@ -30,8 +30,8 @@ public class LoginMediator implements LoginButtonsObserver, LoginPanelObserver, 
         this.lp = lp;
         this.MongoSession = MongoSession;
         this.ErrorMessagesSession = ErrorMessagesSession;
-        for (LoginButtonsSubject button : allButtons){
-            button.registerObserver(this);
+        for(LoginButtonsSubject button : allButtons) {
+        	button.registerObserver(this);
         }
         lp.registerObserver(this);
     }
@@ -44,14 +44,13 @@ public class LoginMediator implements LoginButtonsObserver, LoginPanelObserver, 
 		String Pass1 = lp.getPass1();
 		String Pass2 = lp.getPass2();
 
-		//TODO Verify sPass2 = sPass1
-		if (Email.isBlank()){
+		if (Email.trim().isEmpty()){
             ErrorMessagesSession.showErrorMessage("Missing Email");
         }
-        else if (Pass1.isBlank()){
+        else if (Pass1.trim().isEmpty()){
             ErrorMessagesSession.showErrorMessage("Missing Pass1");
         }
-        else if (Pass2.isBlank()){
+        else if (Pass2.trim().isEmpty()){
             ErrorMessagesSession.showErrorMessage("Missing Pass2");
         }
         else if (!Pass1.equals(Pass2)){
@@ -72,10 +71,10 @@ public class LoginMediator implements LoginButtonsObserver, LoginPanelObserver, 
 	public void onLogin() {
         String Email = lp.getEmail();
 		String Pass1 = lp.getPass1();
-        if (Email.isBlank()){
+        if (Email.trim().isEmpty()){
             ErrorMessagesSession.showErrorMessage("Missing Email");
         }
-        else if (Pass1.isBlank()){
+        else if (Pass1.trim().isEmpty()){
             ErrorMessagesSession.showErrorMessage("Missing Password");
         }
         if (MongoSession.checkValidLogin(Email,Pass1)){
@@ -96,9 +95,10 @@ public class LoginMediator implements LoginButtonsObserver, LoginPanelObserver, 
 
     @Override
     public void notifyObservers() {
-        for (MediatorObserver panel : parentFrames){
-            panel.onLoginClosing();
-        }  
+    	for (MediatorObserver panel : parentFrames) {
+    		panel.onLoginClosing();
+    	}
+         
     }
     
 }

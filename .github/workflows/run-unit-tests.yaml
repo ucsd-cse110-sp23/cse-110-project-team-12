@@ -10,6 +10,9 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-latest
+    strategy:
+       matrix:
+          mongodb-version: ['4.2','4.4','5.0','6.0']
 
     steps:
       - uses: actions/checkout@v3
@@ -25,6 +28,12 @@ jobs:
 
       - name: Setup Gradle
         uses: gradle/gradle-build-action@v2
+
+      - name: MongoDB in GitHub Actions
+        uses: supercharge/mongodb-github-action@1.8.0
+        with:
+           mongodb-version: ${{ matrix.mongodb-version}}
+        
 
       # build everything (includes running unit tests)
       - name: Change wrapper permissions

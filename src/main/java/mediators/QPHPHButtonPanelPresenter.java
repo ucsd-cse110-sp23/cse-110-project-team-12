@@ -151,9 +151,9 @@ public class QPHPHButtonPanelPresenter implements ButtonObserver, PanelObserver,
         boolean confirmation = ErrorMessages.confirmClosing();
         if (confirmation){
             ArrayList<Entry> savedHistory = new ArrayList<Entry>();
-            ListModel<String> modelPromptHistory = ph.getListModel();
+            ListModel modelPromptHistory = ph.getListModel();
             for (int i = 0; i < modelPromptHistory.getSize(); i++){
-                ArrayList<String> deconstructedEntry = parseCommand(modelPromptHistory.getElementAt(i));
+                ArrayList<String> deconstructedEntry = parseCommand((String)modelPromptHistory.getElementAt(i));
                 Entry entry = convertToEntry(deconstructedEntry);
                 savedHistory.add(entry);
             }
@@ -195,7 +195,7 @@ public class QPHPHButtonPanelPresenter implements ButtonObserver, PanelObserver,
     //Helper method to set instantiated listeners to respective panels
     public void setQPPHListeners(StartStopListener ssListener, QuestionListHandler lListener, ClosingFrameListener closeListener){
         JButton startButton = qp.getStartButton();
-        JList<String> promptList = ph.getPromptList(); 
+        JList promptList = ph.getPromptList(); 
         startButton.addActionListener(ssListener);
         promptList.addListSelectionListener(lListener);
         this.af.addWindowListener(closeListener);

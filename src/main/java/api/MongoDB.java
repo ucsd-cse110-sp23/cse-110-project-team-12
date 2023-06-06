@@ -1,6 +1,8 @@
 package api;
-import org.bson.*;
 
+//import org.bson.Document;
+
+import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 
@@ -20,9 +22,10 @@ import processing.Entry;
 public class MongoDB implements MongoInterface, ButtonSubject{
 
 	QPHPHButtonPanelPresenter presenter;
-	private final String URI = "mongodb+srv://juli:Pyys5stHYEsnDtJw@cluster0.w01dcya.mongodb.net/?retryWrites=true&w=majority";
+	
+    private String URI = "mongodb+srv://juli:Pyys5stHYEsnDtJw@cluster0.w01dcya.mongodb.net/?retryWrites=true&w=majority";
 	private final String DATABASENAME = "SayItAssistant";
-	private final String COLLECTION = "Users";
+	private String COLLECTION = "Users";
 
 	private final String EMAIL_CATEGORY = "email_address";
 	private final String PASSWORD_CATEGORY = "password";
@@ -34,16 +37,25 @@ public class MongoDB implements MongoInterface, ButtonSubject{
 
 	private String currentLoggedInUser = null;
 	
+	@Override
+	public void setURI(String URI) {
+		this.URI = URI;
+	}
+	
+	@Override
+	public void setCollection(String col) {
+		this.COLLECTION = col;
+	}
+	
 	public boolean checkEmailExists(String email) {
 	    	 
         Bson filter = eq(EMAIL_CATEGORY, email);
-        try (MongoClient mongoClient = MongoClients.create(URI)) {
-			MongoDatabase userCluster = mongoClient.getDatabase(DATABASENAME);
-            MongoCollection<Document> entries = userCluster.getCollection(COLLECTION);
-	        if (entries.find(filter).first() != null) {
-				currentLoggedInUser = email;
-	        	return true;
-	        }
+        MongoClient mongoClient = MongoClients.create(URI);
+		MongoDatabase userCluster = mongoClient.getDatabase(DATABASENAME);
+        MongoCollection<Document> entries = userCluster.getCollection(COLLECTION);
+        if (entries.find(filter).first() != null) {
+			currentLoggedInUser = email;
+        	return true;
         }
 
 		return false;
@@ -142,16 +154,17 @@ public class MongoDB implements MongoInterface, ButtonSubject{
 	 * param - email
 	 * returns email's password
 	 */
+	/*
 	public String checkPass(String email) {
 		
 		Bson filter = eq(EMAIL_CATEGORY, email);
 
-		MongoCollection<Document> entries = getAllDocuments();
+		MongoCollection<Document> entries = getAllDocuments(String URI, String DATABASENAME, String COLLECTION);
 		Document foundDoc = entries.find(filter).first();
 		return (String) (foundDoc.get(PASSWORD_CATEGORY));
 	
 	
-	}
+	}*/
 
 	////////////////////////////////MEDIATOR SUBJECT METHODS/////////////////////////////////////////
 

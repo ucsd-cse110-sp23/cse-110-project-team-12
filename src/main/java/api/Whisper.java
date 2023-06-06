@@ -97,7 +97,7 @@ public class Whisper implements WhisperInterface{
 		 JSONObject responseJson = new JSONObject(response.toString());
 		 
 		 String responseString = responseJson.getString("text");
-		 if (!responseString.isBlank()) {
+		 if (!((responseString.trim()).isEmpty())) {
 			question_text = responseJson.getString("text");
 		 }		 
 	 }

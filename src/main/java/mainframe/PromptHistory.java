@@ -26,8 +26,8 @@ public class PromptHistory extends JPanel implements PanelSubject {
   private QPHPHButtonPanelPresenter presenter;  
   private JLabel header;
     private static JScrollPane sideBar;
-    private static DefaultListModel<String> listPH;
-    private static JList<String> list;
+    private static DefaultListModel listPH;
+    private static JList list;
     private JButton clearAll;
   
     private static final String FONT = "Sans-serif";
@@ -83,10 +83,10 @@ public class PromptHistory extends JPanel implements PanelSubject {
   public JButton getClearButton(){
     return clearAll;      
 }
-public JList<String> getPromptList(){
+public JList getPromptList(){
   return list;
 }
-public ListModel<String> getListModel(){
+public ListModel getListModel(){
   return listPH;
 }
 
@@ -122,8 +122,8 @@ public void addPH(String s){
 
 
   private static void configList(){
-    listPH = new DefaultListModel<>();
-    list = new JList<String>(listPH);
+    listPH = new DefaultListModel();
+    list = new JList(listPH);
     list.setFont(new Font(FONT, Font.PLAIN, 20));
     list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
     sideBar = new JScrollPane(list);

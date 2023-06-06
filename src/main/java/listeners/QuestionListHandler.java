@@ -21,7 +21,7 @@ public class QuestionListHandler implements ListSelectionListener, ButtonSubject
 	 */
     @SuppressWarnings("unchecked")
     public void valueChanged(ListSelectionEvent e){
-        question = (String) ((JList<String>) e.getSource()).getSelectedValue();
+        question = (String) ((JList) e.getSource()).getSelectedValue();
         if (question != null){
             notifyObservers();
         }
