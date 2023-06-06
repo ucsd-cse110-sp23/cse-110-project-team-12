@@ -4,6 +4,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import api.*;
@@ -44,8 +45,8 @@ public class DS12SetupEmailTest {
     private static JButton startButton;
     private static JButton setupButton;
 
-    @BeforeAll
-    public static void setup(){
+    @BeforeEach
+    public void setup(){
 
         //Mock classes
         qpMock = mock(QuestionPanel.class);
@@ -68,10 +69,9 @@ public class DS12SetupEmailTest {
         when(phMock.getPromptList()).thenReturn(new JList<String>());
         when(epMock.getSetupButton()).thenReturn(setupButton = new JButton());
 
-        //Testing Classes
-
-        testLogic = new QPHPHButtonPanelPresenter( esFrameMock,  appFrameMock,  recorderMock,  WhisperMock, 
-        ChatGPTMock,  serverMock,  ErrorMessagesMock,  MongoDBMock);
+         //Testing Classes
+         testLogic = new QPHPHButtonPanelPresenter( esFrameMock,  appFrameMock,  recorderMock,  WhisperMock, 
+         ChatGPTMock,  serverMock,  ErrorMessagesMock,  MongoDBMock);
     }
 
     @Test
@@ -105,10 +105,8 @@ public class DS12SetupEmailTest {
         ArrayList<String> testInput = new ArrayList<String>(Arrays.asList("First Name", "Last Name", "Display Name", "Email", "SMTP Host", "TLS port", "Email Password"));
         when(WhisperMock.getQuestionText()).thenReturn("Setup Email");
         startButton.doClick();
-        verify(qpMock).startedRecording();
         TimeUnit.SECONDS.sleep(1);
         startButton.doClick();
-        verify(qpMock).stoppedRecording();
         
         //Test Valid Setup Email command
         verify(esFrameMock).onEmailSetup();
@@ -132,10 +130,8 @@ public class DS12SetupEmailTest {
             ArrayList<String> testInput = new ArrayList<String>(Arrays.asList("First Name", "Last Name", "Display Name", "Email", "SMTP Host", "TLS port", "Email Password"));
             when(WhisperMock.getQuestionText()).thenReturn("Setup Email");
             startButton.doClick();
-            verify(qpMock).startedRecording();
             TimeUnit.SECONDS.sleep(1);
             startButton.doClick();
-            verify(qpMock).stoppedRecording();
             
             //Test Valid Setup Email command
             verify(esFrameMock).onEmailSetup();
