@@ -30,9 +30,9 @@ public class app {
 		loginMediator.registerObserver(loginFrame);
 		loginMediator.registerObserver(appFrame);  
         postloginMediator = new QPHPHButtonPanelPresenter(emailSetupFrame, appFrame, new Recorder(), new Whisper(), new ChatGPT(), ServerInstance, new ErrorMessages(), MongoSession);
-        postloginMediator.registerObserver(appFrame);
-        postloginMediator.registerObserver(emailSetupFrame);
-        MongoSession.registerObserver(postloginMediator);
+        // postloginMediator.registerObserver(appFrame);
+        // postloginMediator.registerObserver(emailSetupFrame);
+        // MongoSession.registerObserver(postloginMediator);
 
         
     }

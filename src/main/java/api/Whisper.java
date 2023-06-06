@@ -18,41 +18,41 @@ public class Whisper implements WhisperInterface{
 	 int TEMPCOUNT = 0;
 
 	  public void setWhisperFile(File question_audio) throws IOException {
-		//  File file = question_audio;
-		//  URL url = new URL(API_ENDPOINT);
-        //  HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-        //  connection.setRequestMethod("POST");
-        //  connection.setDoOutput(true);
+		 File file = question_audio;
+		 URL url = new URL(API_ENDPOINT);
+         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+         connection.setRequestMethod("POST");
+         connection.setDoOutput(true);
 
-        //  String boundary = "Boundary-" + System.currentTimeMillis();
-        //  connection.setRequestProperty("Content-Type", "multipart/form-data; boundary=" + boundary);
-        //  connection.setRequestProperty("Authorization", "Bearer " + TOKEN);
+         String boundary = "Boundary-" + System.currentTimeMillis();
+         connection.setRequestProperty("Content-Type", "multipart/form-data; boundary=" + boundary);
+         connection.setRequestProperty("Authorization", "Bearer " + TOKEN);
 
-        //  OutputStream outputStream = connection.getOutputStream();
+         OutputStream outputStream = connection.getOutputStream();
 
-        //  writeParameterToOutputStream(outputStream, "model", MODEL, boundary);
-        //  writeFileToOutputStream(outputStream, file, boundary);
-        //  outputStream.write(("\r\n--" + boundary + "--\r\n").getBytes());
-        //  outputStream.flush();
-        //  outputStream.close();
+         writeParameterToOutputStream(outputStream, "model", MODEL, boundary);
+         writeFileToOutputStream(outputStream, file, boundary);
+         outputStream.write(("\r\n--" + boundary + "--\r\n").getBytes());
+         outputStream.flush();
+         outputStream.close();
 
-        //  int responseCode = connection.getResponseCode();
+         int responseCode = connection.getResponseCode();
 
-        //  if(responseCode== HttpURLConnection.HTTP_OK){
-        //      handleSuccessResponse(connection);
-        //  }
-        //  else{
-        //      handleErrorResponse(connection);
-        //  }
-        //  connection.disconnect();
+         if(responseCode== HttpURLConnection.HTTP_OK){
+             handleSuccessResponse(connection);
+         }
+         else{
+             handleErrorResponse(connection);
+         }
+         connection.disconnect();
       
 
 	}
 
 	public String getQuestionText(){
-		TEMPCOUNT++;
-		return "Setup Email" + TEMPCOUNT;
-		// return question_text;
+		// TEMPCOUNT++;
+		// return "Setup Email" + TEMPCOUNT;
+		return question_text;
 
 	}
 

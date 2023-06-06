@@ -60,6 +60,9 @@ public class QPHPHButtonPanelPresenter implements ButtonObserver, PanelObserver,
         }
         qp.registerObserver(this);
         ph.registerObserver(this);
+        this.registerObserver(appFrame);
+        this.registerObserver(esFrame);
+        this.MongoDBSession.registerObserver(this);
     }
     
     //////////////////////////////////////////////////////////BUTTON OBSERVER METHODS//////////////////////////////////////////////////////////////////////////////////////////////////
@@ -113,7 +116,7 @@ public class QPHPHButtonPanelPresenter implements ButtonObserver, PanelObserver,
                 }
 
                 //Case 2 where command is email setup
-                if (command.equalsIgnoreCase("Setup Email")) {            
+                if (command.equalsIgnoreCase("Setup Email")) {           
                     notifyObservers();
                 }
 
@@ -175,6 +178,7 @@ public class QPHPHButtonPanelPresenter implements ButtonObserver, PanelObserver,
             ErrorMessages.showErrorMessage("Fill up all fields");
         }
         else {
+            System.out.println("here");
             ef.setVisible(false);
             ArrayList<String> fields = ep.getAllFields();
             this.MongoDBSession.setupEmail(fields);
@@ -265,6 +269,7 @@ public class QPHPHButtonPanelPresenter implements ButtonObserver, PanelObserver,
     @Override
     public void notifyObservers() {
         for (MediatorObserver frame : parentFrames){
+           
             frame.onEmailSetup();
         }  
     }
