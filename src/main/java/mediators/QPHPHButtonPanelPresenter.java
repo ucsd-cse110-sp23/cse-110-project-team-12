@@ -51,7 +51,6 @@ public class QPHPHButtonPanelPresenter implements ButtonObserver, PanelObserver{
             try {
                 this.WhisperSession.setWhisperFile(audioFile);
                 question = WhisperSession.getQuestionText();
-                System.out.println(question);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -117,7 +116,9 @@ public class QPHPHButtonPanelPresenter implements ButtonObserver, PanelObserver{
     public ArrayList<String> parseCommand(String question){
         final String[] COMMANDS = {"Question", "Send email", "Create email", "Setup email", "Delete prompt", "Clear all"};
         ArrayList<String> result = null;
+       
         if (question != null){
+        	
             for (int i = 0; i < COMMANDS.length; i++) {
 			
                 if (question.startsWith(COMMANDS[i])) {
@@ -126,9 +127,8 @@ public class QPHPHButtonPanelPresenter implements ButtonObserver, PanelObserver{
                     result.add(command);
                     //check if there are remaining words first
                     try {
-                        String prompt = question.substring(COMMANDS[i].length()+1);
+                        String prompt = question.substring(COMMANDS[i].length()+1).trim();
                         result.add(prompt);
-                        System.out.println(prompt);
                     }
                     catch (StringIndexOutOfBoundsException e){
                         //No question detected

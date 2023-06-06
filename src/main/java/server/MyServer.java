@@ -26,6 +26,7 @@ public class MyServer implements ServerInterface{
 	private static final String SERVER_HOSTNAME = "localhost";
 	private static final String SERVER_ADDRESS = "127.0.0.1";
 	private static final String  URL = "http://localhost:8100/";
+	private static final String UTF8 = "UTF-8";
 
 	public  boolean checkServerAvailability() {
 		try (Socket s = new Socket(SERVER_ADDRESS, SERVER_PORT)) {
@@ -63,50 +64,46 @@ public class MyServer implements ServerInterface{
   
 		String title = entry.getTitle();
 		String answer = entry.getResult();
-		System.out.println("Title" + title + "," + "Answer" + answer);
+	
 		  try {
-			
-			answer = URLEncoder.encode(answer, "UTF-8");
 			URL url = new URL(URL);
 			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 			conn.setRequestMethod("POST");
 			conn.setDoOutput(true);
+
+			String encodedQuestion = URLEncoder.encode(title, UTF8);
+			String encodedAnswer = URLEncoder.encode(answer, UTF8);
 			OutputStreamWriter out = new OutputStreamWriter(
 			  conn.getOutputStream()
 			);
-			out.write(title + "\n" + answer);
+			String encodedData = encodedQuestion + "," + encodedAnswer;
+			System.out.println(encodedData);
+			out.write(encodedData);	
 			out.flush();
 			out.close();
-			
-			//Read output from http post 
 			BufferedReader in = new BufferedReader(
-			  new InputStreamReader(conn.getInputStream())
-			);
-  
-			title = in.readLine();
-			answer = in.readLine();
-			in.close();
-			//TODO Boolean if server is not running?
-			
-			
+              new InputStreamReader(conn.getInputStream())
+            );
+            String response = in.readLine();
+            in.close();
 		  } catch (Exception ex) {
 			ex.printStackTrace();
 		  }
 	  
 		}
   
-		public String getFromServer(String prompt){
+		public String getFromServer(String question){
 			String response = "Getting from server...";
 		  
 			try {
-			String encodedQuery = URLEncoder.encode(prompt, "UTF-8");
+				
+			String encodedQuery = URLEncoder.encode(question, "UTF-8");
 			URL url = new URL(URL + "?=" + encodedQuery);
 			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 			conn.setRequestMethod("GET");
 			BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-			response = URLDecoder.decode(in.readLine(), "ASCII");
+			response = in.readLine();
 			in.close();
-			System.out.println("response" + response);
 			return response; 
 			} catch (Exception ex) {
 			  ex.printStackTrace();
