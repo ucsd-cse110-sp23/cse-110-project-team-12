@@ -6,6 +6,7 @@ import org.bson.types.ObjectId;
 
 import com.mongodb.client.*;
 import com.mongodb.client.model.Filters;
+import com.mongodb.client.model.UpdateOptions;
 
 import interfaces.ButtonSubject;
 import interfaces.MongoInterface;
@@ -27,6 +28,15 @@ public class MongoDB implements MongoInterface, ButtonSubject{
 	private final String EMAIL_CATEGORY = "email_address";
 	private final String PASSWORD_CATEGORY = "password";
 	private final String HISTORY_CATEGORY = "entries";
+	private final String EMAILINFO_CATEGORY = "saved email info";
+
+	private final String FIRSTNAME_CATEGORY = "first name";
+	private final String LASTNAME_CATEGORY = "last name";
+	private final String DISPLAY_CATEGORY = "display name";
+	private final String SMTP_HOST = "smpt host";
+	private final String TLS_PORT = "tls port";
+	private final String EMAIL_PASSWORD = "email password";
+
 
 	private final String COMMAND_CATEGORY = "type";
 	private final String PROMPT_CATEGORY = "prompt";
@@ -41,7 +51,6 @@ public class MongoDB implements MongoInterface, ButtonSubject{
 			MongoDatabase userCluster = mongoClient.getDatabase(DATABASENAME);
             MongoCollection<Document> entries = userCluster.getCollection(COLLECTION);
 	        if (entries.find(filter).first() != null) {
-				currentLoggedInUser = email;
 	        	return true;
 	        }
         }
@@ -92,8 +101,7 @@ public class MongoDB implements MongoInterface, ButtonSubject{
 
 		ArrayList<Document> documentPromptHistory = new ArrayList<Document>();
 		for (Entry entry: PromptHistory){
-			Document documentEntry = new Document("entries", null);
-			documentEntry.append(COMMAND_CATEGORY, entry.getCommand());
+			Document documentEntry = new Document(COMMAND_CATEGORY, entry.getCommand());
 			documentEntry.append(PROMPT_CATEGORY, entry.getPrompt());
 			documentEntry.append(RESULT_CATEGORY, entry.getResult());
 			documentPromptHistory.add(documentEntry);
@@ -122,6 +130,23 @@ public class MongoDB implements MongoInterface, ButtonSubject{
 			promptHistory.add(entry);
 		}
 		return promptHistory;
+	}
+
+	//Called when SetupEmail button is clicked and inputs are valid (not null)
+	public void setupEmail(ArrayList<String> inputs) {
+		Bson filter = eq(EMAIL_CATEGORY, this.currentLoggedInUser);
+		MongoCollection<Document> allUsers = getAllDocuments();
+		Document documentEmailInfo = new Document(EMAILINFO_CATEGORY, inputs.get(0));
+		documentEmailInfo.append(LASTNAME_CATEGORY, inputs.get(1));
+		documentEmailInfo.append(DISPLAY_CATEGORY, inputs.get(2));
+		documentEmailInfo.append(EMAIL_CATEGORY, inputs.get(3));
+		documentEmailInfo.append(SMTP_HOST, inputs.get(4));
+		documentEmailInfo.append(TLS_PORT, inputs.get(5));
+		documentEmailInfo.append(EMAIL_PASSWORD, inputs.get(6));
+		UpdateOptions options = new UpdateOptions().upsert(true);
+		Bson updateOperation = set(EMAILINFO_CATEGORY, documentEmailInfo);
+		allUsers.updateOne(filter, updateOperation, options);
+		
 	}
 
 	

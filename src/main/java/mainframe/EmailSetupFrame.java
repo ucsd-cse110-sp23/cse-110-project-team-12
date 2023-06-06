@@ -7,14 +7,22 @@ import interfaces.MediatorObserver;
 
 public class EmailSetupFrame extends JFrame implements MediatorObserver{
 
+    EmailSetupPanel esp;
+
     public EmailSetupFrame(){
         setTitle("Setup Email");
 		
-		EmailSetupPanel esp = new EmailSetupPanel();
+		esp = new EmailSetupPanel();
 
         add(esp, BorderLayout.CENTER);
         setSize(500,800);
         setVisible(false);
+    }
+
+    
+
+    public EmailSetupPanel getSetupPanel(){
+        return esp;
     }
     
 

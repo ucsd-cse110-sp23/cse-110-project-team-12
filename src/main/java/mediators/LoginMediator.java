@@ -61,10 +61,11 @@ public class LoginMediator implements LoginButtonsObserver, LoginPanelObserver, 
             ErrorMessagesSession.showErrorMessage("Email taken");
         }
         else{
-           MongoSession.createAccount(Email, Pass1, Pass2); 	
+           MongoSession.createAccount(Email, Pass1, Pass2); 
+           //sucessful Login
+            notifyObservers();	
         }
-        //sucessful Login
-        notifyObservers();
+        
 	}
 
 	@Override
