@@ -77,7 +77,6 @@ public class MyServer implements ServerInterface{
 			  conn.getOutputStream()
 			);
 			String encodedData = encodedQuestion + "," + encodedAnswer;
-			System.out.println(encodedData);
 			out.write(encodedData);	
 			out.flush();
 			out.close();
@@ -101,14 +100,42 @@ public class MyServer implements ServerInterface{
 			URL url = new URL(URL + "?=" + encodedQuery);
 			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 			conn.setRequestMethod("GET");
+			
+			//get all lines of answer
 			BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-			response = in.readLine();
+			StringBuilder answer = new StringBuilder();
+			String line;
+			
+			while((line = in.readLine()) != null ) {
+				answer.append(line);
+				answer.append(System.lineSeparator());
+			}
+			
 			in.close();
-			return response; 
+			return answer.toString(); 
 			} catch (Exception ex) {
 			  ex.printStackTrace();
 			  return response;
 		  }
+		}
+
+		public void deleteFromServer(String query){
+			try {
+			String encodedQuery = URLEncoder.encode(query, "UTF-8");
+			URL url = new URL(URL + "?=" + encodedQuery);
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("DELETE");
+            BufferedReader in = new BufferedReader(
+              new InputStreamReader(conn.getInputStream())
+            );
+            in.readLine();
+            in.close();
+          
+          } catch (Exception ex) {
+            ex.printStackTrace();
+          
+          }
+      
 		}
 
 }

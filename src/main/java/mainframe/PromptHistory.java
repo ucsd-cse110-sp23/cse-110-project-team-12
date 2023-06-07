@@ -59,10 +59,8 @@ public class PromptHistory extends JPanel implements PanelSubject {
  public void onNewEntry(Entry entry){
   if (entry == null){
     //does nothing
-}
-  if (entry.getCommand().equalsIgnoreCase("Question")){
-    listPH.addElement(entry.getTitle());
-}
+  }
+  listPH.addElement(entry.getTitle());
 }
 
   //ON NOTIFY() METHODS 
@@ -145,7 +143,7 @@ public void addPH(String s){
   private void configClearAll() {
     clearAll = new JButton("Clear All");
     clearAll.setFont(new Font(FONT, Font.PLAIN, 24));
-      clearAll.setAlignmentX(CENTER_ALIGNMENT);
+    clearAll.setAlignmentX(CENTER_ALIGNMENT);
   }    
 
 

@@ -2,6 +2,7 @@ package mediators;
 import java.io.*;
 import java.util.ArrayList;
 
+import javax.mail.Session;
 import javax.swing.*;
 
 import api.MongoDB;
@@ -31,10 +32,15 @@ public class QPHPHButtonPanelPresenter implements ButtonObserver, PanelObserver,
     QuestionPanel qp;
     PromptHistory ph;
     EmailSetupPanel ep;
+    
+    //Email util
+    TLSEmail tlsEmail;
+    EmailUtil emailUtil;
 
     //Constructor used in app
     public QPHPHButtonPanelPresenter(EmailSetupFrame esFrame, AppFrame appFrame, Recorder recorder, WhisperInterface WhisperSession, 
-    ChatGPTInterface ChatGPTSession, ServerInterface ServerSession, ErrorMessagesInterface ErrorMessages, MongoDB MongoDBSession){
+    ChatGPTInterface ChatGPTSession, ServerInterface ServerSession, ErrorMessagesInterface ErrorMessages, MongoDB MongoDBSession, TLSEmail tlsEmail, 
+    EmailUtil emailUtil){
         
         //Sets created panels that mediator uses
         ef = esFrame;
@@ -51,6 +57,10 @@ public class QPHPHButtonPanelPresenter implements ButtonObserver, PanelObserver,
         this.ServerSession = ServerSession;
         this.ErrorMessages = ErrorMessages;
         this.MongoDBSession = MongoDBSession;
+        
+        //Email util
+        this.tlsEmail = tlsEmail;
+        this.emailUtil = emailUtil;
         
         //Register listeners that mediator observes and then the observers of the mediator
         this.parentFrames = new ArrayList<MediatorObserver>();
@@ -71,13 +81,11 @@ public class QPHPHButtonPanelPresenter implements ButtonObserver, PanelObserver,
     @Override
     public void onStartStop(boolean startedRecording) {
         if (startedRecording){
-          System.out.println("startedRecording");
           recorder.startRecording();
           qp.startedRecording();
 
         }
         else {
-            System.out.println("stoppedRecording");
             File audioFile = recorder.stopRecording();
             qp.stoppedRecording();
             String question = null;
@@ -87,11 +95,12 @@ public class QPHPHButtonPanelPresenter implements ButtonObserver, PanelObserver,
             } catch (Exception e) {
                 e.printStackTrace();
             }
+            //System.out.println(question);
             ArrayList<String> result = parseCommand(question);
             if (result != null){
                 String command = result.get(0);
                 String prompt = result.get(1);
-                Entry entry = null;
+                Entry entry;
 
                 //Case 1 where command is a question
                 if (command.equalsIgnoreCase("Question")) {            
@@ -111,33 +120,100 @@ public class QPHPHButtonPanelPresenter implements ButtonObserver, PanelObserver,
                     entry = new Entry(command, prompt, answer);
                     qp.onNewEntry(entry);
                     ph.onNewEntry(entry);
-                    System.out.println(command + prompt + answer);
-                    this.ServerSession.postToServer(entry);  
+                    this.ServerSession.postToServer(entry); 
+                    
+                  //Case 2 where command is to create email draft
+                } else if (command.equalsIgnoreCase("Create email")) {
+                	String displayName;
+                	if (this.MongoDBSession.getDisplayNameEmail() != null) {
+                		displayName = this.MongoDBSession.getDisplayNameEmail();
+                	} else {
+                		displayName = "Default User";
+                	}
+                	
+                	//create email with chatGPT    
+                    try {
+                        this.ChatGPTSession.askChatGPT("Create an email draft that ends in Best regards, " + displayName + "and the email's body is" + prompt);
+                    } 
+                    catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    catch (IOException e) {
+                        e.printStackTrace();
+                    } 
+        
+                    String answer = this.ChatGPTSession.getAnswer().trim();
+                    entry = new Entry(command, prompt, answer);
+                    qp.onNewEntry(entry);
+                    ph.onNewEntry(entry);
+                    this.ServerSession.postToServer(entry);
                 }
 
-                //Case 2 where command is email setup
+                //Case 3 where command is email setup
                 if (command.equalsIgnoreCase("Setup Email")) {           
                     notifyObservers();
                 }
-
+                
+                //Case 4 where command is send email
+                if (command.equalsIgnoreCase("Send Email")) {
+                	
+                	//can only send email if created email is selected in PH
+                	if (this.qp.getQuestion().startsWith("Create Email")) {
+                		String firstName;
+                		//can only send email if email setup has been configured
+	                	if ((firstName = this.MongoDBSession.getFirstName()) != null ) {
+		                	String lastName = this.MongoDBSession.getLastName();
+		                	String emailBody = this.qp.getAnswer();
+		                	String fromEmail = this.MongoDBSession.getFromEmail();
+		                	
+		                	//configure toEmail from input
+		                	String toEmail = prompt.replace("to ", "");
+		                	toEmail = toEmail.replace("at", "@");
+		                	toEmail = toEmail.replace("dot", ".");
+		                	toEmail = toEmail.replace(" ", "");
+		                	toEmail = toEmail.toLowerCase().trim();
+		                	//removing trailing period
+		                	if (toEmail.charAt(toEmail.length()-1) == '.') {
+		                		toEmail = toEmail.substring(0, toEmail.length()-1);
+		                	}
+		                	
+		                	this.tlsEmail.setFromEmail(this.MongoDBSession.getFromEmail());
+		                	this.tlsEmail.setSMTPHost(this.MongoDBSession.getSMTPHost());
+		                	this.tlsEmail.setTLSPort(this.MongoDBSession.getTLSPort());
+		                	this.tlsEmail.setPassword(this.MongoDBSession.getPassword());
+		                	
+		                	Session session = this.tlsEmail.startEmailSession();
+		                	
+		                	if (this.emailUtil.sendEmail(session, toEmail,fromEmail,"New Message from " + firstName + " " + lastName + " on SayItAssistant2", emailBody)) {
+		                		entry = new Entry(command, prompt, "Email successfully sent.");
+		                        qp.onNewEntry(entry);
+		                        
+		                	} else {
+		                		entry = new Entry(command, toEmail, "Email not sent.");
+		                        qp.onNewEntry(entry);
+		                        ph.onNewEntry(entry);
+		                		ErrorMessages.showErrorMessage("SMTP Host: " + this.MongoDBSession.getSMTPHost());
+		                	} 
+	                	} else {
+	                		ErrorMessages.showErrorMessage("Use Setup Email command before sending emails.");
+	                	}
+                	} else {
+                		ErrorMessages.showErrorMessage("Must select created email before sending email.");
+                	}
+                }
                  
-            }
-            else{
+            } else {
                 qp.InvalidInputDetected(question);
             }
         }
             
-        }
-        //String prompt is formatted as "Question: <Prompt>"
+    }
 
     //When user selects entry in prompt history
     @Override
     public void onListChange(String prompt) {
-        if (prompt.startsWith("Question")){
-            System.out.println("listChanged");
-            String answer = this.ServerSession.getFromServer(prompt);
-            qp.onListChange(prompt, answer);
-        }   
+        String answer = this.ServerSession.getFromServer(prompt);
+        qp.onListChange(prompt, answer);
     }
 
     //When user closes the frame
@@ -164,8 +240,6 @@ public class QPHPHButtonPanelPresenter implements ButtonObserver, PanelObserver,
         //populates prompt history with entries and posts to local server.
         for (Entry entry : savedPromptHistory){
             if (entry != null){
-                System.out.println(entry.getTitle());
-                System.out.println(entry.getResult());
                 ph.onNewEntry(entry);
                 this.ServerSession.postToServer(entry);
             }
@@ -178,40 +252,37 @@ public class QPHPHButtonPanelPresenter implements ButtonObserver, PanelObserver,
             ErrorMessages.showErrorMessage("Fill up all fields");
         }
         else {
-            System.out.println("here");
             ef.setVisible(false);
             ArrayList<String> fields = ep.getAllFields();
             this.MongoDBSession.setupEmail(fields);
-            Entry entry= new Entry("Setup Email", null, null);
-            qp.onNewEntry(entry);
         }
         
         
+    }
+    
+    public void onCancel() {
+    	ef.setVisible(false);
     }
 
     //////////////////////////////////////////////////////////Helper METHODS//////////////////////////////////////////////////////////////////////////////////////////////////
     public Entry convertToEntry (ArrayList<String> deconstructedEntry) {
         String command = deconstructedEntry.get(0);
         String question = deconstructedEntry.get(1);
-        String answer;
-        if (command.equalsIgnoreCase("Question")){
-            answer = this.ServerSession.getFromServer(command + ": " + question);
-        }
-        else {
-            answer = null;
-        }
+        String answer = this.ServerSession.getFromServer(command + ": " + question);
 
         return new Entry(command, question, answer);
     }
 
     //Helper method to set instantiated listeners to respective panels
-    public void setQPPHListeners(StartStopListener ssListener, QuestionListHandler lListener, ClosingFrameListener closeListener, SetupEmailListener seListener){
+    public void setQPPHListeners(StartStopListener ssListener, QuestionListHandler lListener, ClosingFrameListener closeListener, SetupEmailListener seListener, CancelListener cancelListener){
         JButton startButton = qp.getStartButton();
         JButton setupButton = ep.getSetupButton();
+        JButton cancelButton = ep.getCancelButton();
         JList<String> promptList = ph.getPromptList(); 
         startButton.addActionListener(ssListener);
         promptList.addListSelectionListener(lListener);
         setupButton.addActionListener(seListener);
+        cancelButton.addActionListener(cancelListener);
         this.af.addWindowListener(closeListener);
     }
 
@@ -222,30 +293,42 @@ public class QPHPHButtonPanelPresenter implements ButtonObserver, PanelObserver,
         StartStopListener ssListener = new StartStopListener();
         QuestionListHandler lListener = new QuestionListHandler();
         SetupEmailListener seListener = new SetupEmailListener();
-        setQPPHListeners(ssListener, lListener, closeListener, seListener);
+        CancelListener cancelListener = new CancelListener();
+        setQPPHListeners(ssListener, lListener, closeListener, seListener, cancelListener);
         allListeners.add(ssListener);
         allListeners.add(lListener);
         allListeners.add(closeListener);
         allListeners.add(seListener);
+        allListeners.add(cancelListener);
         return allListeners;
     }
     
 
-    //Helper method to deciper what command was captured by voice recording
+    //Helper method to decipher what command was captured by voice recording
     public ArrayList<String> parseCommand(String question){
-        final String[] LOWERCASECOMMANDS = {"question", "send email", "create email", "setup email", "delete prompt", "clear all"};
-        final String[] COMMANDS = {"Question", "Send Email", "Create Email", "Setup Email", "Delete Prompt", "Clear All"};
+    	
+        final String[] LOWERCASECOMMANDS = {"question", "send email", "create email", "setup email", "set up email", "delete prompt", "clear all"};
+        final String[] COMMANDS = {"Question", "Send Email", "Create Email", "Setup Email", "Set up email", "Delete Prompt", "Clear All"};
         ArrayList<String> result = null;
+        
         if (question != null){
             for (int i = 0; i < LOWERCASECOMMANDS.length; i++) {
                 String tempQuestion = question;
                 if (tempQuestion.toLowerCase().startsWith(LOWERCASECOMMANDS[i])) {
                     result = new ArrayList<String>();
                     String command = COMMANDS[i];
+                    
+                    //special case
+                    if (command.equalsIgnoreCase("set up email")) {
+                    	command = "Setup Email";
+                    }
+                    
                     result.add(command);
+                   
                     //check if there are remaining words first
                     try {
                         String prompt = question.substring(COMMANDS[i].length()+1).trim();
+                        
                         result.add(prompt);
                     }
                     catch (StringIndexOutOfBoundsException e){
@@ -254,7 +337,7 @@ public class QPHPHButtonPanelPresenter implements ButtonObserver, PanelObserver,
                 }
             }
         }
-
+        
         return result;
     }
 

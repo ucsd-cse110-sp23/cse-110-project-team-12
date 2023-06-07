@@ -7,6 +7,7 @@ import java.util.Arrays;
 
 public class EmailSetupPanel extends JPanel{
     JButton setupButton;
+    JButton cancelButton;
 
     JLabel firstNameLabel, lastNameLabel, displayNameLabel, emailLabel, SMTPLabel, TLSLabel, PasswordLabel;
     ArrayList<JLabel> allLabels = new ArrayList<JLabel>(Arrays.asList(firstNameLabel, lastNameLabel, displayNameLabel, emailLabel, SMTPLabel, TLSLabel, PasswordLabel));
@@ -20,7 +21,7 @@ public class EmailSetupPanel extends JPanel{
 
         String[] labelNames = {"First Name", "Last Name", "Display Name", "Email", "SMTP Host", "TLS port", "Email Password"};  
         for (int i = 0; i < 7; i++){
-            JLabel label = allLabels.get(i);;
+            JLabel label = allLabels.get(i);
             label = new JLabel();
             label.setText(labelNames[i]);
             JTextField textField = new JTextField(fieldLength);
@@ -31,6 +32,9 @@ public class EmailSetupPanel extends JPanel{
 
         setupButton = new JButton("Setup");
         this.add(setupButton);
+        
+        cancelButton = new JButton("Cancel");
+        this.add(cancelButton);
     }
 
     
@@ -51,9 +55,17 @@ public class EmailSetupPanel extends JPanel{
         }
         return fields;
     }
+    
+    public String getDisplayName() {
+    	return displayNameField.getText();
+    }
 
     public JButton getSetupButton() {
         return setupButton;
+    }
+    
+    public JButton getCancelButton() {
+    	return cancelButton;
     }
 
 

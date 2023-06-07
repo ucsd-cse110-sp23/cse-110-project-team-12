@@ -20,7 +20,7 @@ import processing.*;
  public class QuestionPanel extends JPanel implements PanelSubject{
  
      private JLabel title;
-     private static JTextArea question, answer;
+     private JTextArea question, answer;
      private static JLabel recordingLabel;
      private static JButton startButton;
      private static final String FONT = "Sans-serif";
@@ -67,14 +67,8 @@ import processing.*;
         if (entry == null){
             setQuestion("Invalid Input");
         }
-        if (entry.getCommand() != null){
-            setQuestion(entry.getCommand());
-        }
-        if (entry.getPrompt() != null){
-            setAnswer(entry.getResult());
-        }
-        
-        // }
+        setQuestion(entry.getTitle());
+        setAnswer(entry.getResult());
 
      }
 
@@ -121,7 +115,7 @@ import processing.*;
         return question.getText();
     }
 
-    public static String getAnswer() {
+    public String getAnswer() {
         return answer.getText();
     }
 
@@ -159,7 +153,7 @@ private void configTitle(){
         
 }
     
-    private static void configquestion(){
+    private void configquestion(){
         question = new JTextArea("Your Question will appear here");
         question.setEditable(false);
         question.setLineWrap(true);
@@ -171,7 +165,7 @@ private void configTitle(){
         question.setFont(new Font(FONT, Font.BOLD, 20));
     }
 
-    private static void configanswer(){
+    private void configanswer(){
         answer = new JTextArea("Your Answer will appear here");
         answer.setEditable(false);
         answer.setLineWrap(true);
