@@ -125,6 +125,10 @@ public class QPHPHButtonPanelPresenter implements ButtonObserver, PanelObserver,
                     onDelete();
                 }
 
+                //Case 4 where command is clear all
+                if (command.equalsIgnoreCase("Clear All")){
+                    onClear();
+                }
                 
                  
             }
@@ -199,6 +203,16 @@ public class QPHPHButtonPanelPresenter implements ButtonObserver, PanelObserver,
             qp.onDelete();
             ph.removePH(index);
         }
+    }
+//Stop button is clicked: Clear All is the given command
+    public void onClear(){
+        //iterate through all elements in Prompt History
+        for (int index = 0 ; index < ph.getPHSize(); index++){
+            String title = ph.getTitle(index);
+            this.ServerSession.deleteFromServer(title);
+        }
+        ph.resetPH();
+        qp.onDelete();
     }
 
     //Setup button is clicked: Setup Email is completed.
