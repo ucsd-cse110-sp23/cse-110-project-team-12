@@ -19,6 +19,7 @@ public class LoginMediator implements LoginButtonsObserver, LoginPanelObserver, 
     boolean autoLogIn;
     public static final String savedUserInfoFile = "users/savedInfo.txt";
 
+    //USED BY APP
     public LoginMediator(LoginFrame lf, MongoInterface MongoSession, ErrorMessagesInterface ErrorMessagesSession){
         this.parentFrames = new ArrayList<MediatorObserver>();
         this.lp = lf.getLoginPanel();
@@ -127,5 +128,51 @@ public class LoginMediator implements LoginButtonsObserver, LoginPanelObserver, 
             }
         }
     }
+
+    //Check whether auto-login has been set
+    public void checkAutoLogin(){
+        File file = new File(savedUserInfoFile);
+        boolean autoLogin= file.exists();
+        //File exists, means auto login has been set.
+        if (autoLogin){
+            try{
+                
+                Scanner scanner = new Scanner(file);
+                String savedEmail = scanner.nextLine();
+                String savedPassword = scanner.nextLine();
+                scanner.close();
+                System.out.println(savedEmail);
+                System.out.println(savedPassword);
+                lp.setEmail(savedEmail);
+                lp.setPass1(savedPassword);
+                onLogin(autoLogin);
+            }
+            catch (IOException e){
+
+            }
+            
+        }
+    }
+
+    public void onLogin(boolean autoLogin) {
+        String Email = lp.getEmail();
+		String Pass1 = lp.getPass1();
+        if (Email.isBlank()){
+            ErrorMessagesSession.showErrorMessage("Missing Email");
+        }
+        else if (Pass1.isBlank()){
+            ErrorMessagesSession.showErrorMessage("Missing Password");
+        }
+        if (MongoSession.checkValidLogin(Email,Pass1)){
+            if (!autoLogin){
+                openAutoLogin();
+            }
+            notifyObservers();
+        }
+        else{
+            ErrorMessagesSession.showErrorMessage("Incorrect Login Details");
+        }
+		
+	}
     
 }
