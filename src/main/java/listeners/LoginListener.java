@@ -3,11 +3,11 @@ package listeners;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import interfaces.LoginUIObserver;
-import interfaces.LoginUISubject;
+import interfaces.LoginButtonsObserver;
+import interfaces.LoginButtonsSubject;
 
-public class LoginListener implements LoginUISubject,ActionListener {
-	LoginUIObserver observer;
+public class LoginListener implements LoginButtonsSubject,ActionListener {
+	LoginButtonsObserver observer;
 	
 	@Override
 	public void actionPerformed(ActionEvent e) {
@@ -25,7 +25,7 @@ public class LoginListener implements LoginUISubject,ActionListener {
 	}
 
 	@Override
-	public void registerObserver(LoginUIObserver observer) {
+	public void registerObserver(LoginButtonsObserver observer) {
 		this.observer = observer;
 	}
 }

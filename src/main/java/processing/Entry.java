@@ -1,11 +1,11 @@
 package processing;
 
-public abstract class Entry {
+public class Entry {
 	private String command;
 	private String prompt;
 	private String result;
 	
-	Entry(String command, String prompt, String result) {
+	public Entry(String command, String prompt, String result) {
 		this.command = command;
 		this.prompt = prompt;
 		this.result = result;

@@ -67,10 +67,15 @@ import processing.*;
         if (entry == null){
             setQuestion("Invalid Input");
         }
-        if (entry instanceof QuestionEntry){
+        if (entry.getCommand().equalsIgnoreCase("Question")){
             setQuestion(entry.getTitle());
             setAnswer(entry.getResult());
         }
+     }
+
+     public void InvalidInputDetected(String question){
+        setQuestion(question);
+        setAnswer("Invalid Input Detected");
      }
 
      public void onListChange(String question, String answer){

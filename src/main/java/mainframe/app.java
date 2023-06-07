@@ -1,37 +1,39 @@
 package mainframe;
 
 import java.io.IOException;
-import com.sun.net.httpserver.*; //server create()
-import java.net.*;
-import java.util.*;
 
 import server.MyServer;
+import interfaces.*;
+import mediators.*;
+import processing.*;
+import api.*;
 
 
 public class app {
-    private static LoginScreen loginFrame;
+    private static ServerInterface ServerInstance;
+    private static LoginFrame loginFrame;
     private static AppFrame appFrame;
-    private static boolean autoLogin = false;
-    private static String defaultUserEmail = null;
+    private static EmailSetupFrame emailSetupFrame;
+    private static QPHPHButtonPanelPresenter postloginMediator;
+    private static LoginMediator loginMediator;
 
     public static void main (String args[]) throws IOException{
+        ServerInstance = new MyServer();
+        ServerInstance.runServer();
 
-        MyServer.runServer();
-    	// if (!autoLogin) {
-	    // 	loginFrame = new LoginScreen();
-    	// } else {
-    		appFrame = new AppFrame(defaultUserEmail);
-            //force exit app if server not connected
-        //     MyServer.checkServerAvailability();
-    	// }
+        appFrame = new AppFrame();
+        loginFrame = new LoginFrame();
+        emailSetupFrame = new EmailSetupFrame();
+        MongoDB MongoSession = new MongoDB();
+
+        loginMediator = new LoginMediator(loginFrame, MongoSession, new ErrorMessages());
+		loginMediator.registerObserver(loginFrame);
+		loginMediator.registerObserver(appFrame);  
+        postloginMediator = new QPHPHButtonPanelPresenter(appFrame, new Recorder(), new Whisper(), new ChatGPT(), ServerInstance, new ErrorMessages(), MongoSession);
+        postloginMediator.registerObserver(appFrame);
+        postloginMediator.registerObserver(emailSetupFrame);
+        MongoSession.registerObserver(postloginMediator);
+
+        
     }
-
-    public static void succesfullLogin() {
-        try {
-            new AppFrame(null);
-            MyServer.checkServerAvailability();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }  
 }

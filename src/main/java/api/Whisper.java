@@ -15,40 +15,45 @@ public class Whisper implements WhisperInterface{
 	 private final String MODEL = "whisper-1";
 	 private String question_text = null;
 	 
-	  public Whisper(File question_audio) throws IOException {
-		 File file = question_audio;
-		 URL url = new URL(API_ENDPOINT);
-         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-         connection.setRequestMethod("POST");
-         connection.setDoOutput(true);
+	 int TEMPCOUNT = 0;
 
-         String boundary = "Boundary-" + System.currentTimeMillis();
-         connection.setRequestProperty("Content-Type", "multipart/form-data; boundary=" + boundary);
-         connection.setRequestProperty("Authorization", "Bearer " + TOKEN);
+	  public void setWhisperFile(File question_audio) throws IOException {
+		//  File file = question_audio;
+		//  URL url = new URL(API_ENDPOINT);
+        //  HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+        //  connection.setRequestMethod("POST");
+        //  connection.setDoOutput(true);
 
-         OutputStream outputStream = connection.getOutputStream();
+        //  String boundary = "Boundary-" + System.currentTimeMillis();
+        //  connection.setRequestProperty("Content-Type", "multipart/form-data; boundary=" + boundary);
+        //  connection.setRequestProperty("Authorization", "Bearer " + TOKEN);
 
-         writeParameterToOutputStream(outputStream, "model", MODEL, boundary);
-         writeFileToOutputStream(outputStream, file, boundary);
-         outputStream.write(("\r\n--" + boundary + "--\r\n").getBytes());
-         outputStream.flush();
-         outputStream.close();
+        //  OutputStream outputStream = connection.getOutputStream();
 
-         int responseCode = connection.getResponseCode();
+        //  writeParameterToOutputStream(outputStream, "model", MODEL, boundary);
+        //  writeFileToOutputStream(outputStream, file, boundary);
+        //  outputStream.write(("\r\n--" + boundary + "--\r\n").getBytes());
+        //  outputStream.flush();
+        //  outputStream.close();
 
-         if(responseCode== HttpURLConnection.HTTP_OK){
-             handleSuccessResponse(connection);
-         }
-         else{
-             handleErrorResponse(connection);
-         }
-         connection.disconnect();
+        //  int responseCode = connection.getResponseCode();
+
+        //  if(responseCode== HttpURLConnection.HTTP_OK){
+        //      handleSuccessResponse(connection);
+        //  }
+        //  else{
+        //      handleErrorResponse(connection);
+        //  }
+        //  connection.disconnect();
       
 
 	}
 
 	public String getQuestionText(){
-		return question_text;
+		TEMPCOUNT++;
+		return "Question: When is christmas" + TEMPCOUNT;
+		// return question_text;
+
 	}
 
 	private static void writeParameterToOutputStream(

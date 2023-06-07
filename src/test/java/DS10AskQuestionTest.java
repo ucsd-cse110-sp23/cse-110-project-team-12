@@ -24,6 +24,7 @@ import listeners.StartStopListener;
 import mainframe.*;
 import mediators.QPHPHButtonPanelPresenter;
 import processing.*;
+import server.MyServer;
 
 public class DS10AskQuestionTest{
 
@@ -42,9 +43,11 @@ public class DS10AskQuestionTest{
 // Then I will see an error message stating no question was detected
     private static QuestionPanel qpMock;
     private static PromptHistory phMock;
-    private static ActionEvent eventMock;
-    private static AudioToResult audioToResultMock;
     private static Recorder recorderMock;
+    private static WhisperInterface WhisperMock;
+    private static ChatGPTInterface ChatGPTMock;
+    private static MyServer serverMock;
+
     private static JButton startButton;
     private static StartStopListener testListener;
     private static QPHPHButtonPanelPresenter testLogic;
@@ -53,16 +56,19 @@ public class DS10AskQuestionTest{
     @BeforeAll
     public static void setup(){
         ArrayList<ButtonSubject> createdButtons = new ArrayList<ButtonSubject>();
-        eventMock = mock(ActionEvent.class);
+
         qpMock = mock(QuestionPanel.class);
         phMock = mock(PromptHistory.class);
         recorderMock = mock(Recorder.class);
-        audioToResultMock = mock(AudioToResult.class);
+        serverMock = mock(MyServer.class);
+        WhisperMock = mock(Whisper.class);
+        ChatGPTMock = mock(ChatGPT.class);
+
         testListener = new StartStopListener();
         startButton = new JButton();
         startButton.addActionListener(testListener);
         createdButtons.add(testListener);
-        testLogic = new QPHPHButtonPanelPresenter(createdButtons, qpMock, phMock, recorderMock, audioToResultMock);
+        testLogic = new QPHPHButtonPanelPresenter(createdButtons, qpMock, phMock, recorderMock, WhisperMock, ChatGPTMock, serverMock);
     }
     
     //Question: When is Christmas?
@@ -76,24 +82,33 @@ public class DS10AskQuestionTest{
     }
 
     @Test
-    void unitTestAudioToResultParser(){
-        Entry expectedEntry = new QuestionEntry("Question", "When is Christmas", "25 December");
-        WhisperInterface WhisperMock = mock(Whisper.class);
-        ChatGPTInterface ChatGPTMock = mock(ChatGPT.class);
-        when(WhisperMock.getQuestionText()).thenReturn("Question, When is Christmas");
-        when(ChatGPTMock.getAnswer()).thenReturn("25 December");
-
-        AudioToResult audioToResult = new AudioToResult(WhisperMock, ChatGPTMock);
-        Entry entry = audioToResult.getEntry();
-        System.out.println(entry.getCommand());
-        System.out.println(entry.getPrompt());
-        System.out.println(entry.getResult());
-        System.out.println(expectedEntry.getCommand());
-        System.out.println(expectedEntry.getPrompt());
-        System.out.println(expectedEntry.getResult());
+    void unitTestParseCommand(){
+        ArrayList<String> expectedResult = new ArrayList<String>();
+        expectedResult.add("Question");
+        expectedResult.add("When is Christmas");
         
-        assertTrue(entry.getCommand().equals(expectedEntry.getCommand()));
-        assertTrue(entry.getPrompt().equals(expectedEntry.getPrompt()));
-        assertTrue(entry.getResult().equals(expectedEntry.getResult()));
+        //Case 1: Valid command
+        when(WhisperMock.getQuestionText()).thenReturn("Question, When is Christmas");
+        String testQuestion = "Question: When is Christmas";
+        ArrayList<String> result = testLogic.parseCommand(testQuestion ); 
+        System.out.println(result);
+        assertTrue(result.equals(expectedResult));
+    
+
+        //Case 2: Invalid command
+        when(WhisperMock.getQuestionText()).thenReturn("");
+
+        String testInvalidQuestion = "Blabla";
+        result = testLogic.parseCommand(testInvalidQuestion);
+        assertNull(result);
+
+        //Case 3: No command 
+
+        when(WhisperMock.getQuestionText()).thenReturn("");
+
+        String testNoQuestion = "";
+        result = testLogic.parseCommand(testNoQuestion);
+        assertNull(result);
+    
     } 
 }
