@@ -17,7 +17,7 @@ public class LoginMediator implements LoginButtonsObserver, LoginPanelObserver, 
     ErrorMessagesInterface ErrorMessagesSession;
     ArrayList<MediatorObserver> parentFrames;
     boolean autoLogIn;
-    public static final String savedUserInfoFile = "users/savedInfo.txt";
+    public static final String savedUserInfoFile = "savedInfo.txt";
 
     //USED BY APP
     public LoginMediator(LoginFrame lf, MongoInterface MongoSession, ErrorMessagesInterface ErrorMessagesSession){
