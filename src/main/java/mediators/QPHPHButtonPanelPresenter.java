@@ -155,7 +155,7 @@ public class QPHPHButtonPanelPresenter implements ButtonObserver, PanelObserver,
                 }
                 
                 //Case 4 where command is send email
-                if (command.equalsIgnoreCase("Send Email")) {
+                if (command.equalsIgnoreCase("Send Email") && prompt != null && prompt.startsWith("to ")) {
                 	
                 	//can only send email if created email is selected in PH
                 	if (this.qp.getQuestion().startsWith("Create Email")) {
@@ -167,15 +167,15 @@ public class QPHPHButtonPanelPresenter implements ButtonObserver, PanelObserver,
 		                	String fromEmail = this.MongoDBSession.getFromEmail();
 		                	
 		                	//configure toEmail from input
-		                	String toEmail = prompt.replace("to ", "");
-		                	toEmail = toEmail.replace("at", "@");
-		                	toEmail = toEmail.replace("dot", ".");
-		                	toEmail = toEmail.replace(" ", "");
-		                	toEmail = toEmail.toLowerCase().trim();
+		                	prompt = prompt.replace(" at ", "@");
+		                	prompt = prompt.replace(" dot ", ".");
+		                	prompt = prompt.toLowerCase();
 		                	//removing trailing period
-		                	if (toEmail.charAt(toEmail.length()-1) == '.') {
-		                		toEmail = toEmail.substring(0, toEmail.length()-1);
+		                	if (prompt.charAt(prompt.length()-1) == '.') {
+		                		prompt = prompt.substring(0, prompt.length()-1);
 		                	}
+		                	String toEmail = prompt.replace("to ", "");
+		                	toEmail = toEmail.trim();
 		                	
 		                	this.tlsEmail.setFromEmail(this.MongoDBSession.getFromEmail());
 		                	this.tlsEmail.setSMTPHost(this.MongoDBSession.getSMTPHost());
@@ -189,10 +189,8 @@ public class QPHPHButtonPanelPresenter implements ButtonObserver, PanelObserver,
 		                        qp.onNewEntry(entry);
 		                        
 		                	} else {
-		                		entry = new Entry(command, toEmail, "Email not sent.");
+		                		entry = new Entry(command, prompt, "Email not sent. SMTP Host: " + this.MongoDBSession.getSMTPHost());
 		                        qp.onNewEntry(entry);
-		                        ph.onNewEntry(entry);
-		                		ErrorMessages.showErrorMessage("SMTP Host: " + this.MongoDBSession.getSMTPHost());
 		                	} 
 	                	} else {
 	                		ErrorMessages.showErrorMessage("Use Setup Email command before sending emails.");
