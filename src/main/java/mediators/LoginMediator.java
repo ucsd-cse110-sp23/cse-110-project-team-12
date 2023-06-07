@@ -1,8 +1,13 @@
 package mediators;
 import java.util.ArrayList;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.Scanner;
 
 import interfaces.*;
 import mainframe.*;
+import processing.ErrorMessages;
 
 public class LoginMediator implements LoginButtonsObserver, LoginPanelObserver, MediatorSubject{
    
@@ -11,6 +16,8 @@ public class LoginMediator implements LoginButtonsObserver, LoginPanelObserver, 
     MongoInterface MongoSession;
     ErrorMessagesInterface ErrorMessagesSession;
     ArrayList<MediatorObserver> parentFrames;
+    boolean autoLogIn;
+    public static final String savedUserInfoFile = "users/savedInfo.txt";
 
     public LoginMediator(LoginFrame lf, MongoInterface MongoSession, ErrorMessagesInterface ErrorMessagesSession){
         this.parentFrames = new ArrayList<MediatorObserver>();
@@ -63,6 +70,7 @@ public class LoginMediator implements LoginButtonsObserver, LoginPanelObserver, 
         else{
            MongoSession.createAccount(Email, Pass1, Pass2); 
            //sucessful Login
+           openAutoLogin();
             notifyObservers();	
         }
         
@@ -79,6 +87,7 @@ public class LoginMediator implements LoginButtonsObserver, LoginPanelObserver, 
             ErrorMessagesSession.showErrorMessage("Missing Password");
         }
         if (MongoSession.checkValidLogin(Email,Pass1)){
+            openAutoLogin();
             notifyObservers();
         }
         else{
@@ -99,6 +108,24 @@ public class LoginMediator implements LoginButtonsObserver, LoginPanelObserver, 
         for (MediatorObserver panel : parentFrames){
             panel.onLoginClosing();
         }  
+    }
+
+    //Called upon any succesful login and account creation
+    public void openAutoLogin(){
+        //User selects save my info
+        if (ErrorMessagesSession.confirmAutoLogin()){
+            File file = new File(savedUserInfoFile);
+            try{
+                file.createNewFile();
+                FileWriter writer = new FileWriter(file, false);
+                writer.write(lp.getEmail() + "\n" + lp.getPass1());
+                writer.close();
+            }
+            catch(IOException e){
+                //IO exception 
+                e.printStackTrace();
+            }
+        }
     }
     
 }
