@@ -1,48 +1,54 @@
 package mediators;
 import java.util.ArrayList;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.Scanner;
+
+import javax.swing.JButton;
 
 import interfaces.*;
+import listeners.*;
 import mainframe.*;
-import processing.ErrorMessages;
+import processing.SavefileWriter;
 
 public class LoginMediator implements LoginButtonsObserver, LoginPanelObserver, MediatorSubject{
    
     ArrayList<LoginButtonsSubject> allButtons = new ArrayList<LoginButtonsSubject>();
+    AppFrame af;
     LoginPanel lp;
     MongoInterface MongoSession;
     ErrorMessagesInterface ErrorMessagesSession;
     ArrayList<MediatorObserver> parentFrames;
-    boolean autoLogIn;
-    public static final String savedUserInfoFile = "savedInfo.txt";
+    SavefileWriter sfWriter;
+
+
 
     //USED BY APP
-    public LoginMediator(LoginFrame lf, MongoInterface MongoSession, ErrorMessagesInterface ErrorMessagesSession){
+    public LoginMediator(LoginFrame lf, AppFrame af, MongoInterface MongoSession, ErrorMessagesInterface ErrorMessagesSession, SavefileWriter savefileWriter){
+        
+        this.sfWriter = savefileWriter;
         this.parentFrames = new ArrayList<MediatorObserver>();
+        this.af = af;
         this.lp = lf.getLoginPanel();
-        this.allButtons = lf.addListeners(lp);
+        this.allButtons = getListeners();
         this.MongoSession = MongoSession;
         this.ErrorMessagesSession = ErrorMessagesSession;
         for (LoginButtonsSubject button : allButtons){
             button.registerObserver(this);
         }
         lp.registerObserver(this);
+        this.registerObserver(lf);
+		this.registerObserver(af); 
     }
 
-    public LoginMediator(ArrayList<LoginButtonsSubject> allButtons, LoginPanel lp, MongoInterface MongoSession, ErrorMessagesInterface ErrorMessagesSession){
-        this.parentFrames = new ArrayList<MediatorObserver>();
-        this.allButtons = allButtons;
-        this.lp = lp;
-        this.MongoSession = MongoSession;
-        this.ErrorMessagesSession = ErrorMessagesSession;
-        for (LoginButtonsSubject button : allButtons){
-            button.registerObserver(this);
-        }
-        lp.registerObserver(this);
-    }
+    // public LoginMediator(ArrayList<LoginButtonsSubject> allButtons, LoginPanel lp, MongoInterface MongoSession, ErrorMessagesInterface ErrorMessagesSession){
+    //     this.parentFrames = new ArrayList<MediatorObserver>();
+    //     this.allButtons = allButtons;
+    //     this.lp = lp;
+    //     this.MongoSession = MongoSession;
+    //     this.ErrorMessagesSession = ErrorMessagesSession;
+    //     for (LoginButtonsSubject button : allButtons){
+    //         button.registerObserver(this);
+    //     }
+    //     lp.registerObserver(this);
+    // }
 
 
 
@@ -71,7 +77,7 @@ public class LoginMediator implements LoginButtonsObserver, LoginPanelObserver, 
         else{
            MongoSession.createAccount(Email, Pass1, Pass2); 
            //sucessful Login
-           openAutoLogin();
+           queryAutoLogin();
             notifyObservers();	
         }
         
@@ -88,7 +94,7 @@ public class LoginMediator implements LoginButtonsObserver, LoginPanelObserver, 
             ErrorMessagesSession.showErrorMessage("Missing Password");
         }
         if (MongoSession.checkValidLogin(Email,Pass1)){
-            openAutoLogin();
+            queryAutoLogin();
             notifyObservers();
         }
         else{
@@ -112,67 +118,51 @@ public class LoginMediator implements LoginButtonsObserver, LoginPanelObserver, 
     }
 
     //Called upon any succesful login and account creation
-    public void openAutoLogin(){
+    public void queryAutoLogin(){
         //User selects save my info
-        if (ErrorMessagesSession.confirmAutoLogin()){
-            File file = new File(savedUserInfoFile);
-            try{
-                file.createNewFile();
-                FileWriter writer = new FileWriter(file, false);
-                writer.write(lp.getEmail() + "\n" + lp.getPass1());
-                writer.close();
-            }
-            catch(IOException e){
-                //IO exception 
-                e.printStackTrace();
-            }
+        boolean saveInfo = ErrorMessagesSession.confirmAutoLogin();
+        ArrayList<String> info = null;
+        if (saveInfo){
+            System.out.println("here");
+            info = new ArrayList<String>();
+            info.add(lp.getEmail());
+            info.add(lp.getPass1());
         }
+        this.sfWriter.setLoginInfo(info);
+        
     }
 
     //Check whether auto-login has been set
     public void checkAutoLogin(){
-        File file = new File(savedUserInfoFile);
-        boolean autoLogin= file.exists();
-        //File exists, means auto login has been set.
-        if (autoLogin){
-            try{
-                
-                Scanner scanner = new Scanner(file);
-                String savedEmail = scanner.nextLine();
-                String savedPassword = scanner.nextLine();
-                scanner.close();
-                System.out.println(savedEmail);
-                System.out.println(savedPassword);
-                lp.setEmail(savedEmail);
-                lp.setPass1(savedPassword);
-                onLogin(autoLogin);
+        ArrayList<String> result = this.sfWriter.getLoginInfo();
+        if (result != null){
+            String savedEmail = result.get(0);
+            String savedPassword = result.get(1);
+            if (MongoSession.checkValidLogin(savedEmail,savedPassword)){
+                notifyObservers();
             }
-            catch (IOException e){
-
+            else{
+                ErrorMessagesSession.showErrorMessage("Incorrect Login Details");
             }
-            
         }
+    
+            
     }
 
-    public void onLogin(boolean autoLogin) {
-        String Email = lp.getEmail();
-		String Pass1 = lp.getPass1();
-        if (Email.isBlank()){
-            ErrorMessagesSession.showErrorMessage("Missing Email");
-        }
-        else if (Pass1.isBlank()){
-            ErrorMessagesSession.showErrorMessage("Missing Password");
-        }
-        if (MongoSession.checkValidLogin(Email,Pass1)){
-            if (!autoLogin){
-                openAutoLogin();
-            }
-            notifyObservers();
-        }
-        else{
-            ErrorMessagesSession.showErrorMessage("Incorrect Login Details");
-        }
-		
+    public void setListeners(LoginListener loginListener, CreateAccountListener createListener){
+        JButton loginButton = lp.getLoginButton();
+		JButton createAccountButton = lp.getcreateAccountButton();
+		loginButton.addActionListener(loginListener);
+		createAccountButton.addActionListener(createListener);
+    }
+
+    public ArrayList<LoginButtonsSubject> getListeners(){
+		ArrayList<LoginButtonsSubject> allLoginButtons = new ArrayList<LoginButtonsSubject>();
+        LoginListener loginListener = new LoginListener();
+		CreateAccountListener createListener = new CreateAccountListener();
+        setListeners(loginListener, createListener);
+		allLoginButtons.add(loginListener);
+		allLoginButtons.add(createListener);
+        return allLoginButtons;
 	}
-    
 }
