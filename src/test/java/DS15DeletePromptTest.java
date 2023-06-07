@@ -74,6 +74,17 @@ public class DS15DeletePromptTest {
          ChatGPTMock,  serverMock,  ErrorMessagesMock,  MongoDBMock);
     }
 
+    //Unit test for parsing of "Delete" command
+    @Test
+    void unitTest_parseCommand(){
+        String testCommand = "Delete Prompt";
+        ArrayList<String> expectedResult = new ArrayList<String>();
+        expectedResult.add(testCommand);
+        expectedResult.add(null);
+        ArrayList<String> result = testLogic.parseCommand(testCommand);
+        assertEquals(result,expectedResult);
+    }
+
     // Scenario 1: User deletes selected prompt
     // Given that a specific prompt was selected from my prompt history
     // And I click “Start”
@@ -82,7 +93,24 @@ public class DS15DeletePromptTest {
     // And from the prompt/message screen
     
     @Test
-    void test_1_DeletePrompt(){
+    void test_1_DeletePrompt() throws InterruptedException{
+        String testCommand = "Delete Prompt";
+        int selectedIndex = 1;
+        String selectedPrompt = "Question: When is christmas?";
+
+        when(WhisperMock.getQuestionText()).thenReturn(testCommand);
+        when(phMock.getSelectedIndex()).thenReturn(selectedIndex);
+        when(phMock.getTitle(selectedIndex)).thenReturn(selectedPrompt);
+        //Start recording
+        startButton.doClick();
+        TimeUnit.SECONDS.sleep(1);
+        //Stop recording
+        startButton.doClick();
+        
+       
+        verify(serverMock).deleteFromServer(selectedPrompt);
+        verify(qpMock).onDelete();
+        verify(phMock).removePH(selectedIndex);
 
     }
 
@@ -93,8 +121,24 @@ public class DS15DeletePromptTest {
     // Then the app should alert me that no prompt was selected
 
     @Test
-    void test_2_noPromptToDelete(){
+    void test_2_noPromptToDelete() throws InterruptedException{
+        String testCommand = "Delete Prompt";
+        int selectedIndex = -1;
+        String selectedPrompt = "Question: When is christmas?";
 
+        when(WhisperMock.getQuestionText()).thenReturn(testCommand);
+        when(phMock.getSelectedIndex()).thenReturn(selectedIndex);
+        when(phMock.getTitle(selectedIndex)).thenReturn(selectedPrompt);
+        //Start recording
+        startButton.doClick();
+        TimeUnit.SECONDS.sleep(1);
+        //Stop recording
+        startButton.doClick();
+        
+       
+        verify(serverMock, times(0)).deleteFromServer(selectedPrompt);
+        verify(qpMock, times(0)).onDelete();
+        verify(phMock, times(0)).removePH(selectedIndex);
     }
 
 }

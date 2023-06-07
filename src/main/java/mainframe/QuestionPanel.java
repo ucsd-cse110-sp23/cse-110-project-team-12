@@ -25,6 +25,8 @@ import processing.*;
      private static JButton startButton;
      private static final String FONT = "Sans-serif";
      private QPHPHButtonPanelPresenter presenter;
+     private static final String DEFAULT_QUESTION = "Your Question will appear here";
+     private static final String DEFAULT_ANSWER = "Your Answer will appear here";
  
      LayoutManager qpLayout = new BoxLayout(this, BoxLayout.PAGE_AXIS);    
  
@@ -76,6 +78,11 @@ import processing.*;
         
         // }
 
+     }
+
+     public void onDelete(){
+        setQuestion(DEFAULT_QUESTION);
+        setAnswer(DEFAULT_ANSWER);
      }
 
      public void InvalidInputDetected(String question){

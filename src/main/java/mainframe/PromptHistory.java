@@ -56,6 +56,7 @@ public class PromptHistory extends JPanel implements PanelSubject {
 
  ///////////////////////////////////////////////////////////////////////SETTER METHODS//////////////////////////////////////////////////////////////////////////////////////////
   
+ //called on new commands: Question and Send Email
  public void onNewEntry(Entry entry){
   if (entry == null){
     //does nothing
@@ -64,6 +65,16 @@ public class PromptHistory extends JPanel implements PanelSubject {
     listPH.addElement(entry.getTitle());
 }
 }
+
+//called on delete command
+public void removePH(int index){
+  listPH.remove(index);
+}
+
+//called on clear command
+// private void resetPH() {
+//   listPH.clear();
+// }
 
 
 ///////////////////////////////////////////////////////////////////////GETTER METHODS//////////////////////////////////////////////////////////////////////////////////////////
@@ -82,25 +93,21 @@ public int getPHSize(){
   return listPH.getSize();
 }
 
-public String getElementInPH(int index){
+public String getTitle(int index){
   return (String)listPH.getElementAt(index);
 }
+
+public int getSelectedIndex(){
+  return list.getSelectedIndex();
+  }
 
 public int getIndexInPH(String s){
 return listPH.indexOf(s);
 }
 
-///////////////////////////////////////////////////////////////////////GETTER METHODS//////////////////////////////////////////////////////////////////////////////////////////
 
 
 
-  private void removePH(int index){
-    listPH.remove(index);
-  }
-
-  private void resetPH() {
-    listPH.clear();
-}
 
   
 ///////////////////////////////////////////////////////////////////////SUBJECT METHODS//////////////////////////////////////////////////////////////////////////////////////////
