@@ -54,8 +54,9 @@ public class PromptHistory extends JPanel implements PanelSubject {
       
   }
 
+ ///////////////////////////////////////////////////////////////////////SETTER METHODS//////////////////////////////////////////////////////////////////////////////////////////
   
- ///////////////////////// SETTERS /////////////////////////////////////////////
+ //called on new commands: Question and Send Email
  public void onNewEntry(Entry entry){
   if (entry == null){
     //does nothing
@@ -65,20 +66,18 @@ public class PromptHistory extends JPanel implements PanelSubject {
 }
 }
 
-  //ON NOTIFY() METHODS 
+//called on delete command
+public void removePH(int index){
+  listPH.remove(index);
+}
 
-  @Override
-  public void registerObserver(QPHPHButtonPanelPresenter presenter) {
-      this.presenter = presenter; 
-  }
+//called on clear command
+// private void resetPH() {
+//   listPH.clear();
+// }
 
 
-  @Override
-  public void notifyObservers() {
-      //
-  }
-
-  //Getter methods
+///////////////////////////////////////////////////////////////////////GETTER METHODS//////////////////////////////////////////////////////////////////////////////////////////
 
   public JButton getClearButton(){
     return clearAll;      
@@ -94,31 +93,39 @@ public int getPHSize(){
   return listPH.getSize();
 }
 
-public String getElementInPH(int index){
+public String getTitle(int index){
   return (String)listPH.getElementAt(index);
 }
+
+public int getSelectedIndex(){
+  return list.getSelectedIndex();
+  }
 
 public int getIndexInPH(String s){
 return listPH.indexOf(s);
 }
 
-//TODO Get rid of these public methods.
 
 
-public void addPH(String s){
-    listPH.addElement(s);
-  }
 
-  private void removePH(int index){
-    listPH.remove(index);
-  }
 
-  private void resetPH() {
-    listPH.clear();
+  
+///////////////////////////////////////////////////////////////////////SUBJECT METHODS//////////////////////////////////////////////////////////////////////////////////////////
+
+
+@Override
+public void registerObserver(QPHPHButtonPanelPresenter presenter) {
+    this.presenter = presenter; 
 }
 
 
-  //Configure and Create elements in PH
+@Override
+public void notifyObservers() {
+    //
+}
+
+///////////////////////////////////////////////////////////////////////PRIVATE CONFIGURE METHODS//////////////////////////////////////////////////////////////////////////////////////////
+
 
 
   private static void configList(){
@@ -147,6 +154,8 @@ public void addPH(String s){
     clearAll.setFont(new Font(FONT, Font.PLAIN, 24));
       clearAll.setAlignmentX(CENTER_ALIGNMENT);
   }    
+
+
 
 
 

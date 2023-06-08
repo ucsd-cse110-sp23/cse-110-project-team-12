@@ -111,4 +111,23 @@ public class MyServer implements ServerInterface{
 		  }
 		}
 
+		public void deleteFromServer(String query){
+			try {
+			String encodedQuery = URLEncoder.encode(query, "UTF-8");
+			URL url = new URL(URL + "?=" + encodedQuery);
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("DELETE");
+            BufferedReader in = new BufferedReader(
+              new InputStreamReader(conn.getInputStream())
+            );
+            in.readLine();
+            in.close();
+          
+          } catch (Exception ex) {
+            ex.printStackTrace();
+          
+          }
+      
+		}
+
 }
