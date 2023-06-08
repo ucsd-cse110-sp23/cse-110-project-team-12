@@ -1,6 +1,9 @@
 package mainframe;
 
 import javax.swing.*;
+
+import api.MongoDB;
+
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -35,9 +38,7 @@ public class EmailSetupPanel extends JPanel{
         
         cancelButton = new JButton("Cancel");
         this.add(cancelButton);
-    }
-
-    
+    }    
 
     public boolean checkAllFieldsFilled(){
         for (JTextField field : allFields){
@@ -67,6 +68,32 @@ public class EmailSetupPanel extends JPanel{
     public JButton getCancelButton() {
     	return cancelButton;
     }
+    
+    public void setFirstName(String s) {
+    	this.firstNameField.setText(s);
+    }
+    
+    public void setLastName(String s) {
+    	this.lastNameField.setText(s);
+    }
 
+    public void setDisplayName(String s) {
+    	this.displayNameField.setText(s);
+    }
+    
+    public void setEmailName(String s) {
+    	this.emailField.setText(s);
+    }
 
+    public void setSMTPHost(String s) {
+    	this.SMTPField.setText(s);
+    }
+
+    public void setTLSPort(String s) {
+    	this.TLSField.setText(s);
+    }
+    
+    public void setPassword(String s) {
+    	this.PasswordField.setText(s);
+    }
 }

@@ -50,7 +50,6 @@ public class QPHPHButtonPanelPresenter implements ButtonObserver, PanelObserver,
         ph = appFrame.getPromptHistory();
         ep = ef.getSetupPanel();
         
-        
         //Sets APIs that mediator uses.
         this.recorder = recorder;
         this.WhisperSession = WhisperSession;
@@ -125,7 +124,7 @@ public class QPHPHButtonPanelPresenter implements ButtonObserver, PanelObserver,
                 }
 
                 //Case 2 where command is email setup
-                if (command.equalsIgnoreCase("Setup Email")) {           
+                if (command.equalsIgnoreCase("Setup Email")) {
                     notifyObservers();
                 }
 
@@ -305,7 +304,7 @@ public class QPHPHButtonPanelPresenter implements ButtonObserver, PanelObserver,
     }
 
     //////////////////////////////////////////////////////////Helper METHODS//////////////////////////////////////////////////////////////////////////////////////////////////
-
+    
     //Helper method to convert recordings to entries.
     public Entry convertToEntry (ArrayList<String> deconstructedEntry) {
         String command = deconstructedEntry.get(0);

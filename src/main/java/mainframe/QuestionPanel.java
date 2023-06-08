@@ -25,8 +25,8 @@ import processing.*;
      private static JButton startButton;
      private static final String FONT = "Sans-serif";
      private QPHPHButtonPanelPresenter presenter;
-     private static final String DEFAULT_QUESTION = "Your Question will appear here";
-     private static final String DEFAULT_ANSWER = "Your Answer will appear here";
+     private static final String DEFAULT_QUESTION = "Your query will appear here";
+     private static final String DEFAULT_ANSWER = "Your result will appear here";
  
      LayoutManager qpLayout = new BoxLayout(this, BoxLayout.PAGE_AXIS);    
  
@@ -57,12 +57,12 @@ import processing.*;
 
      public void startedRecording(){
         setRecordingLableVisible();
-        setStartButtonText("Stop Recording");
+        setStartButtonText("Stop");
      }
 
      public void stoppedRecording(){
         setRecordingLableInvisible();
-        setStartButtonText("Start Recording");
+        setStartButtonText("Start");
      }
 
      public void onNewEntry(Entry entry){
@@ -167,7 +167,7 @@ private void configTitle(){
 }
     
     private void configquestion(){
-        question = new JTextArea("Your Question will appear here");
+        question = new JTextArea("Your query will appear here");
         question.setEditable(false);
         question.setLineWrap(true);
         question.setAlignmentX(CENTER_ALIGNMENT);
@@ -179,7 +179,7 @@ private void configTitle(){
     }
 
     private void configanswer(){
-        answer = new JTextArea("Your Answer will appear here");
+        answer = new JTextArea("Your result will appear here");
         answer.setEditable(false);
         answer.setLineWrap(true);
         answer.setAlignmentX(CENTER_ALIGNMENT);
@@ -190,7 +190,7 @@ private void configTitle(){
         answer.setFont(new Font(FONT, Font.PLAIN, 20));
     }
     private static void configstartButton(){
-        startButton = new JButton("New Question"); 
+        startButton = new JButton("Start"); 
         startButton.setFont(new Font(FONT, Font.PLAIN, 24));
         startButton.setAlignmentX(CENTER_ALIGNMENT);
     }

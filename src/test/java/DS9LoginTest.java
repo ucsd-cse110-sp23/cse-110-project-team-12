@@ -121,6 +121,7 @@ public class DS9LoginTest {
         
 }
 
+
 @Test
 	void test_3_2_missingPassword() throws Exception {
 		String arbitraryEmail = "Email";
@@ -134,12 +135,25 @@ public class DS9LoginTest {
 }
 
 // Scenario 4: User tries to log in with wrong password
-// 	Given that I already have an account
-// 	And I’m on the create account/login page
-// 	When I enter my registered email in the email field
-// 	And I enter a wrong password in the password field
-// 	And I press the “Log In” button
-// 	Then an error message pops up saying the password is incorrect
-// And I am returned to the create account/login page
+//	Given that I already have an account
+//	And I’m on the create account/login page
+//	When I enter my registered email in the email field
+//	And I enter a wrong password in the password field
+//	And I press the “Log In” button
+//	Then an error message pops up saying the password is incorrect
+//And I am returned to the create account/login page
+@Test
+void test_4_1_InvalidPassword() throws Exception {
+	String takenEmail = "12345";
+    String InvalidPassword = "wrong";
+    String expectedErrorMessage = "Incorrect Login Details";
+    when(LoginPanelMock.getEmail()).thenReturn(takenEmail);
+	when(LoginPanelMock.getPass1()).thenReturn(InvalidPassword);
+    when(mongoDBMock.checkValidLogin(takenEmail,InvalidPassword)).thenReturn(false);
+    testLogic.onLogin();
+    verify(errorMessagesMock).showErrorMessage(expectedErrorMessage);
+}
+
+
 
 }
