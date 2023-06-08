@@ -13,10 +13,10 @@
         },
         {
             "type": "java",
-            "name": "MyServer",
+            "name": "AppFrame",
             "request": "launch",
-            "mainClass": "server.MyServer",
-            "projectName": "cse-110-project-team-12"
+            "mainClass": "AppFrame",
+            "projectName": "cse-110-project-team-12-4"
         },
         {
             "type": "java",

@@ -86,13 +86,15 @@ public class DS11CreateEmailTest{
     @Test
     void unitTestParseCommand(){
         ArrayList<String> expectedResult = new ArrayList<String>();
-        expectedResult.add("Create email");
+        expectedResult.add("Create Email");
         expectedResult.add("To Henry, let's get lunch.");
         
         //Case 1: Valid command
         when(WhisperMock.getQuestionText()).thenReturn("Create email To Henry, let's get lunch.");
         String testEmail = "Create email To Henry, let's get lunch.";
-        ArrayList<String> result = testLogic.parseCommand(testEmail); 
+        ArrayList<String> result = testLogic.parseCommand(testEmail);
+        System.out.println(result);
+        System.out.println(expectedResult);
         assertTrue(result.equals(expectedResult));
     
 
@@ -100,7 +102,7 @@ public class DS11CreateEmailTest{
         when(WhisperMock.getQuestionText()).thenReturn("Create email");
         String testInvalidEmail = "Create email";
         result = testLogic.parseCommand(testInvalidEmail);
-        assertNull(result);
+        assertNull(result.get(1));
         
       //Case 3: Invalid command
         when(WhisperMock.getQuestionText()).thenReturn("Blabla blabla");

@@ -49,7 +49,10 @@ public class Whisper implements WhisperInterface{
 	}
 
 	public String getQuestionText(){
+		// TEMPCOUNT++;
+		// return "Setup Email" + TEMPCOUNT;
 		return question_text;
+
 	}
 
 	private static void writeParameterToOutputStream(

@@ -4,8 +4,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import interfaces.*;
 
-public class CreateAccountListener implements LoginUISubject,ActionListener {
-	LoginUIObserver observer;
+public class CreateAccountListener implements LoginButtonsSubject,ActionListener {
+	LoginButtonsObserver observer;
 	
 	@Override
 	public void actionPerformed(ActionEvent e) {
@@ -23,7 +23,7 @@ public class CreateAccountListener implements LoginUISubject,ActionListener {
 	}
 
 	@Override
-	public void registerObserver(LoginUIObserver observer) {
+	public void registerObserver(LoginButtonsObserver observer) {
 		this.observer = observer;
 	}
 }

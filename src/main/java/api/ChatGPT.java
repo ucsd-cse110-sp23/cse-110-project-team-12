@@ -21,10 +21,12 @@ public class ChatGPT implements ChatGPTInterface{
 	private static final String MODEL = "text-davinci-003";
 	private String question = null;
 	private String answer = null;
+	int TEMPCOUNT = 0;
 
 	
 	public void askChatGPT(String question_text) throws IOException, InterruptedException {
 		question = question_text;
+		
 		
 		//Set request parameters
 		String prompt = question;
@@ -59,10 +61,6 @@ public class ChatGPT implements ChatGPTInterface{
 		
 		JSONArray choices = responseJson.getJSONArray("choices");
 		answer = choices.getJSONObject(0).getString("text");
-	}
-
-	public String getQuestion(){
-		return question;
 	}
 
 	public String getAnswer(){

@@ -1,39 +1,37 @@
 package mainframe;
 
 import java.io.IOException;
-import com.sun.net.httpserver.*; //server create()
-import java.net.*;
-import java.util.*;
 
 import server.MyServer;
 import interfaces.*;
+import mediators.*;
+import processing.*;
+import api.*;
 
 
 public class app {
     private static ServerInterface ServerInstance;
-    private static LoginScreen loginFrame;
+    private static LoginFrame loginFrame;
     private static AppFrame appFrame;
-    private static boolean autoLogin = false;
-    private static String defaultUserEmail = null;
+    private static EmailSetupFrame emailSetupFrame;
+    private static QPHPHButtonPanelPresenter postloginMediator;
+    private static LoginMediator loginMediator;
+    private static SavefileWriter sfWriter;
 
     public static void main (String args[]) throws IOException{
         ServerInstance = new MyServer();
         ServerInstance.runServer();
-    	// if (!autoLogin) {
-	    // 	loginFrame = new LoginScreen();
-    	// } else {
-    		appFrame = new AppFrame(ServerInstance);
-            //force exit app if server not connected
-        //     MyServer.checkServerAvailability();
-    	// }
-    }
 
-    public static void succesfullLogin() {
-        try {
-            new AppFrame(null);
-            ServerInstance.checkServerAvailability();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }  
+        appFrame = new AppFrame();
+        loginFrame = new LoginFrame();
+        emailSetupFrame = new EmailSetupFrame();
+        MongoDB MongoSession = new MongoDB();
+        sfWriter = new SavefileWriter();
+
+        postloginMediator = new QPHPHButtonPanelPresenter(emailSetupFrame, appFrame, new Recorder(), new Whisper(), new ChatGPT(), ServerInstance, new ErrorMessages(), MongoSession); 
+        loginMediator = new LoginMediator(loginFrame, appFrame, MongoSession, new ErrorMessages(), sfWriter);
+        loginMediator.checkAutoLogin();
+
+        
+    }
 }

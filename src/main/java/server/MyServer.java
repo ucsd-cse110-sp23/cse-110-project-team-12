@@ -77,7 +77,6 @@ public class MyServer implements ServerInterface{
 			  conn.getOutputStream()
 			);
 			String encodedData = encodedQuestion + "," + encodedAnswer;
-			System.out.println(encodedData);
 			out.write(encodedData);	
 			out.flush();
 			out.close();
@@ -109,6 +108,25 @@ public class MyServer implements ServerInterface{
 			  ex.printStackTrace();
 			  return response;
 		  }
+		}
+
+		public void deleteFromServer(String query){
+			try {
+			String encodedQuery = URLEncoder.encode(query, "UTF-8");
+			URL url = new URL(URL + "?=" + encodedQuery);
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("DELETE");
+            BufferedReader in = new BufferedReader(
+              new InputStreamReader(conn.getInputStream())
+            );
+            in.readLine();
+            in.close();
+          
+          } catch (Exception ex) {
+            ex.printStackTrace();
+          
+          }
+      
 		}
 
 }

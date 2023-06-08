@@ -15,7 +15,6 @@ import java.net.URLDecoder;
 public class RequestHandler implements HttpHandler {
 
 	private	 Map<String, String> data;
-	private final String ASCII = "ASCII";
 	private static final String UTF8 = "UTF-8";
 
     
@@ -39,9 +38,9 @@ public class RequestHandler implements HttpHandler {
 			else if (method.equals("GET")) {
 				response = handleGet(httpExchange);
 			} 
-			// else if (method.equals("DELETE")) {
-			// 	response = handleDelete(httpExchange);
-			// } 
+			else if (method.equals("DELETE")) {
+				response = handleDelete(httpExchange);
+			} 
 			else {
 				throw new Exception("Not Valid Request Method");
 			}
@@ -66,7 +65,6 @@ public class RequestHandler implements HttpHandler {
 	 */
 	private String handlePost(HttpExchange httpExchange) throws IOException {
 		//retrieve and read input stream
-		System.out.println("RequestHandler");
 
 		InputStream inStream = httpExchange.getRequestBody();
 		Scanner scanner = new Scanner(inStream); 
@@ -115,34 +113,30 @@ public class RequestHandler implements HttpHandler {
 	
 	
 	
-	// /* Delete data from HashMap
-	//  * 
-	//  * @param HttpExchange httpExchange
-	//  * @return String response - parsed deleted data
-	//  */
-	// private String handleDelete(HttpExchange httpExchange) throws IOException {
-	// 	String response = "Invalid DELETE Request";
-	// 	URI uri = httpExchange.getRequestURI();
-	// 	String query = uri.getRawQuery();
+	/* Delete data from HashMap
+	 * 
+	 * @param HttpExchange httpExchange
+	 * @return String response - parsed deleted data
+	 */
+	private String handleDelete(HttpExchange httpExchange) throws IOException {
+		String response = "Invalid DELETE Request";
+		URI uri = httpExchange.getRequestURI();
+		String query = uri.getRawQuery();
 		
-	// 	if (query != null) {
+		if (query != null) {
 			
-	// 		//extract value of query param from query string
-	// 		String question = query.substring(query.indexOf("=")+1);
-	// 		question = question.replace(' ', '+');
-	// 		String answer = data.get(question); //retrieve data from hashmap
+			//extract value of query param from query string
+			String question = query.substring(query.indexOf("=")+1);
+			String answer = data.get(question); //retrieve data from hashmap
 			
 			
-	// 		if (answer != null) { //valid query
-				
-	// 			response = "Deleted entry {" + question + ", " + answer + "}";
-
-				
-	// 			data.remove(question);
-	// 		} else {            //invalid query
-	// 			response = "No data found for " + question;
-	// 		}
-	// 	}
-	// 	return response;
-	// }
+			if (answer != null) { //valid query
+				response = "Deleted entry {" + question + ", " + answer + "}";
+				data.remove(question);
+			} else {            //invalid query
+				response = "No data found for " + question;
+			}
+		}
+		return response;
+	}
 }

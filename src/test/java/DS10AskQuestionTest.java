@@ -43,7 +43,6 @@ public class DS10AskQuestionTest{
 // Then I will see an error message stating no question was detected
     private static QuestionPanel qpMock;
     private static PromptHistory phMock;
-    private static ActionEvent eventMock;
     private static Recorder recorderMock;
     private static WhisperInterface WhisperMock;
     private static ChatGPTInterface ChatGPTMock;
@@ -58,7 +57,6 @@ public class DS10AskQuestionTest{
     public static void setup(){
         ArrayList<ButtonSubject> createdButtons = new ArrayList<ButtonSubject>();
 
-        eventMock = mock(ActionEvent.class);
         qpMock = mock(QuestionPanel.class);
         phMock = mock(PromptHistory.class);
         recorderMock = mock(Recorder.class);
@@ -101,7 +99,7 @@ public class DS10AskQuestionTest{
 
         String testInvalidQuestion = "Question";
         result = testLogic.parseCommand(testInvalidQuestion);
-        assertNull(result);
+        assertNull(result.get(1));
     
 
         //Case 3: Invalid command

@@ -5,4 +5,6 @@ public interface ButtonObserver {
     // void onDelete();
     void onListChange(String question);
     // void onClear();
+    void onClose();
+    void onStart();
 }

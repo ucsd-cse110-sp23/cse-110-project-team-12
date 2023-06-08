@@ -2,39 +2,89 @@ package mediators;
 import java.io.*;
 import java.util.ArrayList;
 
-import api.*;
+import javax.swing.*;
+
+import api.MongoDB;
 import interfaces.*;
+import listeners.*;
 import mainframe.*;
 import processing.*;
 
-public class QPHPHButtonPanelPresenter implements ButtonObserver, PanelObserver{
-    private static String filePath = "bin/main/questionFile.txt";
-    String defaultEmailUsername = "User";
-    ArrayList<ButtonSubject> allButtons = new ArrayList<ButtonSubject>();
-    QuestionPanel qp;
-    PromptHistory ph;
+
+public class QPHPHButtonPanelPresenter implements ButtonObserver, PanelObserver, MediatorSubject{
+
+    //Mediator
+    ArrayList<MediatorObserver> parentFrames;
+    
+    //API instances
     Recorder recorder;
     WhisperInterface WhisperSession;
     ChatGPTInterface ChatGPTSession;
     ServerInterface ServerSession;
+    ErrorMessagesInterface ErrorMessages;
+    MongoDB MongoDBSession;
+    String defaultEmailUsername = "User";
 
-    public QPHPHButtonPanelPresenter(ArrayList<ButtonSubject> createdButtons, QuestionPanel createdqp, PromptHistory createdph, Recorder recorder, WhisperInterface WhisperSession, ChatGPTInterface ChatGPTSession, ServerInterface ServerSession){
-        allButtons = createdButtons;
-        qp = createdqp;
-        ph = createdph;
+    //References to instantiated UI elements and listeners
+    ArrayList<ButtonSubject> allButtons = new ArrayList<ButtonSubject>();
+    EmailSetupFrame ef;
+    AppFrame af;
+    QuestionPanel qp;
+    PromptHistory ph;
+    EmailSetupPanel ep;
+
+    //Constructor used in app
+    public QPHPHButtonPanelPresenter(EmailSetupFrame esFrame, AppFrame appFrame, Recorder recorder, WhisperInterface WhisperSession, 
+    ChatGPTInterface ChatGPTSession, ServerInterface ServerSession, ErrorMessagesInterface ErrorMessages, MongoDB MongoDBSession){
+        
+        //Sets created panels that mediator uses
+        ef = esFrame;
+        af = appFrame;
+        qp = appFrame.getQuestionPanel();
+        ph = appFrame.getPromptHistory();
+        ep = ef.getSetupPanel();
+        
+        
+        //Sets APIs that mediator uses.
         this.recorder = recorder;
         this.WhisperSession = WhisperSession;
         this.ChatGPTSession = ChatGPTSession;
         this.ServerSession = ServerSession;
+        this.ErrorMessages = ErrorMessages;
+        this.MongoDBSession = MongoDBSession;
         
-        for (ButtonSubject button : allButtons){
-            button.registerObserver(this);
+        //Register listeners that mediator observes and then the observers of the mediator
+        this.parentFrames = new ArrayList<MediatorObserver>();
+        ArrayList<ButtonSubject> allListeners = getListeners();
+        for (ButtonSubject listener : allListeners){
+            listener.registerObserver(this);
         }
         qp.registerObserver(this);
         ph.registerObserver(this);
+        this.registerObserver(appFrame);
+        this.registerObserver(esFrame);
+        this.MongoDBSession.registerObserver(this);
     }
     
-    //BUTTON OBSERVER METHODS
+    //////////////////////////////////////////////////////////BUTTON OBSERVER METHODS//////////////////////////////////////////////////////////////////////////////////////////////////
+
+    //When user first opens the appframe after login
+    @Override
+    public void onStart() {
+        //pulls data from MongoDB server
+        ArrayList<Entry> savedPromptHistory = this.MongoDBSession.retrieveSavedPromptHistory();
+        //populates prompt history with entries and posts to local server.
+        for (Entry entry : savedPromptHistory){
+            if (entry != null){
+                System.out.println(entry.getTitle());
+                System.out.println(entry.getResult());
+                ph.onNewEntry(entry);
+                this.ServerSession.postToServer(entry);
+            }
+        }
+    }
+
+    //When start button is clicked. Can be used to start recording or stop recording.
     @Override
     public void onStartStop(boolean startedRecording) {
         if (startedRecording){
@@ -58,29 +108,32 @@ public class QPHPHButtonPanelPresenter implements ButtonObserver, PanelObserver{
             if (result != null){
                 String command = result.get(0);
                 String prompt = result.get(1);
-                Entry entry = null;
 
                 //Case 1 where command is a question
                 if (command.equalsIgnoreCase("Question")) {            
-                
-                    //ask question to chatGPT    
-                    try {
-                        this.ChatGPTSession.askChatGPT(prompt);
-                    } 
-                    catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                    catch (IOException e) {
-                        e.printStackTrace();
-                    } 
-        
-                    String answer = this.ChatGPTSession.getAnswer();
-                    entry = new Entry(command, prompt, answer);
-                    
+                    onQuestionCommand(command, prompt);
+                     
+                }
+
+                //Case 2 where command is email setup
+                if (command.equalsIgnoreCase("Setup Email")) {           
+                    notifyObservers();
+                }
+
+                //Case 3 where command is delete
+                if (command.equalsIgnoreCase("Delete Prompt")){
+                    onDelete();
+                }
+
+                //Case 4 where command is clear all
+                if (command.equalsIgnoreCase("Clear All")){
+                    onClear();
+                }
+
                 //Case 2 where command is to create email draft
-                } else if (command.equalsIgnoreCase("Create email")) {
-                	
-                	//create email with chatGPT    
+            else if (command.equalsIgnoreCase("Create email")) {
+                if (prompt != null){
+                    //create email with chatGPT    
                     try {
                         this.ChatGPTSession.askChatGPT("Create an email draft that ends in Best regards, " + defaultEmailUsername + "and the email's body is" + prompt);
                     } 
@@ -90,38 +143,169 @@ public class QPHPHButtonPanelPresenter implements ButtonObserver, PanelObserver{
                     catch (IOException e) {
                         e.printStackTrace();
                     } 
-        
+                    
                     String answer = this.ChatGPTSession.getAnswer().trim();
-                    entry = new Entry(command, prompt, answer);
-                }
-                qp.onNewEntry(entry);
-                ph.onNewEntry(entry);
-                this.ServerSession.postToServer(entry);   
+                    Entry entry = new Entry(command, prompt, answer);
+                    qp.onNewEntry(entry);
+                    ph.onNewEntry(entry);
+                    this.ServerSession.postToServer(entry); 
+             }
             }
+
+                
+                
+                 
+            }
+            
             else{
                 qp.InvalidInputDetected(question);
             }
         }
-            
     }
-    
+
     //String prompt is formatted as "Question: <Prompt>"
     @Override
     public void onListChange(String prompt) {
-        //String question = prompt.substring(prompt.indexOf(":") + 2); 
+        System.out.println("listChanged");
         String answer = this.ServerSession.getFromServer(prompt);
-        qp.onListChange(prompt, answer);  
+        qp.onListChange(prompt, answer);   
     }
 
+    //When user closes the appframe
+    @Override
+    public void onClose() {
+        boolean confirmation = ErrorMessages.confirmClosing();
+        if (confirmation){
+            ArrayList<Entry> savedHistory = new ArrayList<Entry>();
+            ListModel<String> modelPromptHistory = ph.getListModel();
+            for (int i = 0; i < modelPromptHistory.getSize(); i++){
+                ArrayList<String> deconstructedEntry = parseCommand(modelPromptHistory.getElementAt(i));
+                Entry entry = convertToEntry(deconstructedEntry);
+                savedHistory.add(entry);
+            }
+            this.MongoDBSession.updateSavedPromptHistory(savedHistory);       
+            af.dispose();     
+        }        
+    }
+
+
+
+    //////////////////////////////////////////////////////////LOGIC HELPER METHODS//////////////////////////////////////////////////////////////////////////////////////////////////
+    
+    //Stop button is clicked:Question command is parsed
+    public void onQuestionCommand(String command, String prompt){
+        Entry entry;
+        //real ask question to chatGPT    
+        try {
+            this.ChatGPTSession.askChatGPT(prompt);
+        } 
+        catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        } 
+
+        String answer = this.ChatGPTSession.getAnswer().trim();
+        entry = new Entry(command, prompt, answer);
+        qp.onNewEntry(entry);
+        ph.onNewEntry(entry);
+        System.out.println(command + prompt + answer);
+        this.ServerSession.postToServer(entry); 
+    }
+
+    //Stop button is clicked: Delete is the given command
+    public void onDelete(){
+        int index = ph.getSelectedIndex();
+        if (index != -1){
+            String title = ph.getTitle(index);
+            this.ServerSession.deleteFromServer(title);
+            qp.onDelete();
+            ph.removePH(index);
+        }
+    }
+//Stop button is clicked: Clear All is the given command
+    public void onClear(){
+        //iterate through all elements in Prompt History
+        for (int index = 0 ; index < ph.getPHSize(); index++){
+            String title = ph.getTitle(index);
+            this.ServerSession.deleteFromServer(title);
+        }
+        ph.resetPH();
+        qp.onDelete();
+    }
+
+    //Setup button is clicked: Setup Email is completed.
+    public void onEmailSetup(){
+        if (!ep.checkAllFieldsFilled()){
+            ErrorMessages.showErrorMessage("Fill up all fields");
+        }
+        else {
+            System.out.println("here");
+            ef.setVisible(false);
+            ArrayList<String> fields = ep.getAllFields();
+            this.MongoDBSession.setupEmail(fields);
+            Entry entry= new Entry("Setup Email", null, null);
+            qp.onNewEntry(entry);
+        }
+        
+        
+    }
+    
+
+    //////////////////////////////////////////////////////////Helper METHODS//////////////////////////////////////////////////////////////////////////////////////////////////
+
+    //Helper method to convert recordings to entries.
+    public Entry convertToEntry (ArrayList<String> deconstructedEntry) {
+        String command = deconstructedEntry.get(0);
+        String question = deconstructedEntry.get(1);
+        String answer;
+        if (command.equalsIgnoreCase("Question")){
+            answer = this.ServerSession.getFromServer(command + ": " + question);
+        }
+        else {
+            answer = null;
+        }
+
+        return new Entry(command, question, answer);
+    }
+
+    //Helper method to set instantiated listeners to respective panels
+    public void setQPPHListeners(StartStopListener ssListener, QuestionListHandler lListener, ClosingFrameListener closeListener, SetupEmailListener seListener){
+        JButton startButton = qp.getStartButton();
+        JButton setupButton = ep.getSetupButton();
+        JList<String> promptList = ph.getPromptList(); 
+        startButton.addActionListener(ssListener);
+        promptList.addListSelectionListener(lListener);
+        setupButton.addActionListener(seListener);
+        this.af.addWindowListener(closeListener);
+    }
+
+    //Helper method to get listeners for mediator to observe
+    public ArrayList<ButtonSubject> getListeners(){
+        ArrayList<ButtonSubject> allListeners = new ArrayList<ButtonSubject>();
+        ClosingFrameListener closeListener = new ClosingFrameListener();
+        StartStopListener ssListener = new StartStopListener();
+        QuestionListHandler lListener = new QuestionListHandler();
+        SetupEmailListener seListener = new SetupEmailListener();
+        setQPPHListeners(ssListener, lListener, closeListener, seListener);
+        allListeners.add(ssListener);
+        allListeners.add(lListener);
+        allListeners.add(closeListener);
+        allListeners.add(seListener);
+        return allListeners;
+    }
+    
+
+    //Helper method to deciper what command was captured by voice recording
     public ArrayList<String> parseCommand(String question){
-        final String[] COMMANDS = {"Question", "Send email", "Create email", "Setup email", "Delete prompt", "Clear all"};
+        final String[] LOWERCASECOMMANDS = {"question", "send email", "create email", "setup email", "delete prompt", "clear all"};
+        final String[] COMMANDS = {"Question", "Send Email", "Create Email", "Setup Email", "Delete Prompt", "Clear All"};
         ArrayList<String> result = null;
-       
         if (question != null){
-        	
-            for (int i = 0; i < COMMANDS.length; i++) {
-			
-                if (question.startsWith(COMMANDS[i])) {
+            for (int i = 0; i < LOWERCASECOMMANDS.length; i++) {
+                String tempQuestion = question;
+                if (tempQuestion.toLowerCase().startsWith(LOWERCASECOMMANDS[i])) {
                     result = new ArrayList<String>();
                     String command = COMMANDS[i];
                     result.add(command);
@@ -131,8 +315,7 @@ public class QPHPHButtonPanelPresenter implements ButtonObserver, PanelObserver{
                         result.add(prompt);
                     }
                     catch (StringIndexOutOfBoundsException e){
-                        //No question detected
-                        return null;
+                        result.add(null);
                     }
                 }
             }
@@ -140,75 +323,59 @@ public class QPHPHButtonPanelPresenter implements ButtonObserver, PanelObserver{
 
         return result;
     }
+
+        //////////////////////////////////////////////////////////LISTENER METHODS//////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+    @Override
+    public void registerObserver(MediatorObserver parentFrame) {
+        this.parentFrames.add(parentFrame);
+    }
+
+    @Override
+    public void notifyObservers() {
+        for (MediatorObserver frame : parentFrames){
+           
+            frame.onEmailSetup();
+        }  
+    }
+
+
+
+        //////////////////////////////////////////////////////////TODO OLD METHODS//////////////////////////////////////////////////////////////////////////////////////////////////
+
+//Old constructor still used in tests
+public QPHPHButtonPanelPresenter(ArrayList<ButtonSubject> createdButtons, QuestionPanel createdqp, PromptHistory createdph, Recorder recorder, WhisperInterface WhisperSession, ChatGPTInterface ChatGPTSession, ServerInterface ServerSession){
+    this.parentFrames = new ArrayList<MediatorObserver>();
+    allButtons = createdButtons;
+    qp = createdqp;
+    ph = createdph;
+    this.recorder = recorder;
+    this.WhisperSession = WhisperSession;
+    this.ChatGPTSession = ChatGPTSession;
+    this.ServerSession = ServerSession;
+    
+    for (ButtonSubject button : allButtons){
+        button.registerObserver(this);
+    }
+    qp.registerObserver(this);
+    ph.registerObserver(this);
+}
 }
 
-    
-
-    // @Override
-    // public void onDelete() {
-    //     System.out.println("deleted");
-    //     String question = qp.getQuestion();
-    //     int questionIndex = ph.getIndexInPH(question);
-    //     System.out.println(questionIndex);
-    //     ServerCalls.deleteFromServer(question);
-    //     ph.removePH(questionIndex);
-    //     qp.setQuestion("Your Question will appear here");
-    //     qp.setAnswer("Your Answer will appear here");
-    // }
-
-    // @Override
-    // public void onClear(){
-    //     System.out.println("cleared");
-    //     for (int i = 0; i < ph.getPHSize(); i++) {
-    //         String question = ph.getElementInPH(i);
-    //         ServerCalls.deleteFromServer(question);
-    //     }
-    //       //TODO Should be some kind of update method with ClearListener
-    //     qp.setQuestion("Your Question will appear here");
-    //     qp.setAnswer("Your Answer will appear here");
-    //     ph.resetPH();
-    // }
-    //_______________________________
-//<TODO>
-
-// // * save asked questions to text file
-// // */
-// public void saveQuestions() {
-//   try {
-//     FileWriter questionFile = new FileWriter(filePath);
-    
-//     for (int i = 0; i < ph.getPHSize(); i++) {
-      
-//     questionFile.write(ph.getElementInPH(i));
-//     questionFile.write("\n");
-      
-//     }
-//     questionFile.close();
-//   } catch (IOException e) {
-//       System.out.println("saveQuestions() failed");
-//   }	  
+// //Helper method to get listeners for mediator to observe
+// public ArrayList<ButtonSubject> getListeners(QuestionPanel qp,PromptHistory ph){
+//     ArrayList<ButtonSubject> allListeners = new ArrayList<ButtonSubject>();
+//     ClosingFrameListener closeListener = new ClosingFrameListener();
+//     StartStopListener ssListener = new StartStopListener();
+//     setQPPHListeners(ssListener, closeListener);
+//     allListeners.add(ssListener);
+//     allListeners.add(lListener);
+//     allListeners.add(closeListener);
+//     return allListeners;
 // }
 
 
-//  /*
-// * load asked questions from text file
-// */
-// public void loadQuestions() {
-
-//   try {
-//     BufferedReader questionFile = new BufferedReader(new FileReader(filePath));
-//     String currLine;
-
-//     while ((currLine = questionFile.readLine()) != null) {      		
-//       String response = ServerCalls.getFromServer(currLine);
-//       // String question = response.substring(0,);
-//       // String answer = response.substring()
-//     }
     
-//     questionFile.close();
-    
-//   } catch (IOException e){
-//     System.out.println("loadQuestions() failed");
-//   }
-  
-// }
+
+   
