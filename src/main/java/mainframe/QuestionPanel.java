@@ -70,7 +70,7 @@ import processing.*;
             setQuestion("Invalid Input");
         }
         if (entry.getCommand() != null){
-            setQuestion(entry.getCommand());
+            setQuestion(entry.getTitle());
         }
         if (entry.getPrompt() != null){
             setAnswer(entry.getResult());

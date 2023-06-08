@@ -1,4 +1,4 @@
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.mockito.Mockito.mock;
@@ -6,6 +6,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import processing.ErrorMessages;
+import processing.SavefileWriter;
 import interfaces.ErrorMessagesInterface;
 import interfaces.LoginButtonsSubject;
 import interfaces.MongoInterface;
@@ -21,33 +22,42 @@ import javax.swing.JButton;
 public class DS9LoginTest {
     private static MongoInterface mongoDBMock;
     private static ErrorMessagesInterface errorMessagesMock ;
+    private static SavefileWriter sfWriterMock;
     private static LoginPanel LoginPanelMock;
     private static AppFrame AppFrameMock ;
     private static LoginFrame LoginFrameMock ;
+    private static QuestionPanel qpMock;
+    private static PromptHistory phMock;
 
-	private static CreateAccountListener createListener;
     private static JButton createButton;
+    private static JButton loginButton;
 
 	private static LoginMediator testLogic;
 
-    @BeforeAll
-	public static void setUp(){
+    @BeforeEach
+	public void setUp(){
 		ArrayList<LoginButtonsSubject> allButtons = new ArrayList<LoginButtonsSubject>();
 		
+        //Mock classes
         mongoDBMock = mock(MongoDB.class);
         errorMessagesMock = mock(ErrorMessages.class);
-		LoginPanelMock = mock(LoginPanel.class);
+        sfWriterMock = mock(SavefileWriter.class);
         LoginFrameMock = mock(LoginFrame.class);
         AppFrameMock = mock(AppFrame.class);
+        LoginPanelMock = mock(LoginPanel.class);
+        qpMock = mock(QuestionPanel.class);
+        phMock = mock(PromptHistory.class);
 
-       	createButton = new JButton();
-		createListener = new CreateAccountListener();
-        createButton.addActionListener(createListener);
-		allButtons.add(createListener);
-		testLogic = new LoginMediator(allButtons, LoginPanelMock, mongoDBMock,errorMessagesMock);
-        testLogic.registerObserver(AppFrameMock);
-        testLogic.registerObserver(LoginFrameMock);
+        //Mock Method calls
+        when(AppFrameMock.getQuestionPanel()).thenReturn(qpMock);
+        when(AppFrameMock.getPromptHistory()).thenReturn(phMock);
+        when(LoginFrameMock.getLoginPanel()).thenReturn(LoginPanelMock);
+        when(LoginPanelMock.getLoginButton()).thenReturn(loginButton = new JButton());
+        when(LoginPanelMock.getcreateAccountButton()).thenReturn(createButton = new JButton());
+
+		testLogic = new LoginMediator(LoginFrameMock, AppFrameMock, mongoDBMock,errorMessagesMock, sfWriterMock);
     }
+
 
 //     Scenario 1: User logs in with registered email and password
 // Given that I already have an account 

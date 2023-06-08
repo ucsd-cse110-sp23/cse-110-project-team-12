@@ -77,7 +77,6 @@ public class MyServer implements ServerInterface{
 			  conn.getOutputStream()
 			);
 			String encodedData = encodedQuestion + "," + encodedAnswer;
-			System.out.println(encodedData);
 			out.write(encodedData);	
 			out.flush();
 			out.close();

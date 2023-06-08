@@ -107,7 +107,6 @@ public class QPHPHButtonPanelPresenter implements ButtonObserver, PanelObserver,
             if (result != null){
                 String command = result.get(0);
                 String prompt = result.get(1);
-                Entry entry = null;
 
                 //Case 1 where command is a question
                 if (command.equalsIgnoreCase("Question")) {            
@@ -125,6 +124,10 @@ public class QPHPHButtonPanelPresenter implements ButtonObserver, PanelObserver,
                     onDelete();
                 }
 
+                //Case 4 where command is clear all
+                if (command.equalsIgnoreCase("Clear All")){
+                    onClear();
+                }
                 
                  
             }
@@ -139,11 +142,9 @@ public class QPHPHButtonPanelPresenter implements ButtonObserver, PanelObserver,
     //When user selects entry in prompt history
     @Override
     public void onListChange(String prompt) {
-        if (prompt.startsWith("Question")){
-            System.out.println("listChanged");
-            String answer = this.ServerSession.getFromServer(prompt);
-            qp.onListChange(prompt, answer);
-        }   
+        System.out.println("listChanged");
+        String answer = this.ServerSession.getFromServer(prompt);
+        qp.onListChange(prompt, answer);   
     }
 
     //When user closes the appframe
@@ -168,7 +169,7 @@ public class QPHPHButtonPanelPresenter implements ButtonObserver, PanelObserver,
     //////////////////////////////////////////////////////////LOGIC HELPER METHODS//////////////////////////////////////////////////////////////////////////////////////////////////
     
     //Stop button is clicked:Question command is parsed
-    public Entry onQuestionCommand(String command, String prompt){
+    public void onQuestionCommand(String command, String prompt){
         Entry entry;
         //real ask question to chatGPT    
         try {
@@ -181,13 +182,12 @@ public class QPHPHButtonPanelPresenter implements ButtonObserver, PanelObserver,
             e.printStackTrace();
         } 
 
-        String answer = this.ChatGPTSession.getAnswer();
+        String answer = this.ChatGPTSession.getAnswer().trim();
         entry = new Entry(command, prompt, answer);
         qp.onNewEntry(entry);
         ph.onNewEntry(entry);
         System.out.println(command + prompt + answer);
         this.ServerSession.postToServer(entry); 
-        return entry;
     }
 
     //Stop button is clicked: Delete is the given command
@@ -199,6 +199,16 @@ public class QPHPHButtonPanelPresenter implements ButtonObserver, PanelObserver,
             qp.onDelete();
             ph.removePH(index);
         }
+    }
+//Stop button is clicked: Clear All is the given command
+    public void onClear(){
+        //iterate through all elements in Prompt History
+        for (int index = 0 ; index < ph.getPHSize(); index++){
+            String title = ph.getTitle(index);
+            this.ServerSession.deleteFromServer(title);
+        }
+        ph.resetPH();
+        qp.onDelete();
     }
 
     //Setup button is clicked: Setup Email is completed.

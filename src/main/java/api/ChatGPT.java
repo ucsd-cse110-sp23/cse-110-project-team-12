@@ -64,8 +64,6 @@ public class ChatGPT implements ChatGPTInterface{
 	}
 
 	public String getAnswer(){
-		// TEMPCOUNT++;
-		// return "25 Dec 25" + TEMPCOUNT;
 		return answer;
 	}
 
