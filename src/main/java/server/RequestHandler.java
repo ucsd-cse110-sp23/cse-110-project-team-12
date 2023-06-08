@@ -15,7 +15,6 @@ import java.net.URLDecoder;
 public class RequestHandler implements HttpHandler {
 
 	private	 Map<String, String> data;
-	private final String ASCII = "ASCII";
 	private static final String UTF8 = "UTF-8";
 
     

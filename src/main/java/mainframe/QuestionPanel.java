@@ -67,10 +67,15 @@ import processing.*;
         if (entry == null){
             setQuestion("Invalid Input");
         }
-        if (entry.getCommand().equalsIgnoreCase("Question")){
-            setQuestion(entry.getTitle());
+        if (entry.getCommand() != null){
+            setQuestion(entry.getCommand());
+        }
+        if (entry.getPrompt() != null){
             setAnswer(entry.getResult());
         }
+        
+        // }
+
      }
 
      public void InvalidInputDetected(String question){

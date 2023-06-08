@@ -26,18 +26,22 @@ public class QPHPHButtonPanelPresenter implements ButtonObserver, PanelObserver,
 
     //References to instantiated UI elements and listeners
     ArrayList<ButtonSubject> allButtons = new ArrayList<ButtonSubject>();
+    EmailSetupFrame ef;
     AppFrame af;
     QuestionPanel qp;
     PromptHistory ph;
+    EmailSetupPanel ep;
 
     //Constructor used in app
-    public QPHPHButtonPanelPresenter(AppFrame appFrame, Recorder recorder, WhisperInterface WhisperSession, 
+    public QPHPHButtonPanelPresenter(EmailSetupFrame esFrame, AppFrame appFrame, Recorder recorder, WhisperInterface WhisperSession, 
     ChatGPTInterface ChatGPTSession, ServerInterface ServerSession, ErrorMessagesInterface ErrorMessages, MongoDB MongoDBSession){
         
         //Sets created panels that mediator uses
+        ef = esFrame;
         af = appFrame;
         qp = appFrame.getQuestionPanel();
         ph = appFrame.getPromptHistory();
+        ep = ef.getSetupPanel();
         
         
         //Sets APIs that mediator uses.
@@ -56,6 +60,9 @@ public class QPHPHButtonPanelPresenter implements ButtonObserver, PanelObserver,
         }
         qp.registerObserver(this);
         ph.registerObserver(this);
+        this.registerObserver(appFrame);
+        this.registerObserver(esFrame);
+        this.MongoDBSession.registerObserver(this);
     }
     
     //////////////////////////////////////////////////////////BUTTON OBSERVER METHODS//////////////////////////////////////////////////////////////////////////////////////////////////
@@ -109,20 +116,8 @@ public class QPHPHButtonPanelPresenter implements ButtonObserver, PanelObserver,
                 }
 
                 //Case 2 where command is email setup
-                if (command.equalsIgnoreCase("Setup Email")) {            
+                if (command.equalsIgnoreCase("Setup Email")) {           
                     notifyObservers();
-                //     //real ask question to chatGPT    
-                //     try {
-                //         this.ChatGPTSession.askChatGPT(prompt);
-                //     } 
-                //     catch (InterruptedException e) {
-                //         e.printStackTrace();
-                //     }
-                //     catch (IOException e) {
-                //         e.printStackTrace();
-                //     } 
-        
-                //     String answer = this.ChatGPTSession.getAnswer();
                 }
 
                  
@@ -177,6 +172,23 @@ public class QPHPHButtonPanelPresenter implements ButtonObserver, PanelObserver,
         }
     }
 
+    //
+    public void onEmailSetup(){
+        if (!ep.checkAllFieldsFilled()){
+            ErrorMessages.showErrorMessage("Fill up all fields");
+        }
+        else {
+            System.out.println("here");
+            ef.setVisible(false);
+            ArrayList<String> fields = ep.getAllFields();
+            this.MongoDBSession.setupEmail(fields);
+            Entry entry= new Entry("Setup Email", null, null);
+            qp.onNewEntry(entry);
+        }
+        
+        
+    }
+
     //////////////////////////////////////////////////////////Helper METHODS//////////////////////////////////////////////////////////////////////////////////////////////////
     public Entry convertToEntry (ArrayList<String> deconstructedEntry) {
         String command = deconstructedEntry.get(0);
@@ -193,11 +205,13 @@ public class QPHPHButtonPanelPresenter implements ButtonObserver, PanelObserver,
     }
 
     //Helper method to set instantiated listeners to respective panels
-    public void setQPPHListeners(StartStopListener ssListener, QuestionListHandler lListener, ClosingFrameListener closeListener){
+    public void setQPPHListeners(StartStopListener ssListener, QuestionListHandler lListener, ClosingFrameListener closeListener, SetupEmailListener seListener){
         JButton startButton = qp.getStartButton();
+        JButton setupButton = ep.getSetupButton();
         JList<String> promptList = ph.getPromptList(); 
         startButton.addActionListener(ssListener);
         promptList.addListSelectionListener(lListener);
+        setupButton.addActionListener(seListener);
         this.af.addWindowListener(closeListener);
     }
 
@@ -207,22 +221,25 @@ public class QPHPHButtonPanelPresenter implements ButtonObserver, PanelObserver,
         ClosingFrameListener closeListener = new ClosingFrameListener();
         StartStopListener ssListener = new StartStopListener();
         QuestionListHandler lListener = new QuestionListHandler();
-        setQPPHListeners(ssListener, lListener, closeListener);
+        SetupEmailListener seListener = new SetupEmailListener();
+        setQPPHListeners(ssListener, lListener, closeListener, seListener);
         allListeners.add(ssListener);
         allListeners.add(lListener);
         allListeners.add(closeListener);
+        allListeners.add(seListener);
         return allListeners;
     }
     
 
     //Helper method to deciper what command was captured by voice recording
     public ArrayList<String> parseCommand(String question){
-        final String[] COMMANDS = {"Question", "Send email", "Create email", "Setup email", "Delete prompt", "Clear all"};
+        final String[] LOWERCASECOMMANDS = {"question", "send email", "create email", "setup email", "delete prompt", "clear all"};
+        final String[] COMMANDS = {"Question", "Send Email", "Create Email", "Setup Email", "Delete Prompt", "Clear All"};
         ArrayList<String> result = null;
         if (question != null){
-            for (int i = 0; i < COMMANDS.length; i++) {
-			
-                if (question.startsWith(COMMANDS[i])) {
+            for (int i = 0; i < LOWERCASECOMMANDS.length; i++) {
+                String tempQuestion = question;
+                if (tempQuestion.toLowerCase().startsWith(LOWERCASECOMMANDS[i])) {
                     result = new ArrayList<String>();
                     String command = COMMANDS[i];
                     result.add(command);
@@ -232,8 +249,7 @@ public class QPHPHButtonPanelPresenter implements ButtonObserver, PanelObserver,
                         result.add(prompt);
                     }
                     catch (StringIndexOutOfBoundsException e){
-                        //No question detected
-                        return null;
+                        result.add(null);
                     }
                 }
             }
@@ -252,8 +268,9 @@ public class QPHPHButtonPanelPresenter implements ButtonObserver, PanelObserver,
 
     @Override
     public void notifyObservers() {
-        for (MediatorObserver panel : parentFrames){
-            panel.onEmailSetup();
+        for (MediatorObserver frame : parentFrames){
+           
+            frame.onEmailSetup();
         }  
     }
 
@@ -279,18 +296,17 @@ public QPHPHButtonPanelPresenter(ArrayList<ButtonSubject> createdButtons, Questi
     ph.registerObserver(this);
 }
 
-//Helper method to get listeners for mediator to observe
-public ArrayList<ButtonSubject> getListeners(QuestionPanel qp,PromptHistory ph){
-    ArrayList<ButtonSubject> allListeners = new ArrayList<ButtonSubject>();
-    ClosingFrameListener closeListener = new ClosingFrameListener();
-    StartStopListener ssListener = new StartStopListener();
-    QuestionListHandler lListener = new QuestionListHandler();
-    setQPPHListeners(ssListener, lListener, closeListener);
-    allListeners.add(ssListener);
-    allListeners.add(lListener);
-    allListeners.add(closeListener);
-    return allListeners;
-}
+// //Helper method to get listeners for mediator to observe
+// public ArrayList<ButtonSubject> getListeners(QuestionPanel qp,PromptHistory ph){
+//     ArrayList<ButtonSubject> allListeners = new ArrayList<ButtonSubject>();
+//     ClosingFrameListener closeListener = new ClosingFrameListener();
+//     StartStopListener ssListener = new StartStopListener();
+//     setQPPHListeners(ssListener, closeListener);
+//     allListeners.add(ssListener);
+//     allListeners.add(lListener);
+//     allListeners.add(closeListener);
+//     return allListeners;
+// }
 
 
 }
