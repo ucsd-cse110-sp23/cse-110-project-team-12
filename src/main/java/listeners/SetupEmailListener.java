@@ -1,10 +1,16 @@
+/**
+ * @author CSE 110 - Team 12
+ */
 package listeners;
 import java.awt.event.*;
 
 import interfaces.ButtonSubject;
 import mediators.QPHPHButtonPanelPresenter;
 
-
+/**
+ * Listener for clicking Save button on email setup screen
+ *
+ */
 public class SetupEmailListener implements ButtonSubject,ActionListener{
     QPHPHButtonPanelPresenter presenter;
 

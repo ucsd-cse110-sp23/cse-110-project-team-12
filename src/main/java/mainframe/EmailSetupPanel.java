@@ -1,14 +1,18 @@
+/**
+ * @author CSE 110 - Team 12
+ */
 package mainframe;
 
 import javax.swing.*;
-
-import api.MongoDB;
-
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+/**
+ * EmailSetupPanel for user to configure their email settings
+ */
 public class EmailSetupPanel extends JPanel{
+	
     JButton setupButton;
     JButton cancelButton;
 
@@ -19,6 +23,10 @@ public class EmailSetupPanel extends JPanel{
     ArrayList<JTextField> allFields = new ArrayList<JTextField>();
     int fieldLength = 20;
 
+    /**
+     * Constructor for EmailSetupPanel
+     * Sets labels and creates fields
+     */
     public EmailSetupPanel(){
         super(new GridLayout(8,1));
 
@@ -40,6 +48,11 @@ public class EmailSetupPanel extends JPanel{
         this.add(cancelButton);
     }    
 
+    /**
+     * Checks if all email fields are filled
+     * 
+     * @return boolean - true if all fields filled, false otherwise
+     */
     public boolean checkAllFieldsFilled(){
         for (JTextField field : allFields){
             if (field.getText().isBlank()){
@@ -49,6 +62,11 @@ public class EmailSetupPanel extends JPanel{
         return true;
     }
 
+    /**
+     * Gets all of user's email settings
+     * 
+     * @return ArrayList<String> - email settings
+     */
     public ArrayList<String> getAllFields(){
         ArrayList<String> fields = new ArrayList<String>();
         for (JTextField field : allFields){
@@ -57,43 +75,31 @@ public class EmailSetupPanel extends JPanel{
         return fields;
     }
     
+    /**
+     * Gets user's display name
+     * 
+     * @return String display name
+     */
     public String getDisplayName() {
     	return displayNameField.getText();
     }
 
+    /**
+     * Gets panel's setup button
+     * 
+     * @return JButton - setup button
+     */
     public JButton getSetupButton() {
         return setupButton;
     }
     
+    /**
+     * Gets panel's cancel button
+     * 
+     * @return JButton - cancel button
+     */
     public JButton getCancelButton() {
     	return cancelButton;
     }
-    
-    public void setFirstName(String s) {
-    	this.firstNameField.setText(s);
-    }
-    
-    public void setLastName(String s) {
-    	this.lastNameField.setText(s);
-    }
 
-    public void setDisplayName(String s) {
-    	this.displayNameField.setText(s);
-    }
-    
-    public void setEmailName(String s) {
-    	this.emailField.setText(s);
-    }
-
-    public void setSMTPHost(String s) {
-    	this.SMTPField.setText(s);
-    }
-
-    public void setTLSPort(String s) {
-    	this.TLSField.setText(s);
-    }
-    
-    public void setPassword(String s) {
-    	this.PasswordField.setText(s);
-    }
 }

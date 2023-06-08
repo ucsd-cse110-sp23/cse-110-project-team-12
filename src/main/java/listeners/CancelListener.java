@@ -1,9 +1,16 @@
+/**
+ * @author CSE 110 - Team 12
+ */
 package listeners;
 import java.awt.event.*;
 
 import interfaces.ButtonSubject;
 import mediators.QPHPHButtonPanelPresenter;
 
+/**
+ * Listener for pressing Cancel button on email setup
+ *
+ */
 public class CancelListener implements ButtonSubject,ActionListener{
 	QPHPHButtonPanelPresenter presenter;
 

@@ -1,6 +1,8 @@
-package mainframe;
-/*
- * AppFrame is the main interface of our program, contains 2 subpanels
+/**
+ * @author CSE 110 - Team 12
+ */
+package mainframe;/*
+
  */
 
 import java.awt.*;
@@ -10,9 +12,10 @@ import javax.swing.*;
 
 import interfaces.*;
 
-/*
- * Main interface for application
- * System exits if no server detected
+/**
+ * AppFrame is the main interface of our program, contains 2 subpanels:
+ * 	QuestionPanel
+ * 	PromptHistory
  */
 public class AppFrame extends JFrame implements MediatorObserver{
 
@@ -22,6 +25,11 @@ public class AppFrame extends JFrame implements MediatorObserver{
         
     LayoutManager afLayout = new BorderLayout();
     
+    /**
+     * AppFrame constructor
+     * 
+     * @throws IOException
+     */
     public AppFrame() throws IOException {
     	this.setTitle(TITLE);
         this.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
@@ -29,9 +37,6 @@ public class AppFrame extends JFrame implements MediatorObserver{
         this.setLayout(afLayout);
         
         //windowed fullscreen
-        // GraphicsEnvironment graph = GraphicsEnvironment.getLocalGraphicsEnvironment();
-        // GraphicsDevice dev = graph.getDefaultScreenDevice();
-        // dev.setFullScreenWindow(this);
         this.setExtendedState(JFrame.MAXIMIZED_BOTH); 
         
         this.setVisible(false);
@@ -43,14 +48,25 @@ public class AppFrame extends JFrame implements MediatorObserver{
         this.add(ph, BorderLayout.WEST); 
     }
 
+    /**
+     * Gets frame's QuestionPanel
+     * @return QuestionPanel
+     */
     public QuestionPanel getQuestionPanel(){
         return qp;
     }
 
+    /**
+     * Gets frame's PromptHistory panel
+     * @return PromptHistory
+     */
     public PromptHistory getPromptHistory(){
         return ph;
     }
 
+    /**
+     * AppFrame opens when LoginFrame closes
+     */
     @Override
     public void onLoginClosing() {
         this.setVisible(true);
@@ -58,15 +74,16 @@ public class AppFrame extends JFrame implements MediatorObserver{
         this.setAlwaysOnTop(false);
     }
 
+    /**
+     * Does nothing
+     */
     @Override
-    public void onEmailSetup() {
-        // Not used
-    }
+    public void onEmailSetup() {}
 
+    /**
+     * Does nothing
+     */
 	@Override
-	public void onCancel() {
-		// Not used
-		
-	}
+	public void onCancel() {}
     
 }
