@@ -22,45 +22,46 @@ public class ChatGPT implements ChatGPTInterface{
 	private String question = null;
 	private String answer = null;
 	int TEMPCOUNT = 0;
+	int TEMPCOUNT = 0;
 
 	
 	public void askChatGPT(String question_text) throws IOException, InterruptedException {
 		question = question_text;
 		
 		
-		//Set request parameters
-		String prompt = question;
-		int maxTokens = 100;
+		// //Set request parameters
+		// String prompt = question;
+		// int maxTokens = 100;
 		
-		//Create a request body which you will pass into request object
-		JSONObject requestBody = new JSONObject();
-		requestBody.put("model", MODEL);
-		requestBody.put("prompt", prompt);
-		requestBody.put("max_tokens", maxTokens);
-		requestBody.put("temperature", 1.0);
+		// //Create a request body which you will pass into request object
+		// JSONObject requestBody = new JSONObject();
+		// requestBody.put("model", MODEL);
+		// requestBody.put("prompt", prompt);
+		// requestBody.put("max_tokens", maxTokens);
+		// requestBody.put("temperature", 1.0);
 		
-		//create HTTP client
-		HttpClient client = HttpClient.newHttpClient();
+		// //create HTTP client
+		// HttpClient client = HttpClient.newHttpClient();
 		
-		//create the request object
-		HttpRequest request = HttpRequest
-		.newBuilder()
-		.uri(URI.create(API_ENDPOINT))
-		.header("Content-Type", "application/json")
-		.header("Authorization", String.format("Bearer %s",  API_KEY))
-		.POST(HttpRequest.BodyPublishers.ofString(requestBody.toString()))
-		.build();
+		// //create the request object
+		// HttpRequest request = HttpRequest
+		// .newBuilder()
+		// .uri(URI.create(API_ENDPOINT))
+		// .header("Content-Type", "application/json")
+		// .header("Authorization", String.format("Bearer %s",  API_KEY))
+		// .POST(HttpRequest.BodyPublishers.ofString(requestBody.toString()))
+		// .build();
 		
-		//send request and receive response
-		HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+		// //send request and receive response
+		// HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 	
-		//process the response
-		String responseBody = response.body();
+		// //process the response
+		// String responseBody = response.body();
 		
-		JSONObject responseJson = new JSONObject(responseBody);
+		// JSONObject responseJson = new JSONObject(responseBody);
 		
-		JSONArray choices = responseJson.getJSONArray("choices");
-		answer = choices.getJSONObject(0).getString("text");
+		// JSONArray choices = responseJson.getJSONArray("choices");
+		// answer = choices.getJSONObject(0).getString("text");
 	}
 
 	public String getAnswer(){

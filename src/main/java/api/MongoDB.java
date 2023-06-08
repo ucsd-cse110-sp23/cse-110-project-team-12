@@ -9,17 +9,24 @@ import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.UpdateOptions;
 
 import interfaces.ButtonSubject;
+import interfaces.ButtonSubject;
 import interfaces.MongoInterface;
+import mediators.QPHPHButtonPanelPresenter;
 import mediators.QPHPHButtonPanelPresenter;
 
 import static com.mongodb.client.model.Filters.eq;
 import static com.mongodb.client.model.Updates.*;
+import static com.mongodb.client.model.Updates.*;
 
+import java.util.ArrayList;
+import processing.Entry;
 import java.util.ArrayList;
 import processing.Entry;
 
 public class MongoDB implements MongoInterface, ButtonSubject{
+public class MongoDB implements MongoInterface, ButtonSubject{
 
+	QPHPHButtonPanelPresenter presenter;
 	QPHPHButtonPanelPresenter presenter;
 	private final String URI = "mongodb+srv://juli:Pyys5stHYEsnDtJw@cluster0.w01dcya.mongodb.net/?retryWrites=true&w=majority";
 	private final String DATABASENAME = "SayItAssistant";
@@ -47,10 +54,12 @@ public class MongoDB implements MongoInterface, ButtonSubject{
 	public boolean checkEmailExists(String email) {
 	    	 
         Bson filter = eq(EMAIL_CATEGORY, email);
+        Bson filter = eq(EMAIL_CATEGORY, email);
         try (MongoClient mongoClient = MongoClients.create(URI)) {
 			MongoDatabase userCluster = mongoClient.getDatabase(DATABASENAME);
             MongoCollection<Document> entries = userCluster.getCollection(COLLECTION);
 	        if (entries.find(filter).first() != null) {
+				currentLoggedInUser = email;
 	        	return true;
 	        }
         }
@@ -65,7 +74,15 @@ public class MongoDB implements MongoInterface, ButtonSubject{
 			userDocument.append(EMAIL_CATEGORY, email)
 				.append(PASSWORD_CATEGORY, pass1)
 				.append(HISTORY_CATEGORY, new ArrayList<Document>());
+            MongoCollection<Document> entries = getAllDocuments();
+			Document userDocument = new Document("_id", new ObjectId());
+			userDocument.append(EMAIL_CATEGORY, email)
+				.append(PASSWORD_CATEGORY, pass1)
+				.append(HISTORY_CATEGORY, new ArrayList<Document>());
 			//insert user's email and password into database
+			entries.insertOne(userDocument);
+			currentLoggedInUser = email;
+			
 			entries.insertOne(userDocument);
 			currentLoggedInUser = email;
 			
@@ -75,7 +92,10 @@ public class MongoDB implements MongoInterface, ButtonSubject{
 		
 		Bson filter1 = eq(EMAIL_CATEGORY, email);
 		Bson filter2 = Filters.and(eq(EMAIL_CATEGORY, email), eq(PASSWORD_CATEGORY, pass1));
+		Bson filter1 = eq(EMAIL_CATEGORY, email);
+		Bson filter2 = Filters.and(eq(EMAIL_CATEGORY, email), eq(PASSWORD_CATEGORY, pass1));
 	
+		MongoCollection<Document> entries = getAllDocuments();
 		MongoCollection<Document> entries = getAllDocuments();
             
 		//check if email exists
@@ -83,6 +103,8 @@ public class MongoDB implements MongoInterface, ButtonSubject{
 			//check that password is correct for email
 			if (entries.find(filter2).first() != null) {
 				//account exists so user logs in
+				this.currentLoggedInUser = email;
+				notifyObservers();
 				this.currentLoggedInUser = email;
 				notifyObservers();
 				return true;
@@ -95,6 +117,21 @@ public class MongoDB implements MongoInterface, ButtonSubject{
 	}
 
 	@Override
+	public void updateSavedPromptHistory(ArrayList<Entry> PromptHistory) {
+		Bson filter = eq(EMAIL_CATEGORY, this.currentLoggedInUser);
+		MongoCollection<Document> allUsers = getAllDocuments();
+
+		ArrayList<Document> documentPromptHistory = new ArrayList<Document>();
+		for (Entry entry: PromptHistory){
+			Document documentEntry = new Document(COMMAND_CATEGORY, entry.getCommand());
+			documentEntry.append(PROMPT_CATEGORY, entry.getPrompt());
+			documentEntry.append(RESULT_CATEGORY, entry.getResult());
+			documentPromptHistory.add(documentEntry);
+		}
+		Bson updateOperation = set(HISTORY_CATEGORY, documentPromptHistory);
+		//UpdateResult updateresult = 
+		allUsers.updateOne(filter, updateOperation);
+		
 	public void updateSavedPromptHistory(ArrayList<Entry> PromptHistory) {
 		Bson filter = eq(EMAIL_CATEGORY, this.currentLoggedInUser);
 		MongoCollection<Document> allUsers = getAllDocuments();
@@ -161,6 +198,39 @@ public class MongoDB implements MongoInterface, ButtonSubject{
 		return users;
 	}
 	
+
+
+////////////////////////////////////UNUSED METHODS////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	/*
+	 * param - email
+	 * returns email's password
+	 */
+	public String checkPass(String email) {
+		
+		Bson filter = eq(EMAIL_CATEGORY, email);
+
+		MongoCollection<Document> entries = getAllDocuments();
+		Document foundDoc = entries.find(filter).first();
+		return (String) (foundDoc.get(PASSWORD_CATEGORY));
+	
+	
+	}
+
+	////////////////////////////////MEDIATOR SUBJECT METHODS/////////////////////////////////////////
+
+	@Override
+	public void registerObserver(QPHPHButtonPanelPresenter presenter) {
+		this.presenter = presenter;
+		System.out.println("Reached");
+	}
+
+	@Override
+	public void notifyObservers() {
+		this.presenter.onStart();
+	}
+
+	
+
 
 
 ////////////////////////////////////UNUSED METHODS////////////////////////////////////////////////////////////////////////////////////////////////////////////

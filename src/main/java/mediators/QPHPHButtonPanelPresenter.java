@@ -5,11 +5,22 @@ import java.util.ArrayList;
 import javax.swing.*;
 
 import api.MongoDB;
+import javax.swing.*;
+
+import api.MongoDB;
 import interfaces.*;
+import listeners.*;
 import listeners.*;
 import mainframe.*;
 import processing.*;
 
+
+public class QPHPHButtonPanelPresenter implements ButtonObserver, PanelObserver, MediatorSubject{
+
+    //Mediator
+    ArrayList<MediatorObserver> parentFrames;
+    
+    //API instances
 
 public class QPHPHButtonPanelPresenter implements ButtonObserver, PanelObserver, MediatorSubject{
 
@@ -51,7 +62,14 @@ public class QPHPHButtonPanelPresenter implements ButtonObserver, PanelObserver,
         this.ServerSession = ServerSession;
         this.ErrorMessages = ErrorMessages;
         this.MongoDBSession = MongoDBSession;
+        this.ErrorMessages = ErrorMessages;
+        this.MongoDBSession = MongoDBSession;
         
+        //Register listeners that mediator observes and then the observers of the mediator
+        this.parentFrames = new ArrayList<MediatorObserver>();
+        ArrayList<ButtonSubject> allListeners = getListeners();
+        for (ButtonSubject listener : allListeners){
+            listener.registerObserver(this);
         //Register listeners that mediator observes and then the observers of the mediator
         this.parentFrames = new ArrayList<MediatorObserver>();
         ArrayList<ButtonSubject> allListeners = getListeners();
@@ -65,6 +83,9 @@ public class QPHPHButtonPanelPresenter implements ButtonObserver, PanelObserver,
         this.MongoDBSession.registerObserver(this);
     }
     
+    //////////////////////////////////////////////////////////BUTTON OBSERVER METHODS//////////////////////////////////////////////////////////////////////////////////////////////////
+
+    //When start button is clicked. Can be used to start recording or stop recording.
     //////////////////////////////////////////////////////////BUTTON OBSERVER METHODS//////////////////////////////////////////////////////////////////////////////////////////////////
 
     //When start button is clicked. Can be used to start recording or stop recording.
@@ -131,9 +152,14 @@ public class QPHPHButtonPanelPresenter implements ButtonObserver, PanelObserver,
         //String prompt is formatted as "Question: <Prompt>"
 
     //When user selects entry in prompt history
+
+    //When user selects entry in prompt history
     @Override
     public void onListChange(String prompt) {
         if (prompt.startsWith("Question")){
+            System.out.println("listChanged");
+            String answer = this.ServerSession.getFromServer(prompt);
+            qp.onListChange(prompt, answer);
             System.out.println("listChanged");
             String answer = this.ServerSession.getFromServer(prompt);
             qp.onListChange(prompt, answer);
@@ -276,8 +302,20 @@ public class QPHPHButtonPanelPresenter implements ButtonObserver, PanelObserver,
 
 
 
+
+        //////////////////////////////////////////////////////////TODO OLD METHODS//////////////////////////////////////////////////////////////////////////////////////////////////
         //////////////////////////////////////////////////////////TODO OLD METHODS//////////////////////////////////////////////////////////////////////////////////////////////////
 
+//Old constructor still used in tests
+public QPHPHButtonPanelPresenter(ArrayList<ButtonSubject> createdButtons, QuestionPanel createdqp, PromptHistory createdph, Recorder recorder, WhisperInterface WhisperSession, ChatGPTInterface ChatGPTSession, ServerInterface ServerSession){
+    this.parentFrames = new ArrayList<MediatorObserver>();
+    allButtons = createdButtons;
+    qp = createdqp;
+    ph = createdph;
+    this.recorder = recorder;
+    this.WhisperSession = WhisperSession;
+    this.ChatGPTSession = ChatGPTSession;
+    this.ServerSession = ServerSession;
 //Old constructor still used in tests
 public QPHPHButtonPanelPresenter(ArrayList<ButtonSubject> createdButtons, QuestionPanel createdqp, PromptHistory createdph, Recorder recorder, WhisperInterface WhisperSession, ChatGPTInterface ChatGPTSession, ServerInterface ServerSession){
     this.parentFrames = new ArrayList<MediatorObserver>();

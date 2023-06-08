@@ -66,8 +66,13 @@ public class RequestHandler implements HttpHandler {
 	private String handlePost(HttpExchange httpExchange) throws IOException {
 		//retrieve and read input stream
 
+
 		InputStream inStream = httpExchange.getRequestBody();
 		Scanner scanner = new Scanner(inStream); 
+		String postData = scanner.nextLine();
+		String question = postData.substring(0,postData.indexOf(","));
+		String answer = postData.substring(postData.indexOf(",") + 1);
+		
 		String postData = scanner.nextLine();
 		String question = postData.substring(0,postData.indexOf(","));
 		String answer = postData.substring(postData.indexOf(",") + 1);
@@ -92,9 +97,17 @@ public class RequestHandler implements HttpHandler {
 		String response = "Invalid GET Request";
 		URI uri = httpExchange.getRequestURI();
 		String encodedQuery = uri.getRawQuery();
+		String encodedQuery = uri.getRawQuery();
 		
 		if (encodedQuery != null) {
+		if (encodedQuery != null) {
 			//Decode query to get the question which is the key for the map
+			encodedQuery = encodedQuery.substring(encodedQuery.indexOf("=") + 1);
+			String question = URLDecoder.decode(encodedQuery, UTF8);
+			String encodedAnswer = data.get(encodedQuery); 
+			
+			String answer = URLDecoder.decode(encodedAnswer, UTF8);
+	
 			encodedQuery = encodedQuery.substring(encodedQuery.indexOf("=") + 1);
 			String question = URLDecoder.decode(encodedQuery, UTF8);
 			String encodedAnswer = data.get(encodedQuery); 
