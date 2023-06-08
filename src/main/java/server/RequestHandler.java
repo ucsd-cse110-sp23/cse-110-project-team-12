@@ -98,7 +98,6 @@ public class RequestHandler implements HttpHandler {
 			encodedQuery = encodedQuery.substring(encodedQuery.indexOf("=") + 1);
 			String question = URLDecoder.decode(encodedQuery, UTF8);
 			String encodedAnswer = data.get(encodedQuery); 
-			
 			String answer = URLDecoder.decode(encodedAnswer, UTF8);
 	
 			if (answer != null) {

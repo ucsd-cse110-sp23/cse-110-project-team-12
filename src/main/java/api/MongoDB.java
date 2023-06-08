@@ -116,7 +116,6 @@ public class MongoDB implements MongoInterface, ButtonSubject{
 	public ArrayList<Entry> retrieveSavedPromptHistory() {
 		ArrayList<Entry> promptHistory = new ArrayList<Entry>();
 		MongoCollection<Document> allUsers = getAllDocuments();
-		System.out.println(currentLoggedInUser);
 		Bson filter = eq(EMAIL_CATEGORY,currentLoggedInUser);
 		//Gets the data saved to that email
 		Document LoggedInUserData = allUsers.find(filter).first();
@@ -134,9 +133,10 @@ public class MongoDB implements MongoInterface, ButtonSubject{
 
 	//Called when SetupEmail button is clicked and inputs are valid (not null)
 	public void setupEmail(ArrayList<String> inputs) {
+		System.out.println("reached");
 		Bson filter = eq(EMAIL_CATEGORY, this.currentLoggedInUser);
 		MongoCollection<Document> allUsers = getAllDocuments();
-		Document documentEmailInfo = new Document(EMAILINFO_CATEGORY, inputs.get(0));
+		Document documentEmailInfo = new Document(FIRSTNAME_CATEGORY, inputs.get(0));
 		documentEmailInfo.append(LASTNAME_CATEGORY, inputs.get(1));
 		documentEmailInfo.append(DISPLAY_CATEGORY, inputs.get(2));
 		documentEmailInfo.append(EMAIL_CATEGORY, inputs.get(3));
@@ -147,6 +147,63 @@ public class MongoDB implements MongoInterface, ButtonSubject{
 		Bson updateOperation = set(EMAILINFO_CATEGORY, documentEmailInfo);
 		allUsers.updateOne(filter, updateOperation, options);
 		
+	}
+	
+	//used by TLSEmail
+	private Document getEmailFields() {
+		MongoCollection<Document> allUsers = getAllDocuments();
+		Bson filter = eq(EMAIL_CATEGORY,currentLoggedInUser);
+		//Gets the data saved to that email
+		Document LoggedInUserData = allUsers.find(filter).first();
+		Document emailFields;
+		if ((emailFields = (Document) LoggedInUserData.get(EMAILINFO_CATEGORY)) != null) {
+			return emailFields;
+		} else {
+			return null;
+		}
+	}
+	
+	public String getFirstName() {
+		Document emailFields;
+		if ((emailFields = getEmailFields()) != null) {
+			return (String) emailFields.get(FIRSTNAME_CATEGORY);
+		} else {
+			return null;
+		}
+	}
+	
+	public String getLastName() {
+		Document emailFields = getEmailFields();
+		return (String) emailFields.get(LASTNAME_CATEGORY);
+	}
+	
+	public String getDisplayNameEmail() {
+		Document emailFields;
+		if ((emailFields = getEmailFields()) != null) {
+			return (String) emailFields.get(DISPLAY_CATEGORY);
+		} else {
+			return null;
+		}
+	}
+	
+	public String getFromEmail() {
+		Document emailFields = getEmailFields();
+		return (String) emailFields.get(EMAIL_CATEGORY);
+	}
+	
+	public String getSMTPHost() {
+		Document emailFields = getEmailFields();
+		return (String) emailFields.get(SMTP_HOST);
+	}
+	
+	public String getTLSPort() {
+		Document emailFields = getEmailFields();
+		return (String) emailFields.get(TLS_PORT);
+	}
+	
+	public String getPassword() {
+		Document emailFields = getEmailFields();
+		return (String) emailFields.get(EMAIL_PASSWORD);
 	}
 
 	
@@ -184,7 +241,6 @@ public class MongoDB implements MongoInterface, ButtonSubject{
 	@Override
 	public void registerObserver(QPHPHButtonPanelPresenter presenter) {
 		this.presenter = presenter;
-		System.out.println("Reached");
 	}
 
 	@Override

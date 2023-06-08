@@ -37,5 +37,13 @@ public class EmailSetupFrame extends JFrame implements MediatorObserver{
     public void onLoginClosing() {
         //Does nothing
     }
+
+
+
+	@Override
+	public void onCancel() {
+		this.setVisible(false);
+		
+	}
     
 }

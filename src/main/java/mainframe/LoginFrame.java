@@ -61,6 +61,12 @@ public class LoginFrame extends JFrame implements MediatorObserver{
 	public void onEmailSetup() {
 		// Not used
 	}
+
+	@Override
+	public void onCancel() {
+		// Not used
+		
+	}
 	
 	
 }

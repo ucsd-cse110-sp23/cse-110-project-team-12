@@ -16,6 +16,7 @@ public class app {
     private static EmailSetupFrame emailSetupFrame;
     private static QPHPHButtonPanelPresenter postloginMediator;
     private static LoginMediator loginMediator;
+    private static TLSEmail tlsEmail;
     private static SavefileWriter sfWriter;
 
     public static void main (String args[]) throws IOException{
@@ -27,8 +28,11 @@ public class app {
         emailSetupFrame = new EmailSetupFrame();
         MongoDB MongoSession = new MongoDB();
         sfWriter = new SavefileWriter();
+        tlsEmail = new TLSEmail();
+        EmailUtil emailUtil = new EmailUtil();
+        
 
-        postloginMediator = new QPHPHButtonPanelPresenter(emailSetupFrame, appFrame, new Recorder(), new Whisper(), new ChatGPT(), ServerInstance, new ErrorMessages(), MongoSession); 
+        postloginMediator = new QPHPHButtonPanelPresenter(emailSetupFrame, appFrame, new Recorder(), new Whisper(), new ChatGPT(), ServerInstance, new ErrorMessages(), MongoSession, tlsEmail, emailUtil);
         loginMediator = new LoginMediator(loginFrame, appFrame, MongoSession, new ErrorMessages(), sfWriter);
         loginMediator.checkAutoLogin();
 

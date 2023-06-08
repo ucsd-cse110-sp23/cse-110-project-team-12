@@ -40,10 +40,13 @@ public class DS15DeletePromptTest {
     private static QuestionPanel qpMock;
     private static PromptHistory phMock;
     private static EmailSetupPanel epMock;
+    private static TLSEmail tlsMock;
+    private static EmailUtil emailUtilMock;
 
     private static QPHPHButtonPanelPresenter testLogic;
     private static JButton startButton;
     private static JButton setupButton;
+    private static JButton cancelButton;
 
     @BeforeEach
     public void setup(){
@@ -60,6 +63,9 @@ public class DS15DeletePromptTest {
         appFrameMock = mock(AppFrame.class);
         ErrorMessagesMock = mock(ErrorMessages.class);
         MongoDBMock = mock(MongoDB.class);
+        tlsMock = mock(TLSEmail.class);
+        emailUtilMock = mock(EmailUtil.class);
+
 
         //Mock Method calls
         when(appFrameMock.getQuestionPanel()).thenReturn(qpMock);
@@ -68,10 +74,11 @@ public class DS15DeletePromptTest {
         when(qpMock.getStartButton()).thenReturn(startButton = new JButton());
         when(phMock.getPromptList()).thenReturn(new JList<String>());
         when(epMock.getSetupButton()).thenReturn(setupButton = new JButton());
+        when(epMock.getCancelButton()).thenReturn(cancelButton = new JButton());
 
          //Testing Classes
          testLogic = new QPHPHButtonPanelPresenter( esFrameMock,  appFrameMock,  recorderMock,  WhisperMock, 
-         ChatGPTMock,  serverMock,  ErrorMessagesMock,  MongoDBMock);
+         ChatGPTMock,  serverMock,  ErrorMessagesMock,  MongoDBMock, tlsMock, emailUtilMock);
     }
 
     //Unit test for parsing of "Delete" command

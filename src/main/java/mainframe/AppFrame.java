@@ -60,7 +60,13 @@ public class AppFrame extends JFrame implements MediatorObserver{
 
     @Override
     public void onEmailSetup() {
-        //
+        // Not used
     }
+
+	@Override
+	public void onCancel() {
+		// Not used
+		
+	}
     
 }
