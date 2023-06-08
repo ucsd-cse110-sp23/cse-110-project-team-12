@@ -1,6 +1,8 @@
-package listeners;
-/*
- * QuestionListHandler handles selections for scrolling JList sidebar of previous questions
+/**
+ * @author CSE 110 - Team 12
+ */
+package listeners;/*
+
  * implements ListSelectionListener
  */
 
@@ -11,7 +13,9 @@ import javax.swing.event.ListSelectionListener;
 import interfaces.ButtonSubject;
 import mediators.QPHPHButtonPanelPresenter;
 
-
+/**
+ * QuestionListHandler handles selections for scrolling JList sidebar of previous questions
+ */
 public class QuestionListHandler implements ListSelectionListener, ButtonSubject{
     QPHPHButtonPanelPresenter presenter;
     String question;

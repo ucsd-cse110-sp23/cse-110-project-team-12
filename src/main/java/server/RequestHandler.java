@@ -1,35 +1,44 @@
-package server;
-/*
- * RequestHandler - how server should handle incoming requests
+/**
+ * @author CSE 110 - Team 12
+ */
+package server;/*
+
  */
 
 import com.sun.net.httpserver.*; //server create()
-
 import java.io.*;
 import java.net.*;
 import java.util.*;
-import java.net.URLEncoder;
 import java.net.URLDecoder;
 
-
+/**
+ * RequestHandler - how server should handle incoming requests
+ *
+ */
 public class RequestHandler implements HttpHandler {
 
+	//saves data as <Title,Result> 
 	private	 Map<String, String> data;
 	private static final String UTF8 = "UTF-8";
 
-    
-    public RequestHandler(Map<String, String> data) {
-        this.data = data;
-    }
-	
-	/* Called by HttpServer when HTTP request receivedgigit	
+	/**
+	 * Constructor for RequestHandler
+	 * 
+	 * @param data from MyServer
+	 */
+	public RequestHandler(Map<String, String> data) {
+		this.data = data;
+	}
+
+	/**
+	 * Called by HttpServer when HTTP request receivedgigit	
 	 * 
 	 * @param HttpExchange httpExchange
 	 */
 	public void handle(HttpExchange httpExchange) throws IOException {
 		String response = "Request Received";
 		String method = httpExchange.getRequestMethod();
-		
+
 		//handle request method - GET, POST, PUT, DELETE
 		try {
 			if (method.equals("POST")) {
@@ -45,11 +54,10 @@ public class RequestHandler implements HttpHandler {
 				throw new Exception("Not Valid Request Method");
 			}
 		} catch (Exception e) {
-			System.out.println("An erroneous request");
 			response = e.toString();
 			e.printStackTrace();
 		}
-		
+
 		//send back response to client
 		httpExchange.sendResponseHeaders(200, response.length());
 		OutputStream outStream = httpExchange.getResponseBody();
@@ -57,32 +65,32 @@ public class RequestHandler implements HttpHandler {
 		outStream.close();
 	}
 
-	/* Handles HTTP POST request received by server
+	/** 
+	 * Handles HTTP POST request received by server
 	 * Gets data from server and sends response to client
 	 * 
 	 * @param HttpExchange httpExchange
 	 * @return String response - parsed retrieved data
 	 */
 	private String handlePost(HttpExchange httpExchange) throws IOException {
+		
 		//retrieve and read input stream
-
 		InputStream inStream = httpExchange.getRequestBody();
 		Scanner scanner = new Scanner(inStream); 
 		String postData = scanner.nextLine();
 		String question = postData.substring(0,postData.indexOf(","));
 		String answer = postData.substring(postData.indexOf(",") + 1);
-		
+
 		//store data in hashmap and local server
 		data.put(question, answer);
-		
-		String response = question + "\n" + answer ;
 
+		String response = question + "\n" + answer ;
 		scanner.close();
-		
 		return response;
 	}
-	
-	/* Handles HTTP GET request received by server
+
+	/** 
+	 * Handles HTTP GET request received by server
 	 * Queries are names of programming languages
 	 * 
 	 * @param HttpExchange httpExchange
@@ -92,14 +100,14 @@ public class RequestHandler implements HttpHandler {
 		String response = "Invalid GET Request";
 		URI uri = httpExchange.getRequestURI();
 		String encodedQuery = uri.getRawQuery();
-		
+
 		if (encodedQuery != null) {
 			//Decode query to get the question which is the key for the map
 			encodedQuery = encodedQuery.substring(encodedQuery.indexOf("=") + 1);
 			String question = URLDecoder.decode(encodedQuery, UTF8);
 			String encodedAnswer = data.get(encodedQuery); 
 			String answer = URLDecoder.decode(encodedAnswer, UTF8);
-	
+
 			if (answer != null) {
 				response = answer;
 			} else {
@@ -109,10 +117,9 @@ public class RequestHandler implements HttpHandler {
 		}
 		return response;
 	}
-	
-	
-	
-	/* Delete data from HashMap
+
+	/** 
+	 * Delete data from HashMap
 	 * 
 	 * @param HttpExchange httpExchange
 	 * @return String response - parsed deleted data
@@ -121,21 +128,24 @@ public class RequestHandler implements HttpHandler {
 		String response = "Invalid DELETE Request";
 		URI uri = httpExchange.getRequestURI();
 		String query = uri.getRawQuery();
-		
+
 		if (query != null) {
-			
+
 			//extract value of query param from query string
 			String question = query.substring(query.indexOf("=")+1);
 			String answer = data.get(question); //retrieve data from hashmap
-			
-			
-			if (answer != null) { //valid query
+
+			//valid query
+			if (answer != null) { 
 				response = "Deleted entry {" + question + ", " + answer + "}";
 				data.remove(question);
-			} else {            //invalid query
+			
+			//invalid query
+			} else {            
 				response = "No data found for " + question;
 			}
 		}
+		
 		return response;
 	}
 }

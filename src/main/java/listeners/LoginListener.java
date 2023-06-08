@@ -1,3 +1,6 @@
+/**
+ * @author CSE 110 - Team 12
+ */
 package listeners;
 
 import java.awt.event.ActionEvent;
@@ -6,6 +9,10 @@ import java.awt.event.ActionListener;
 import interfaces.LoginButtonsObserver;
 import interfaces.LoginButtonsSubject;
 
+/**
+ * Listener for clicking Login button on login screen
+ *
+ */
 public class LoginListener implements LoginButtonsSubject,ActionListener {
 	LoginButtonsObserver observer;
 	

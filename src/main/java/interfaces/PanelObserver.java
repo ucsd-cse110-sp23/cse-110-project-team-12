@@ -1,5 +1,10 @@
+/**
+ * @author CSE 110 - Team 12
+ */
 package interfaces;
 
-public interface PanelObserver {
-    
-}
+/**
+ * No PanelObserver methods
+ *
+ */
+public interface PanelObserver {}

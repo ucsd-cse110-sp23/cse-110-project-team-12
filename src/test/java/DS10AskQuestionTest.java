@@ -1,24 +1,17 @@
+/**
+ * @author CSE 110 - Team 12
+ */
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-
 import api.ChatGPT;
 import api.Whisper;
-
 import static org.junit.jupiter.api.Assertions.*;
-
-import java.io.File;
-import java.util.Random;
 import java.util.concurrent.TimeUnit;
-
 import javax.swing.JButton;
-
 import java.util.ArrayList;
-import java.awt.event.ActionEvent;
-
 import interfaces.*;
 import listeners.StartStopListener;
 import mainframe.*;
@@ -26,21 +19,13 @@ import mediators.QPHPHButtonPanelPresenter;
 import processing.*;
 import server.MyServer;
 
+/**
+ * Testing for US10 - User asks question using "Question" command
+ *
+ */
 public class DS10AskQuestionTest{
 
-//     Scenario 1:  User successfully uses “Question” command
-// Given that I click “Start”
-// When I say command “Question” 
-// And ask a question
-// Then I should see “Question” with the question in the prompt box
-// And the question’s answer in the result box 
-// And the it should have copy-paste functionality
-
-// Scenario 2: User unsuccessfully uses “Question” command
-// Given that I click “Start”
-// When I say command “Question”
-// And do not follow it up with a question
-// Then I will see an error message stating no question was detected
+	//Mock classes
     private static QuestionPanel qpMock;
     private static PromptHistory phMock;
     private static Recorder recorderMock;
@@ -48,11 +33,16 @@ public class DS10AskQuestionTest{
     private static ChatGPTInterface ChatGPTMock;
     private static MyServer serverMock;
 
+    //button and listener
     private static JButton startButton;
     private static StartStopListener testListener;
+    
+    //mediator
     private static QPHPHButtonPanelPresenter testLogic;
     
-    
+    /**
+	 * Sets up environment for mocking
+	 */
     @BeforeAll
     public static void setup(){
         ArrayList<ButtonSubject> createdButtons = new ArrayList<ButtonSubject>();
@@ -71,7 +61,10 @@ public class DS10AskQuestionTest{
         testLogic = new QPHPHButtonPanelPresenter(createdButtons, qpMock, phMock, recorderMock, WhisperMock, ChatGPTMock, serverMock);
     }
     
-    //Question: When is Christmas?
+    /**
+     * Test that UI updates when start/stop pressed
+     * @throws Exception
+     */
     @Test
 	void testUIupdatedStartStop() throws Exception {
         startButton.doClick();
@@ -81,6 +74,9 @@ public class DS10AskQuestionTest{
         verify(qpMock).stoppedRecording();
     }
 
+    /**
+     * Test parsing of Question command and its prompt
+     */
     @Test
     void unitTestParseCommand(){
         ArrayList<String> expectedResult = new ArrayList<String>();
@@ -91,7 +87,6 @@ public class DS10AskQuestionTest{
         when(WhisperMock.getQuestionText()).thenReturn("Question, When is Christmas");
         String testQuestion = "Question, When is Christmas";
         ArrayList<String> result = testLogic.parseCommand(testQuestion ); 
-        System.out.println("testres" + result);
         assertTrue(result.equals(expectedResult));
         
       //Case 2: Invalid use of command
