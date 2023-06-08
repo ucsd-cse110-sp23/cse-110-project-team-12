@@ -7,5 +7,6 @@ public interface ServerInterface {
     public void runServer() throws IOException;
     public void postToServer(Entry entry);
     public String getFromServer(String question);
+    public void deleteFromServer(String question);
 
 }

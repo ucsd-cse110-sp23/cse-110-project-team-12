@@ -24,6 +24,7 @@ public class QPHPHButtonPanelPresenter implements ButtonObserver, PanelObserver,
     ServerInterface ServerSession;
     ErrorMessagesInterface ErrorMessages;
     MongoDB MongoDBSession;
+    String defaultEmailUsername = "User";
 
     //References to instantiated UI elements and listeners
     ArrayList<ButtonSubject> allButtons = new ArrayList<ButtonSubject>();
@@ -77,6 +78,22 @@ public class QPHPHButtonPanelPresenter implements ButtonObserver, PanelObserver,
     
     //////////////////////////////////////////////////////////BUTTON OBSERVER METHODS//////////////////////////////////////////////////////////////////////////////////////////////////
 
+    //When user first opens the appframe after login
+    @Override
+    public void onStart() {
+        //pulls data from MongoDB server
+        ArrayList<Entry> savedPromptHistory = this.MongoDBSession.retrieveSavedPromptHistory();
+        //populates prompt history with entries and posts to local server.
+        for (Entry entry : savedPromptHistory){
+            if (entry != null){
+                System.out.println(entry.getTitle());
+                System.out.println(entry.getResult());
+                ph.onNewEntry(entry);
+                this.ServerSession.postToServer(entry);
+            }
+        }
+    }
+
     //When start button is clicked. Can be used to start recording or stop recording.
     @Override
     public void onStartStop(boolean startedRecording) {
@@ -100,121 +117,112 @@ public class QPHPHButtonPanelPresenter implements ButtonObserver, PanelObserver,
             if (result != null){
                 String command = result.get(0);
                 String prompt = result.get(1);
-                Entry entry;
 
                 //Case 1 where command is a question
                 if (command.equalsIgnoreCase("Question")) {            
-                
-                    //real ask question to chatGPT    
-                    try {
-                        this.ChatGPTSession.askChatGPT(prompt);
-                    } 
-                    catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                    catch (IOException e) {
-                        e.printStackTrace();
-                    } 
-        
-                    String answer = this.ChatGPTSession.getAnswer();
-                    entry = new Entry(command, prompt, answer);
-                    qp.onNewEntry(entry);
-                    ph.onNewEntry(entry);
-                    this.ServerSession.postToServer(entry); 
-                    
-                  //Case 2 where command is to create email draft
-                } else if (command.equalsIgnoreCase("Create email")) {
-                	String displayName;
-                	if (this.MongoDBSession.getDisplayNameEmail() != null) {
-                		displayName = this.MongoDBSession.getDisplayNameEmail();
-                	} else {
-                		displayName = "Default User";
-                	}
-                	
-                	//create email with chatGPT    
-                    try {
-                        this.ChatGPTSession.askChatGPT("Create an email draft that ends in Best regards, " + displayName + "and the email's body is" + prompt);
-                    } 
-                    catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                    catch (IOException e) {
-                        e.printStackTrace();
-                    } 
-        
-                    String answer = this.ChatGPTSession.getAnswer().trim();
-                    entry = new Entry(command, prompt, answer);
-                    qp.onNewEntry(entry);
-                    ph.onNewEntry(entry);
-                    this.ServerSession.postToServer(entry);
+                    onQuestionCommand(command, prompt);
+                     
                 }
 
-                //Case 3 where command is email setup
+                //Case 2 where command is email setup
                 if (command.equalsIgnoreCase("Setup Email")) {           
                     notifyObservers();
                 }
-                
-                //Case 4 where command is send email
-                if (command.equalsIgnoreCase("Send Email") && prompt != null && prompt.startsWith("to ")) {
-                	
-                	//can only send email if created email is selected in PH
-                	if (this.qp.getQuestion().startsWith("Create Email")) {
-                		String firstName;
-                		//can only send email if email setup has been configured
-	                	if ((firstName = this.MongoDBSession.getFirstName()) != null ) {
-		                	String lastName = this.MongoDBSession.getLastName();
-		                	String emailBody = this.qp.getAnswer();
-		                	String fromEmail = this.MongoDBSession.getFromEmail();
-		                	
-		                	//configure toEmail from input
-		                	prompt = prompt.replace(" at ", "@");
-		                	prompt = prompt.replace(" dot ", ".");
-		                	prompt = prompt.toLowerCase();
-		                	//removing trailing period
-		                	if (prompt.charAt(prompt.length()-1) == '.') {
-		                		prompt = prompt.substring(0, prompt.length()-1);
-		                	}
-		                	String toEmail = prompt.replace("to ", "");
-		                	toEmail = toEmail.trim();
-		                	
-		                	this.tlsEmail.setFromEmail(this.MongoDBSession.getFromEmail());
-		                	this.tlsEmail.setSMTPHost(this.MongoDBSession.getSMTPHost());
-		                	this.tlsEmail.setTLSPort(this.MongoDBSession.getTLSPort());
-		                	this.tlsEmail.setPassword(this.MongoDBSession.getPassword());
-		                	
-		                	Session session = this.tlsEmail.startEmailSession();
-		                	
-		                	if (this.emailUtil.sendEmail(session, toEmail,fromEmail,"New Message from " + firstName + " " + lastName + " on SayItAssistant2", emailBody)) {
-		                		entry = new Entry(command, prompt, "Email successfully sent.");
-		                        qp.onNewEntry(entry);
-		                        
-		                	} else {
-		                		entry = new Entry(command, prompt, "Email not sent. SMTP Host: " + this.MongoDBSession.getSMTPHost());
-		                        qp.onNewEntry(entry);
-		                	} 
-	                	} else {
-	                		ErrorMessages.showErrorMessage("Use Setup Email command before sending emails.");
-	                	}
-                	} else {
-                		ErrorMessages.showErrorMessage("Must select created email before sending email.");
-                	}
+
+                //Case 3 where command is delete
+                if (command.equalsIgnoreCase("Delete Prompt")){
+                    onDelete();
                 }
+
+                //Case 4 where command is clear all
+                if (command.equalsIgnoreCase("Clear All")){
+                    onClear();
+                }
+
+                //Case 5 where command is to create email draft
+            else if (command.equalsIgnoreCase("Create email")) {
+                if (prompt != null){
+                    //create email with chatGPT    
+                    try {
+                        this.ChatGPTSession.askChatGPT("Create an email draft that ends in Best regards, " + defaultEmailUsername + "and the email's body is" + prompt);
+                    } 
+                    catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    catch (IOException e) {
+                        e.printStackTrace();
+                    } 
+                    
+                    String answer = this.ChatGPTSession.getAnswer().trim();
+                    Entry entry = new Entry(command, prompt, answer);
+                    qp.onNewEntry(entry);
+                    ph.onNewEntry(entry);
+                    this.ServerSession.postToServer(entry); 
+             }
+            }
+
+            //Case 6 where command is send email
+            if (command.equalsIgnoreCase("Send Email") && prompt != null && prompt.startsWith("to ")) {
+                Entry entry;
+                //can only send email if created email is selected in PH
+                if (this.qp.getQuestion().startsWith("Create Email")) {
+                    String firstName;
+                    //can only send email if email setup has been configured
+                    if ((firstName = this.MongoDBSession.getFirstName()) != null ) {
+                        String lastName = this.MongoDBSession.getLastName();
+                        String emailBody = this.qp.getAnswer();
+                        String fromEmail = this.MongoDBSession.getFromEmail();
+                        
+                        //configure toEmail from input
+                        prompt = prompt.replace(" at ", "@");
+                        prompt = prompt.replace(" dot ", ".");
+                        prompt = prompt.toLowerCase();
+                        //removing trailing period
+                        if (prompt.charAt(prompt.length()-1) == '.') {
+                            prompt = prompt.substring(0, prompt.length()-1);
+                        }
+                        String toEmail = prompt.replace("to ", "");
+                        toEmail = toEmail.trim();
+                        
+                        this.tlsEmail.setFromEmail(this.MongoDBSession.getFromEmail());
+                        this.tlsEmail.setSMTPHost(this.MongoDBSession.getSMTPHost());
+                        this.tlsEmail.setTLSPort(this.MongoDBSession.getTLSPort());
+                        this.tlsEmail.setPassword(this.MongoDBSession.getPassword());
+                        
+                        Session session = this.tlsEmail.startEmailSession();
+                        
+                        if (this.emailUtil.sendEmail(session, toEmail,fromEmail,"New Message from " + firstName + " " + lastName + " on SayItAssistant2", emailBody)) {
+                            entry = new Entry(command, prompt, "Email successfully sent.");
+                            qp.onNewEntry(entry);
+                            
+                        } else {
+                            entry = new Entry(command, prompt, "Email not sent. SMTP Host: " + this.MongoDBSession.getSMTPHost());
+                            qp.onNewEntry(entry);
+                        } 
+                    } else {
+                        ErrorMessages.showErrorMessage("Use Setup Email command before sending emails.");
+                    }
+                } else {
+                    ErrorMessages.showErrorMessage("Must select created email before sending email.");
+                }
+            }
                  
-            } else {
+            }
+            
+            else{
                 qp.InvalidInputDetected(question);
             }
         }
-            
     }
 
-    //When user selects entry in prompt history
+    //String prompt is formatted as "Command: <Prompt>"
     @Override
     public void onListChange(String prompt) {
         String answer = this.ServerSession.getFromServer(prompt);
         qp.onListChange(prompt, answer);
     }
 
-    //When user closes the frame
+    //When user closes the appframe
     @Override
     public void onClose() {
         boolean confirmation = ErrorMessages.confirmClosing();
@@ -231,20 +239,54 @@ public class QPHPHButtonPanelPresenter implements ButtonObserver, PanelObserver,
         }        
     }
 
-    @Override
-    public void onStart() {
-        //pulls data from MongoDB server
-        ArrayList<Entry> savedPromptHistory = this.MongoDBSession.retrieveSavedPromptHistory();
-        //populates prompt history with entries and posts to local server.
-        for (Entry entry : savedPromptHistory){
-            if (entry != null){
-                ph.onNewEntry(entry);
-                this.ServerSession.postToServer(entry);
-            }
+
+
+    //////////////////////////////////////////////////////////LOGIC HELPER METHODS//////////////////////////////////////////////////////////////////////////////////////////////////
+    
+    //Stop button is clicked:Question command is parsed
+    public void onQuestionCommand(String command, String prompt){
+        Entry entry;
+        //real ask question to chatGPT    
+        try {
+            this.ChatGPTSession.askChatGPT(prompt);
+        } 
+        catch (InterruptedException e) {
+            e.printStackTrace();
         }
+        catch (IOException e) {
+            e.printStackTrace();
+        } 
+
+        String answer = this.ChatGPTSession.getAnswer().trim();
+        entry = new Entry(command, prompt, answer);
+        qp.onNewEntry(entry);
+        ph.onNewEntry(entry);
+        System.out.println(command + prompt + answer);
+        this.ServerSession.postToServer(entry); 
     }
 
-    //
+    //Stop button is clicked: Delete is the given command
+    public void onDelete(){
+        int index = ph.getSelectedIndex();
+        if (index != -1){
+            String title = ph.getTitle(index);
+            this.ServerSession.deleteFromServer(title);
+            qp.onDelete();
+            ph.removePH(index);
+        }
+    }
+//Stop button is clicked: Clear All is the given command
+    public void onClear(){
+        //iterate through all elements in Prompt History
+        for (int index = 0 ; index < ph.getPHSize(); index++){
+            String title = ph.getTitle(index);
+            this.ServerSession.deleteFromServer(title);
+        }
+        ph.resetPH();
+        qp.onDelete();
+    }
+
+    //Setup button is clicked: Setup Email is completed.
     public void onEmailSetup(){
         if (!ep.checkAllFieldsFilled()){
             ErrorMessages.showErrorMessage("Fill up all fields");
@@ -263,6 +305,8 @@ public class QPHPHButtonPanelPresenter implements ButtonObserver, PanelObserver,
     }
 
     //////////////////////////////////////////////////////////Helper METHODS//////////////////////////////////////////////////////////////////////////////////////////////////
+
+    //Helper method to convert recordings to entries.
     public Entry convertToEntry (ArrayList<String> deconstructedEntry) {
         String command = deconstructedEntry.get(0);
         String question = deconstructedEntry.get(1);
@@ -376,6 +420,7 @@ public QPHPHButtonPanelPresenter(ArrayList<ButtonSubject> createdButtons, Questi
     qp.registerObserver(this);
     ph.registerObserver(this);
 }
+}
 
 // //Helper method to get listeners for mediator to observe
 // public ArrayList<ButtonSubject> getListeners(QuestionPanel qp,PromptHistory ph){
@@ -390,7 +435,6 @@ public QPHPHButtonPanelPresenter(ArrayList<ButtonSubject> createdButtons, Questi
 // }
 
 
-}
     
 
    

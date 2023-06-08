@@ -21,5 +21,16 @@ public class ErrorMessages implements ErrorMessagesInterface{
         }
         return false;
     }
+
+    @Override
+    public boolean confirmAutoLogin() {
+        if (JOptionPane.showConfirmDialog(null,"Do you want to save your log-in details for auto-login?", 
+        "Auto Login", 
+        JOptionPane.YES_NO_OPTION, 
+        JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION){
+            return true;
+        }
+        return false;
+    }
     
 }

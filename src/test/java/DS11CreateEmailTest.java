@@ -26,7 +26,7 @@ import mediators.QPHPHButtonPanelPresenter;
 import processing.*;
 import server.MyServer;
 
-public class DS10AskQuestionTest{
+public class DS11CreateEmailTest{
 
 //     Scenario 1:  User successfully uses “Question” command
 // Given that I click “Start”
@@ -43,6 +43,7 @@ public class DS10AskQuestionTest{
 // Then I will see an error message stating no question was detected
     private static QuestionPanel qpMock;
     private static PromptHistory phMock;
+    private static ActionEvent eventMock;
     private static Recorder recorderMock;
     private static WhisperInterface WhisperMock;
     private static ChatGPTInterface ChatGPTMock;
@@ -57,6 +58,7 @@ public class DS10AskQuestionTest{
     public static void setup(){
         ArrayList<ButtonSubject> createdButtons = new ArrayList<ButtonSubject>();
 
+        eventMock = mock(ActionEvent.class);
         qpMock = mock(QuestionPanel.class);
         phMock = mock(PromptHistory.class);
         recorderMock = mock(Recorder.class);
@@ -71,7 +73,7 @@ public class DS10AskQuestionTest{
         testLogic = new QPHPHButtonPanelPresenter(createdButtons, qpMock, phMock, recorderMock, WhisperMock, ChatGPTMock, serverMock);
     }
     
-    //Question: When is Christmas?
+    //Create email To Henry, let's get lunch.
     @Test
 	void testUIupdatedStartStop() throws Exception {
         startButton.doClick();
@@ -84,37 +86,36 @@ public class DS10AskQuestionTest{
     @Test
     void unitTestParseCommand(){
         ArrayList<String> expectedResult = new ArrayList<String>();
-        expectedResult.add("Question");
-        expectedResult.add("When is Christmas");
+        expectedResult.add("Create Email");
+        expectedResult.add("To Henry, let's get lunch.");
         
         //Case 1: Valid command
-        when(WhisperMock.getQuestionText()).thenReturn("Question, When is Christmas");
-        String testQuestion = "Question, When is Christmas";
-        ArrayList<String> result = testLogic.parseCommand(testQuestion ); 
-        System.out.println("testres" + result);
+        when(WhisperMock.getQuestionText()).thenReturn("Create email To Henry, let's get lunch.");
+        String testEmail = "Create email To Henry, let's get lunch.";
+        ArrayList<String> result = testLogic.parseCommand(testEmail);
+        System.out.println(result);
+        System.out.println(expectedResult);
         assertTrue(result.equals(expectedResult));
-        
-      //Case 2: Invalid use of command
-        when(WhisperMock.getQuestionText()).thenReturn("Question");
-
-        String testInvalidQuestion = "Question";
-        result = testLogic.parseCommand(testInvalidQuestion);
-        assertNull(result.get(1));
     
 
-        //Case 3: Invalid command
+        //Case 2: Invalid use of command
+        when(WhisperMock.getQuestionText()).thenReturn("Create email");
+        String testInvalidEmail = "Create email";
+        result = testLogic.parseCommand(testInvalidEmail);
+        assertNull(result.get(1));
+        
+      //Case 3: Invalid command
         when(WhisperMock.getQuestionText()).thenReturn("Blabla blabla");
-
         String testInvalidCommand = "Blabla blabla";
         result = testLogic.parseCommand(testInvalidCommand);
         assertNull(result);
 
-        //Case 4: No command 
+        //Case 3: No command 
 
         when(WhisperMock.getQuestionText()).thenReturn("");
 
-        String testNoQuestion = "";
-        result = testLogic.parseCommand(testNoQuestion);
+        String testNoEmail = "";
+        result = testLogic.parseCommand(testNoEmail);
         assertNull(result);
     
     } 

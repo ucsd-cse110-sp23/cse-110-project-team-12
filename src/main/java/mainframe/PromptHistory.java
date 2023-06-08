@@ -54,29 +54,26 @@ public class PromptHistory extends JPanel implements PanelSubject {
       
   }
 
-  
- ///////////////////////// SETTERS /////////////////////////////////////////////
- public void onNewEntry(Entry entry){
-  if (entry == null){
-    //does nothing
+  public void onNewEntry(Entry entry){
+    if (entry == null){
+      //does nothing
   }
-  listPH.addElement(entry.getTitle());
+  //TODO Dosent check for what kind of entry
+    listPH.addElement(entry.getTitle());
+ }
+
+//called on delete command
+public void removePH(int index){
+  listPH.remove(index);
 }
 
-  //ON NOTIFY() METHODS 
-
-  @Override
-  public void registerObserver(QPHPHButtonPanelPresenter presenter) {
-      this.presenter = presenter; 
-  }
+//called on clear command
+public void resetPH() {
+  listPH.clear();
+}
 
 
-  @Override
-  public void notifyObservers() {
-      //
-  }
-
-  //Getter methods
+///////////////////////////////////////////////////////////////////////GETTER METHODS//////////////////////////////////////////////////////////////////////////////////////////
 
   public JButton getClearButton(){
     return clearAll;      
@@ -92,31 +89,39 @@ public int getPHSize(){
   return listPH.getSize();
 }
 
-public String getElementInPH(int index){
+public String getTitle(int index){
   return (String)listPH.getElementAt(index);
 }
+
+public int getSelectedIndex(){
+  return list.getSelectedIndex();
+  }
 
 public int getIndexInPH(String s){
 return listPH.indexOf(s);
 }
 
-//TODO Get rid of these public methods.
 
 
-public void addPH(String s){
-    listPH.addElement(s);
-  }
 
-  private void removePH(int index){
-    listPH.remove(index);
-  }
 
-  private void resetPH() {
-    listPH.clear();
+  
+///////////////////////////////////////////////////////////////////////SUBJECT METHODS//////////////////////////////////////////////////////////////////////////////////////////
+
+
+@Override
+public void registerObserver(QPHPHButtonPanelPresenter presenter) {
+    this.presenter = presenter; 
 }
 
 
-  //Configure and Create elements in PH
+@Override
+public void notifyObservers() {
+    //
+}
+
+///////////////////////////////////////////////////////////////////////PRIVATE CONFIGURE METHODS//////////////////////////////////////////////////////////////////////////////////////////
+
 
 
   private static void configList(){
@@ -145,6 +150,8 @@ public void addPH(String s){
     clearAll.setFont(new Font(FONT, Font.PLAIN, 24));
     clearAll.setAlignmentX(CENTER_ALIGNMENT);
   }    
+
+
 
 
 

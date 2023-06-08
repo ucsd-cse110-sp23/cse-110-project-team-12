@@ -25,6 +25,8 @@ import processing.*;
      private static JButton startButton;
      private static final String FONT = "Sans-serif";
      private QPHPHButtonPanelPresenter presenter;
+     private static final String DEFAULT_QUESTION = "Your Question will appear here";
+     private static final String DEFAULT_ANSWER = "Your Answer will appear here";
  
      LayoutManager qpLayout = new BoxLayout(this, BoxLayout.PAGE_AXIS);    
  
@@ -67,9 +69,20 @@ import processing.*;
         if (entry == null){
             setQuestion("Invalid Input");
         }
-        setQuestion(entry.getTitle());
-        setAnswer(entry.getResult());
+        if (entry.getCommand() != null){
+            setQuestion(entry.getTitle());
+        }
+        if (entry.getPrompt() != null){
+            setAnswer(entry.getResult());
+        }
+        
+        // }
 
+     }
+
+     public void onDelete(){
+        setQuestion(DEFAULT_QUESTION);
+        setAnswer(DEFAULT_ANSWER);
      }
 
      public void InvalidInputDetected(String question){
@@ -77,8 +90,8 @@ import processing.*;
         setAnswer("Invalid Input Detected");
      }
 
-     public void onListChange(String question, String answer){
-        setQuestion(question);
+     public void onListChange(String title, String answer){
+        setQuestion(title);
         setAnswer(answer);
      }
 

@@ -15,7 +15,6 @@ public class Whisper implements WhisperInterface{
 	 private final String MODEL = "whisper-1";
 	 private String question_text = null;
 	 
-	 int TEMPCOUNT = 0;
 
 	  public void setWhisperFile(File question_audio) throws IOException {
 		 File file = question_audio;
