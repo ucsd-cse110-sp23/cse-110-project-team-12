@@ -7,18 +7,12 @@ import interfaces.*;
 import mediators.*;
 import processing.*;
 import api.*;
-import mediators.*;
-import processing.*;
-import api.*;
 
 
 public class app {
     private static ServerInterface ServerInstance;
     private static LoginFrame loginFrame;
     private static AppFrame appFrame;
-    private static EmailSetupFrame emailSetupFrame;
-    private static QPHPHButtonPanelPresenter postloginMediator;
-    private static LoginMediator loginMediator;
     private static EmailSetupFrame emailSetupFrame;
     private static QPHPHButtonPanelPresenter postloginMediator;
     private static LoginMediator loginMediator;
