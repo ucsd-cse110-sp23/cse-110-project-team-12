@@ -23,6 +23,7 @@ public class QPHPHButtonPanelPresenter implements ButtonObserver, PanelObserver,
     ServerInterface ServerSession;
     ErrorMessagesInterface ErrorMessages;
     MongoDB MongoDBSession;
+    String defaultEmailUsername = "User";
 
     //References to instantiated UI elements and listeners
     ArrayList<ButtonSubject> allButtons = new ArrayList<ButtonSubject>();
@@ -128,18 +129,41 @@ public class QPHPHButtonPanelPresenter implements ButtonObserver, PanelObserver,
                 if (command.equalsIgnoreCase("Clear All")){
                     onClear();
                 }
+
+                //Case 2 where command is to create email draft
+            else if (command.equalsIgnoreCase("Create email")) {
+                if (prompt != null){
+                    //create email with chatGPT    
+                    try {
+                        this.ChatGPTSession.askChatGPT("Create an email draft that ends in Best regards, " + defaultEmailUsername + "and the email's body is" + prompt);
+                    } 
+                    catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    catch (IOException e) {
+                        e.printStackTrace();
+                    } 
+                    
+                    String answer = this.ChatGPTSession.getAnswer().trim();
+                    Entry entry = new Entry(command, prompt, answer);
+                    qp.onNewEntry(entry);
+                    ph.onNewEntry(entry);
+                    this.ServerSession.postToServer(entry); 
+             }
+            }
+
+                
                 
                  
             }
+            
             else{
                 qp.InvalidInputDetected(question);
             }
         }
-            
-        }
-        //String prompt is formatted as "Question: <Prompt>"
+    }
 
-    //When user selects entry in prompt history
+    //String prompt is formatted as "Question: <Prompt>"
     @Override
     public void onListChange(String prompt) {
         System.out.println("listChanged");
@@ -337,6 +361,7 @@ public QPHPHButtonPanelPresenter(ArrayList<ButtonSubject> createdButtons, Questi
     qp.registerObserver(this);
     ph.registerObserver(this);
 }
+}
 
 // //Helper method to get listeners for mediator to observe
 // public ArrayList<ButtonSubject> getListeners(QuestionPanel qp,PromptHistory ph){
@@ -351,7 +376,6 @@ public QPHPHButtonPanelPresenter(ArrayList<ButtonSubject> createdButtons, Questi
 // }
 
 
-}
     
 
    

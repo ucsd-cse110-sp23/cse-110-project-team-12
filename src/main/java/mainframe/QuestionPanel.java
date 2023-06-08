@@ -90,8 +90,8 @@ import processing.*;
         setAnswer("Invalid Input Detected");
      }
 
-     public void onListChange(String question, String answer){
-        setQuestion(question);
+     public void onListChange(String title, String answer){
+        setQuestion(title);
         setAnswer(answer);
      }
 

@@ -54,17 +54,13 @@ public class PromptHistory extends JPanel implements PanelSubject {
       
   }
 
- ///////////////////////////////////////////////////////////////////////SETTER METHODS//////////////////////////////////////////////////////////////////////////////////////////
-  
- //called on new commands: Question and Send Email
- public void onNewEntry(Entry entry){
-  if (entry == null){
-    //does nothing
-}
-  if (entry.getCommand().equalsIgnoreCase("Question")){
+  public void onNewEntry(Entry entry){
+    if (entry == null){
+      //does nothing
+  }
+  //TODO Dosent check for what kind of entry
     listPH.addElement(entry.getTitle());
-}
-}
+ }
 
 //called on delete command
 public void removePH(int index){
@@ -152,7 +148,7 @@ public void notifyObservers() {
   private void configClearAll() {
     clearAll = new JButton("Clear All");
     clearAll.setFont(new Font(FONT, Font.PLAIN, 24));
-      clearAll.setAlignmentX(CENTER_ALIGNMENT);
+    clearAll.setAlignmentX(CENTER_ALIGNMENT);
   }    
 
 
