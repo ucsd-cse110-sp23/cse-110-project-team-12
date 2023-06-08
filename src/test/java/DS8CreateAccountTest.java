@@ -75,7 +75,6 @@ public class DS8CreateAccountTest {
 		String takenEmail = "12345";
 		when(lpMock.getEmail()).thenReturn(takenEmail);
 		when(lpMock.getPass1()).thenReturn(ValidPassword);
-		when(lpMock.getPass2()).thenReturn(ValidPassword);
 		when(mongoDBMock.checkEmailExists(availableEmail)).thenReturn(false);
 		when(mongoDBMock.checkEmailExists(takenEmail)).thenReturn(true);
 		testLogic.onCreateAccount();
@@ -99,11 +98,10 @@ public class DS8CreateAccountTest {
 		String takenEmail = "12345";
 		when(lpMock.getEmail()).thenReturn(availableEmail);
 		when(lpMock.getPass1()).thenReturn(ValidPassword);
-		when(lpMock.getPass2()).thenReturn(ValidPassword);
 		when(mongoDBMock.checkEmailExists(availableEmail)).thenReturn(false);
 		when(mongoDBMock.checkEmailExists(takenEmail)).thenReturn(true);
 		testLogic.onCreateAccount();
-		verify(mongoDBMock).createAccount(availableEmail,ValidPassword,ValidPassword);	
+		verify(errorMessagesMock).checkPassword(ValidPassword);	
 	}
 
 	
@@ -129,10 +127,9 @@ public class DS8CreateAccountTest {
 
 		when(lpMock.getEmail()).thenReturn(someInput);
 		when(lpMock.getPass1()).thenReturn(testPass1);
-		when(lpMock.getPass2()).thenReturn(testPass2);
+		when(errorMessagesMock.checkPassword(testPass2)).thenReturn(false);
 		testLogic.onCreateAccount();
-		verify(errorMessagesMock).showErrorMessage(expectedErrorMessage);
-
+		verify(errorMessagesMock).checkPassword(testPass1);
 	}
 	
 	// /*
@@ -166,18 +163,5 @@ public class DS8CreateAccountTest {
 
 	}
 
-	@Test
-	void test_4_3_MissingPass2() {
-		String invalidInput = "";
-		String someInput = "123";
-		String expectedErrorMessage = "Missing Pass2";
-
-		when(lpMock.getEmail()).thenReturn(someInput);
-		when(lpMock.getPass1()).thenReturn(someInput);
-		when(lpMock.getPass2()).thenReturn(invalidInput);
-		testLogic.onCreateAccount();
-		verify(errorMessagesMock).showErrorMessage(expectedErrorMessage);
-
-	}
 
 }

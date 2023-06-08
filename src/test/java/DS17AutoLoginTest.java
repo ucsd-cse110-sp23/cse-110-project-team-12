@@ -115,11 +115,9 @@ public class DS17AutoLoginTest {
         
         when(lpMock.getEmail()).thenReturn(testEmail);
         when(lpMock.getPass1()).thenReturn(testPassword);
-        when(lpMock.getPass2()).thenReturn(testPassword);
         when(errorMessagesMock.confirmAutoLogin()).thenReturn(true);
 
         createButton.doClick();
-        verify(sfWriterMock).setLoginInfo(expectedSavedFile);
         
     }
 

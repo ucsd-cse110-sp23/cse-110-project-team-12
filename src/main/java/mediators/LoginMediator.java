@@ -56,29 +56,24 @@ public class LoginMediator implements LoginButtonsObserver, LoginPanelObserver, 
 	public void onCreateAccount() {
 		String Email = lp.getEmail();
 		String Pass1 = lp.getPass1();
-		String Pass2 = lp.getPass2();
 
-		//TODO Verify sPass2 = sPass1
 		if (Email.isBlank()){
             ErrorMessagesSession.showErrorMessage("Missing Email");
         }
         else if (Pass1.isBlank()){
             ErrorMessagesSession.showErrorMessage("Missing Pass1");
-        }
-        else if (Pass2.isBlank()){
-            ErrorMessagesSession.showErrorMessage("Missing Pass2");
-        }
-        else if (!Pass1.equals(Pass2)){
-           ErrorMessagesSession.showErrorMessage("Passwords do not match");
-        }
+        } 
         else if (MongoSession.checkEmailExists(Email)){
             ErrorMessagesSession.showErrorMessage("Email taken");
-        }
-        else{
-           MongoSession.createAccount(Email, Pass1, Pass2); 
-           //sucessful Login
-           queryAutoLogin();
-            notifyObservers();	
+        } else {
+	        if (validatePassword(Pass1)) {
+	           MongoSession.createAccount(Email, Pass1, Pass1); 
+	           //sucessful Login
+	           queryAutoLogin();
+	           notifyObservers();	
+	        } else {
+	        	ErrorMessagesSession.showErrorMessage("Passwords do not match");
+	        }
         }
         
 	}
@@ -147,6 +142,11 @@ public class LoginMediator implements LoginButtonsObserver, LoginPanelObserver, 
         }
     
             
+    }
+    
+    //validate password
+    public boolean validatePassword(String pass) {
+    	return ErrorMessagesSession.checkPassword(pass);
     }
 
     public void setListeners(LoginListener loginListener, CreateAccountListener createListener){

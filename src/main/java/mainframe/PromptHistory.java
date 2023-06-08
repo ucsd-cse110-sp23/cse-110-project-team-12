@@ -3,13 +3,11 @@
  * holds:
  * 			header - JLabel
  * 			list of questions in scrolling JList sidebar
- * 			clearAll - JButton
  */
 
 
 package mainframe;
 import java.awt.*;
-import java.util.ArrayList;
 
 // import java.io.*;
 import javax.swing.*;
@@ -28,12 +26,9 @@ public class PromptHistory extends JPanel implements PanelSubject {
     private static JScrollPane sideBar;
     private static DefaultListModel<String> listPH;
     private static JList<String> list;
-    private JButton clearAll;
   
     private static final String FONT = "Sans-serif";
     LayoutManager phLayout = new BoxLayout(this, BoxLayout.PAGE_AXIS);
-
-
     
     /*
      * constructor
@@ -42,15 +37,11 @@ public class PromptHistory extends JPanel implements PanelSubject {
     	
       configBackground();
       configheader();
-      configClearAll();
-      // loadQuestions();
       configList();
       
       this.add(header);
       this.add(sideBar);
-      this.add(clearAll);
       setVisible(true);
-      
       
   }
 
@@ -75,9 +66,6 @@ public void resetPH() {
 
 ///////////////////////////////////////////////////////////////////////GETTER METHODS//////////////////////////////////////////////////////////////////////////////////////////
 
-  public JButton getClearButton(){
-    return clearAll;      
-}
 public JList<String> getPromptList(){
   return list;
 }
@@ -139,22 +127,11 @@ public void notifyObservers() {
     this.setPreferredSize(new Dimension(400,1000));
     setVisible(true);
   }
+  
   private void configheader(){
       header = new JLabel("Prompt History"); 
       header.setFont(new Font(FONT, Font.BOLD, 40));
       header.setAlignmentX(CENTER_ALIGNMENT);
   }
   
-  private void configClearAll() {
-    clearAll = new JButton("Clear All");
-    clearAll.setFont(new Font(FONT, Font.PLAIN, 24));
-    clearAll.setAlignmentX(CENTER_ALIGNMENT);
-  }    
-
-
-
-
-
-
-
 }

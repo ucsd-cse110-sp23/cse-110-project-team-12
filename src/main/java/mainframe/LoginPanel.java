@@ -9,8 +9,8 @@ public class LoginPanel extends JPanel implements LoginPanelSubject {
 
     LoginMediator mediator;
     JButton loginButton, createAccountButton;
-    JLabel email, pass1, pass2;
-	JTextField emailField, passField1, passField2;
+    JLabel email, pass1;
+	JTextField emailField, passField1;
 	int fieldLength = 20;
 	boolean loggedIn = false;
 
@@ -32,13 +32,6 @@ public class LoginPanel extends JPanel implements LoginPanelSubject {
 		//text field to get password
 		passField1 = new JTextField(fieldLength);
 		
-		//label for pass1
-		pass2 = new JLabel();
-		pass2.setText("Password (Create Account only)");
-		
-		//text field to get password
-		passField2 = new JTextField(fieldLength);
-		
 		//create buttons
 		loginButton = new JButton("Login");
 		createAccountButton = new JButton("Create Account");
@@ -47,8 +40,6 @@ public class LoginPanel extends JPanel implements LoginPanelSubject {
 		this.add(emailField);
 		this.add(pass1);
 		this.add(passField1);
-		this.add(pass2);
-		this.add(passField2);
 		this.add(loginButton);
 		this.add(createAccountButton);        
                
@@ -76,14 +67,6 @@ public class LoginPanel extends JPanel implements LoginPanelSubject {
 	
 	public void setPass1(String s) {
 		passField1.setText(s);
-	}
-
-    public String getPass2() {
-		return passField2.getText();
-	}
-	
-	public void setPass2(String s) {
-		passField2.setText(s);
 	}
 
 	public boolean getLoggedInStatus(){

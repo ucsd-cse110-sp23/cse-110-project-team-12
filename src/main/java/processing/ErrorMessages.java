@@ -32,5 +32,17 @@ public class ErrorMessages implements ErrorMessagesInterface{
         }
         return false;
     }
+
+	@Override
+	public boolean checkPassword(String pass1) {
+		String pass2 = JOptionPane.showInputDialog("Please confirm your password");
+		
+		if (pass2 != null && pass2.equals(pass1)) {
+			return true;
+		} else {
+			return false;
+		}
+		
+	}
     
 }

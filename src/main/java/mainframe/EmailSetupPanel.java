@@ -30,7 +30,7 @@ public class EmailSetupPanel extends JPanel{
             allFields.add(textField);
         }
 
-        setupButton = new JButton("Setup");
+        setupButton = new JButton("Save");
         this.add(setupButton);
         
         cancelButton = new JButton("Cancel");
